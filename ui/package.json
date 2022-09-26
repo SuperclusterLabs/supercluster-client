@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "react-demo",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -7,26 +7,20 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.11.60",
+    "@types/node": "^16.11.62",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "concurrently": "^7.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.8.3",
-    "watch": "^1.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "concurrently \"npm run watch:ts\" \"npm run watch:wasm\"",
-    "build": "npm run build:wasm && npm run build:ts",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "watch:ts": "react-scripts start",
-    "watch:wasm": "watch \"npm run build:wasm\" ./wasm",
-    "build:ts": "react-scripts build",
-    "build:wasm": "cd wasm && GOOS=js GOARCH=wasm go build -o ../public/main.wasm && cd .. && echo \"\\033[0;32mcompiled wasm successfully!\\033[0m\""
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

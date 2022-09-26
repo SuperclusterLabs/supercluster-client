@@ -1,11 +1,6 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) using the [typescript-golang template](https://github.com/royhadad/CRA-wasm-go-template)
-
-- make sure you have Go installed on your machine
-- make sure to have WebAssembly configured in your IDE:
-  - [VS Code guide](https://egghead.io/lessons/go-configure-go-build-constraints-in-vs-code-to-work-with-webassembly)
-  - [Intellij guide](https://www.jetbrains.com/help/go/webassembly-project.html)
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
