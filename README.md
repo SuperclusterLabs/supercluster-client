@@ -1,13 +1,18 @@
-# Supercluster Client
+# embeddable-react
 
-The desktop client for Supercluster. It comprises of a Go executable that serves a React frontend.
+This Repo consists of the final version of the code implemented and discussed in [this blog](#https://observiq.com/blog/embed-react-in-golang/).
 
-## Running
-- Install React dependencies and build frontend:
-``` shell
-cd ui
-yarn
-yarn build
+## Bootstrapping
+
+For the code to compile you need to build the React app.
+
+```sh
+cd ui && npm run build
 ```
-- From the project root, you can start the server by running `go run cmd/server/main.go`
-- This will start the server, which can be accessed at `http://localhost:8080`
+
+Then you can build and serve the app with.
+
+```sh
+go build
+./embedded-react-final
+```
