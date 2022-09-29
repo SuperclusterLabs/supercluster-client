@@ -1,6 +1,8 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func addRoutes(r *gin.Engine, store Store) {
 	api := r.Group("/api")
