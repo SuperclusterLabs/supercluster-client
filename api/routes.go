@@ -8,4 +8,5 @@ func addRoutes(r *gin.Engine, store Store) {
 	api.POST("/todos", func(ctx *gin.Context) { createTodo(ctx, store) })
 	api.DELETE("/todos/:id", func(ctx *gin.Context) { deleteTodo(ctx, store) })
 	api.PUT("/todos/:id", func(ctx *gin.Context) { checkTodo(ctx, store) })
+	api.GET("/ws", func(ctx *gin.Context) { wshandler(ctx, store) })
 }
