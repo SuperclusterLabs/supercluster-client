@@ -16,16 +16,16 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.18
-    
+
     - name: Setup Node.js environment
       uses: actions/setup-node@v3.5.0
       with:
         # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
         node-version: 16.14
-    
+
     - name: Install frontend dependencies
       run: cd ui && yarn
-    
+
     - name: Build frontend
       run: cd ui && yarn build
 
@@ -34,3 +34,26 @@ jobs:
 
     - name: Test client
       run: go test -v ./...
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Get Next Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          majorList: release
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          draft: false
+          name: ${{ steps.semver.outputs.next }}
+          body: Changelog Contents
+          token: ${{ github.token }}
