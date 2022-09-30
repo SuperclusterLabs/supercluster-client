@@ -22,7 +22,7 @@ var wsupgrader = websocket.Upgrader{
 func wshandler(ctx *gin.Context, _ Store) {
 	conn, err := wsupgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
-		fmt.Println("Failed to set websocket upgrade: %+v", err)
+		fmt.Println("Failed to set websocket upgrade: ", err)
 		return
 	}
 
