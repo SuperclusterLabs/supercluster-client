@@ -1,18 +1,13 @@
-# embeddable-react
+# Supercluster Client
 
 This Repo consists of the final version of the code implemented and discussed in [this blog](#https://observiq.com/blog/embed-react-in-golang/).
 
-## Bootstrapping
+## Getting started
+- First install frontend dependencies:
 
-For the code to compile you need to build the React app.
-
-```sh
-cd ui && npm run build
+``` sh
+cd ui
+yarn # or npm install
 ```
 
-Then you can build and serve the app with.
-
-```sh
-go build
-./embedded-react-final
-```
+- Then you can run the start script from the project directory: `./start.sh`
