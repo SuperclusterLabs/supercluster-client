@@ -22,9 +22,6 @@ jobs:
       with:
         # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
         node-version: 16.14
-
-    - name: Set up Yarn
-      uses: comchangs/action-yarn@v0.1-beta
     
     - name: Install frontend dependencies
       run: cd ui && yarn
