@@ -52,6 +52,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
+          fetch-depth: 0
           allowUpdates: true
           draft: false
           name: ${{ steps.semver.outputs.next }}
