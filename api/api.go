@@ -38,13 +38,16 @@ func wshandler(ctx *gin.Context, _ Store) {
 func createFile(ctx *gin.Context, s Store) {
 	payload := &CreatePayload{}
 	if err := ctx.BindJSON(payload); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, ResponseError{})
 		return
 	}
 
 	file, err := s.Create(payload.Name, payload.Contents)
 	if err != nil {
-		ctx.AbortWithError(http.StatusInternalServerError, err)
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: "File creation failed",
+		})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, CreateResponse{
@@ -57,7 +60,8 @@ func deleteFile(ctx *gin.Context, s Store) {
 
 	err := s.Delete(name)
 	if err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, ResponseError{})
+		return
 	}
 	ctx.Status(http.StatusOK)
 }
@@ -67,13 +71,15 @@ func modifyFile(ctx *gin.Context, s Store) {
 
 	payload := &ModifyPayload{}
 	if err := ctx.BindJSON(payload); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, ResponseError{})
 		return
 	}
 
 	f, err := s.Modify(name, payload.Contents)
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, err)
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: "File doesn't exist",
+		})
 		return
 	}
 

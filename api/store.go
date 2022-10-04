@@ -10,7 +10,10 @@ import (
 
 const StoreName = "store"
 
-var ErrNotFound = errors.New("not found")
+var ErrNotFound = errors.New("File does not exist")
+var ErrFileExists = errors.New("File already exists")
+var ErrRequestUnmarshalled = errors.New("Request could not be unmarshalled")
+var ErrCannotCreate = errors.New("File could not be created")
 
 type Store interface {
 	Create(name, contents string) (*file, error)
@@ -38,7 +41,7 @@ func newStore() (Store, error) {
 	}
 	err := os.Mkdir(StoreName, 0777)
 	if err != nil {
-		log.Fatal("Could not create file: ", err.Error())
+		log.Println("Could not create file: ", err.Error())
 		return nil, err
 	}
 	return s, nil
@@ -50,23 +53,27 @@ func (s *store) Create(name, contents string) (*file, error) {
 		Contents:  contents,
 		CreatedAt: time.Now().Unix(),
 	}
+	if _, ok := s.files[name]; ok {
+		log.Println("Could not create file: ", ErrFileExists.Error())
+		return nil, ErrFileExists
+	}
 	s.files[name] = new
 
 	f, err := os.Create(StoreName + "/" + name)
 	if err != nil {
-		log.Fatal("Could not create file: ", err.Error())
+		log.Println("Could not create file: ", err.Error())
 		return nil, err
 	}
 
 	_, err = f.WriteString(contents)
 	if err != nil {
-		log.Fatal("Could not create file: ", ErrNotFound.Error())
+		log.Println("Could not create file: ", err.Error())
 		return nil, err
 	}
 
 	f.Close()
 	if err != nil {
-		log.Fatal("Could not close file: ", ErrNotFound.Error())
+		log.Println("Could not close file: ", err.Error())
 		return nil, err
 	}
 
@@ -76,19 +83,19 @@ func (s *store) Create(name, contents string) (*file, error) {
 func (s *store) Modify(name, contents string) (*file, error) {
 	filename := StoreName + "/" + name
 	if err := os.Truncate(filename, 0); err != nil {
-		log.Printf("Failed to truncate: %v", err)
+		log.Println("Failed to truncate: ", err)
 		return nil, err
 	}
 
 	f, err := os.OpenFile(filename, os.O_RDWR, 0777)
 	if err != nil {
-		log.Fatal("Could not modify file: ", ErrNotFound.Error())
-		return nil, ErrNotFound
+		log.Println("Could not modify file: ", err.Error())
+		return nil, err
 	}
 
 	_, err = f.WriteString(contents)
 	if err != nil {
-		log.Fatal("Could not modify file: ", ErrNotFound.Error())
+		log.Println("Could not modify file: ", err.Error())
 		return nil, err
 	}
 
@@ -101,7 +108,7 @@ func (s *store) Modify(name, contents string) (*file, error) {
 func (s *store) Delete(name string) error {
 	err := os.Remove(StoreName + "/" + name)
 	if err != nil {
-		log.Fatal("Could not modify file: ", ErrNotFound.Error())
+		log.Println("Could not delete file: ", err.Error())
 		return err
 	}
 	delete(s.files, name)
