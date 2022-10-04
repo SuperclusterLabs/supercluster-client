@@ -7,7 +7,10 @@ import (
 )
 
 func Start() {
-	store := newStore()
+	store, err := newStore()
+	if err != nil {
+		panic("Cannot create store: " + err.Error())
+	}
 	router := gin.Default()
 
 	addRoutes(router, store)

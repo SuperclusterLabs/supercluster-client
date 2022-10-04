@@ -6,9 +6,9 @@ import (
 
 func addRoutes(r *gin.Engine, store Store) {
 	api := r.Group("/api")
-	api.GET("/todos", func(ctx *gin.Context) { listTodos(ctx, store) })
-	api.POST("/todos", func(ctx *gin.Context) { createTodo(ctx, store) })
-	api.DELETE("/todos/:id", func(ctx *gin.Context) { deleteTodo(ctx, store) })
-	api.PUT("/todos/:id", func(ctx *gin.Context) { checkTodo(ctx, store) })
+	api.GET("/files", func(ctx *gin.Context) { listFiles(ctx, store) })
+	api.POST("/files", func(ctx *gin.Context) { createFile(ctx, store) })
+	api.DELETE("/files/:name", func(ctx *gin.Context) { deleteFile(ctx, store) })
+	api.PUT("/files/:name", func(ctx *gin.Context) { modifyFile(ctx, store) })
 	api.GET("/ws", func(ctx *gin.Context) { wshandler(ctx, store) })
 }

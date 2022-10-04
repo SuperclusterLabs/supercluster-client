@@ -2,107 +2,122 @@ package api
 
 import (
 	"errors"
+	"log"
+	"os"
 	"sort"
 	"time"
-
-	"github.com/google/uuid"
 )
+
+const StoreName = "store"
 
 var ErrNotFound = errors.New("not found")
 
 type Store interface {
-	Create(description string) todo
-	Check(id string, completed bool) (todo, error)
-	Delete(id string)
-	List() []todo
+	Create(name, contents string) (*file, error)
+	Modify(name, contents string) (*file, error)
+	Delete(name string) error
+	List() []file
 }
 
 type store struct {
-	todos map[string]*todo
+	files map[string]*file
 }
 
-type todo struct {
-	// UUID, equal to the key in the todos map
-	ID string `json:"id"`
-	// The text of the Todo
-	Description string `json:"description"`
-	// Boolean of whether the Todo is completed
-	Completed bool `json:"completed"`
+type file struct {
+	// Name of the file
+	Name string `json:"name"`
+	// The contents of the file
+	Contents string `json:"contents"`
 	// Unix timestamp of creation
 	CreatedAt int64 `json:"createdAt"`
 }
 
-func newStore() Store {
+func newStore() (Store, error) {
 	s := &store{
-		todos: make(map[string]*todo),
+		files: make(map[string]*file),
 	}
-	s.Seed()
-	return s
+	err := os.Mkdir(StoreName, 0777)
+	if err != nil {
+		log.Fatal("Could not create file: ", err.Error())
+		return nil, err
+	}
+	return s, nil
 }
 
-func (s *store) Seed() {
-	id1 := uuid.NewString()
-	s.todos[id1] = &todo{
-		ID:          id1,
-		Description: "Pick up dry cleaning",
-		Completed:   true,
-		CreatedAt:   1,
+func (s *store) Create(name, contents string) (*file, error) {
+	new := &file{
+		Name:      name,
+		Contents:  contents,
+		CreatedAt: time.Now().Unix(),
+	}
+	s.files[name] = new
+
+	f, err := os.Create(StoreName + "/" + name)
+	if err != nil {
+		log.Fatal("Could not create file: ", err.Error())
+		return nil, err
 	}
 
-	id2 := uuid.NewString()
-	s.todos[id2] = &todo{
-		ID:          id2,
-		Description: "Grab coffee",
-		Completed:   false,
-		CreatedAt:   2,
+	_, err = f.WriteString(contents)
+	if err != nil {
+		log.Fatal("Could not create file: ", ErrNotFound.Error())
+		return nil, err
 	}
 
-	id3 := uuid.NewString()
-	s.todos[id3] = &todo{
-		ID:          id3,
-		Description: "Solve world hunger",
-		Completed:   false,
-		CreatedAt:   3,
+	f.Close()
+	if err != nil {
+		log.Fatal("Could not close file: ", ErrNotFound.Error())
+		return nil, err
 	}
+
+	return new, nil
 }
 
-func (s *store) Create(description string) todo {
-	id := uuid.NewString()
-	new := &todo{
-		ID:          id,
-		Description: description,
-		CreatedAt:   time.Now().Unix(),
-	}
-	s.todos[id] = new
-	return *new
-}
-
-func (s *store) Check(id string, completed bool) (todo, error) {
-	var checked *todo = s.todos[id]
-
-	if checked == nil {
-		return *checked, ErrNotFound
+func (s *store) Modify(name, contents string) (*file, error) {
+	filename := StoreName + "/" + name
+	if err := os.Truncate(filename, 0); err != nil {
+		log.Printf("Failed to truncate: %v", err)
+		return nil, err
 	}
 
-	checked.Completed = completed
-
-	return *checked, nil
-}
-
-func (s *store) Delete(id string) {
-	delete(s.todos, id)
-}
-
-func (s *store) List() []todo {
-	todos := make([]todo, 0)
-
-	for _, t := range s.todos {
-		todos = append(todos, *t)
+	f, err := os.OpenFile(filename, os.O_RDWR, 0777)
+	if err != nil {
+		log.Fatal("Could not modify file: ", ErrNotFound.Error())
+		return nil, ErrNotFound
 	}
 
-	sort.Slice(todos, func(i, j int) bool {
-		return todos[i].CreatedAt < todos[j].CreatedAt
+	_, err = f.WriteString(contents)
+	if err != nil {
+		log.Fatal("Could not modify file: ", ErrNotFound.Error())
+		return nil, err
+	}
+
+	var modified *file = s.files[name]
+	modified.Contents = contents
+
+	return modified, nil
+}
+
+func (s *store) Delete(name string) error {
+	err := os.Remove(StoreName + "/" + name)
+	if err != nil {
+		log.Fatal("Could not modify file: ", ErrNotFound.Error())
+		return err
+	}
+	delete(s.files, name)
+	return nil
+}
+
+func (s *store) List() []file {
+	files := make([]file, 0)
+
+	for _, f := range s.files {
+		files = append(files, *f)
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].CreatedAt < files[j].CreatedAt
 	})
 
-	return todos
+	return files
 }
