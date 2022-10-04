@@ -38,14 +38,16 @@ func wshandler(ctx *gin.Context, _ Store) {
 func createFile(ctx *gin.Context, s Store) {
 	payload := &CreatePayload{}
 	if err := ctx.BindJSON(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{})
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrRequestUnmarshalled.Error(),
+		})
 		return
 	}
 
 	file, err := s.Create(payload.Name, payload.Contents)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
-			Error: "File creation failed",
+			Error: ErrCannotCreate.Error(),
 		})
 		return
 	}
@@ -60,7 +62,9 @@ func deleteFile(ctx *gin.Context, s Store) {
 
 	err := s.Delete(name)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{})
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrNotFound.Error(),
+		})
 		return
 	}
 	ctx.Status(http.StatusOK)
@@ -71,14 +75,16 @@ func modifyFile(ctx *gin.Context, s Store) {
 
 	payload := &ModifyPayload{}
 	if err := ctx.BindJSON(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{})
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrRequestUnmarshalled.Error(),
+		})
 		return
 	}
 
 	f, err := s.Modify(name, payload.Contents)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: "File doesn't exist",
+			Error: ErrNotFound.Error(),
 		})
 		return
 	}

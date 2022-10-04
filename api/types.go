@@ -22,3 +22,7 @@ type ModifyPayload struct {
 type ModifyResponse struct {
 	File file `json:"file"`
 }
+
+type ResponseError struct {
+	Error string `json:"error"`
+}
