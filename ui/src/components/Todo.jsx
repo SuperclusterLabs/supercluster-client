@@ -3,7 +3,7 @@ import { TrashCanIcon } from "./TrashCanSvg";
 
 export const File = (props) => {
   const [contents, setContents] = useState(props.file.contents);
-  const [name, _] = useState(props.file.name);
+  const name = props.file.name;
   const [showDelete, setShowDelete] = useState(false);
 
   async function handleSetContents() {
