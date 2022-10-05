@@ -5,6 +5,11 @@ import { NewFileInput } from "./NewTodoForm";
 import { File } from "./Todo";
 import { Link } from "react-router-dom";
 
+import { Mainnet, DAppProvider, useEtherBalance, useEthers, Config, Goerli } from '@usedapp/core'
+import { formatEther } from '@ethersproject/units'
+import { getDefaultProvider } from 'ethers'
+import { MetamaskConnect } from '../components/MetamaskConnect'
+
 export const Files = () => {
   const [files, setFiles] = useState([]);
 
@@ -28,8 +33,12 @@ export const Files = () => {
     setFiles([...files, newFile]);
   }
 
+  const { account, deactivate} = useEthers();
+
   return (
     <>
+      {account && <button onClick={() => deactivate()}>Disconnect</button>}
+      {!account && <MetamaskConnect />}
       <h3>Store:</h3>
       <div className="files">
         {files.map((file) => (
