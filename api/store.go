@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -14,12 +15,13 @@ var ErrNotFound = errors.New("File does not exist")
 var ErrFileExists = errors.New("File already exists")
 var ErrRequestUnmarshalled = errors.New("Request could not be unmarshalled")
 var ErrCannotCreate = errors.New("File could not be created")
+var ErrExistingFileRead = errors.New("Could not read existing file:")
 
 type Store interface {
 	Create(name, contents string) (*file, error)
 	Modify(name, contents string) (*file, error)
 	Delete(name string) error
-	List() []file
+	List() ([]file, error)
 }
 
 type store struct {
@@ -115,8 +117,31 @@ func (s *store) Delete(name string) error {
 	return nil
 }
 
-func (s *store) List() []file {
+func (s *store) List() ([]file, error) {
 	files := make([]file, 0)
+	existing, err := ioutil.ReadDir(StoreName)
+	if err != nil {
+		log.Fatal("`store` dir could not be accessed:", err.Error())
+		return nil, err
+	}
+
+	for _, fInfo := range existing {
+		c, err := os.ReadFile(StoreName + "/" + fInfo.Name())
+		if err != nil {
+			// fatal if required dir is not working
+			log.Println(ErrExistingFileRead, err.Error())
+			return nil, err
+		}
+		f := file{
+			Name:      fInfo.Name(),
+			Contents:  string(c),
+			CreatedAt: fInfo.ModTime().Unix(),
+		}
+
+		if _, ok := s.files[f.Name]; !ok {
+			s.files[f.Name] = &f
+		}
+	}
 
 	for _, f := range s.files {
 		files = append(files, *f)
@@ -126,5 +151,5 @@ func (s *store) List() []file {
 		return files[i].CreatedAt < files[j].CreatedAt
 	})
 
-	return files
+	return files, nil
 }

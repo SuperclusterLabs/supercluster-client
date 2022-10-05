@@ -95,7 +95,14 @@ func modifyFile(ctx *gin.Context, s Store) {
 }
 
 func listFiles(ctx *gin.Context, s Store) {
+	fs, err := s.List()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: ErrExistingFileRead.Error(),
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, ListResponse{
-		Files: s.List(),
+		Files: fs,
 	})
 }
