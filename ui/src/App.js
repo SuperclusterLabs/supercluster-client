@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Todos } from "./components/Todos";
+import { Files } from "./components/Todos";
 import { About } from "./components/About";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
@@ -27,7 +27,7 @@ class App extends React.Component {
             path="/"
             element={
               <div className="container">
-                <Todos />
+                <Files />
               </div>
             }
           />

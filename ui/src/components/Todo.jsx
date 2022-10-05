@@ -1,47 +1,52 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import { TrashCanIcon } from "./TrashCanSvg";
 
-export const Todo = (props) => {
-  const [completed, setCompleted] = useState(props.todo.completed);
+export const File = (props) => {
+  const [contents, setContents] = useState(props.file.contents);
+  const [name, _] = useState(props.file.name);
   const [showDelete, setShowDelete] = useState(false);
 
-  async function handleCheckClick(e) {
+  async function handleSetContents() {
     const payload = {
-      completed: e.target.checked,
+      contents: contents,
     };
 
-    const resp = await fetch(`/api/todos/${props.todo.id}`, {
+    const resp = await fetch(`/api/files/${props.file.name}`, {
       method: "PUT",
       body: JSON.stringify(payload),
     });
 
     const body = await resp.json();
-    const { todo } = body;
-    setCompleted(todo.completed);
+    const { file } = body;
+    setContents(file.contents);
   }
 
-  async function handleDelete(e) {
-    await fetch(`/api/todos/${props.todo.id}`, { method: "DELETE" });
+  async function handleDelete(_) {
+    await fetch(`/api/files/${props.file.name}`, { method: "DELETE" });
     props.onDeleteSuccess();
   }
   return (
     <div
-      className="todo"
+      className="file"
       onMouseEnter={() => setShowDelete(true)}
       onMouseLeave={() => setShowDelete(false)}
     >
+      <p>{name}</p>
       <input
-        type={"checkbox"}
-        className="checkbox"
-        checked={completed}
-        onChange={handleCheckClick}
+        type={"text"}
+        className=""
+        onChange={(e) => setContents(e.target.value)}
+        value={contents}
       />
-      <p>{props.todo.description}</p>
-
       {showDelete && (
-        <button className="delete" onClick={handleDelete}>
-          <TrashCanIcon />
-        </button>
+        <div>
+          <button className="delete" onClick={handleSetContents}>
+            Modify Contents
+          </button>
+          <button className="delete" onClick={handleDelete}>
+            <TrashCanIcon />
+          </button>
+        </div>
       )}
     </div>
   );

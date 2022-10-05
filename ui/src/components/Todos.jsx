@@ -1,42 +1,42 @@
 import React, { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
-import { NewTodoInput } from "./NewTodoForm";
-import { Todo } from "./Todo";
+import { NewFileInput } from "./NewTodoForm";
+import { File } from "./Todo";
 import { Link } from "react-router-dom";
 
-export const Todos = () => {
-  const [todos, setTodos] = useState([]);
+export const Files = () => {
+  const [files, setFiles] = useState([]);
 
-  const fetchTodos = useCallback(async () => {
-    const resp = await fetch("/api/todos");
+  const fetchFiles = useCallback(async () => {
+    const resp = await fetch("/api/files");
     const body = await resp.json();
-    const { todos } = body;
-
-    setTodos(todos);
-  }, [setTodos]);
+    const { files } = body;
+    console.log(files)
+    setFiles(files);
+  }, [setFiles]);
 
   useEffect(() => {
-    fetchTodos();
-  }, [fetchTodos]);
+    fetchFiles();
+  }, [fetchFiles]);
 
   function onDeleteSuccess() {
-    fetchTodos();
+    fetchFiles();
   }
 
-  function onCreateSuccess(newTodo) {
-    setTodos([...todos, newTodo]);
+  function onCreateSuccess(newFile) {
+    setFiles([...files, newFile]);
   }
 
   return (
     <>
-      <h3>To Do:</h3>
-      <div className="todos">
-        {todos.map((todo) => (
-          <Todo key={todo.id} todo={todo} onDeleteSuccess={onDeleteSuccess} />
+      <h3>Store:</h3>
+      <div className="files">
+        {files.map((file) => (
+          <File key={file.name} file={file} onDeleteSuccess={onDeleteSuccess} />
         ))}
       </div>
-      <NewTodoInput onCreateSuccess={onCreateSuccess} />
+      <NewFileInput onCreateSuccess={onCreateSuccess} />
       <Link to="/about" className="nav-link">
         Learn more...
       </Link>
