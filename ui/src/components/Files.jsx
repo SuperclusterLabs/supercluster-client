@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
-import { NewFileInput } from "./NewTodoForm";
-import { File } from "./Todo";
+import { NewFileInput } from "./NewFileForm";
+import { File } from "./File";
 import { Link } from "react-router-dom";
 
 import { Mainnet, DAppProvider, useEtherBalance, useEthers, Config, Goerli } from '@usedapp/core'
