@@ -5,9 +5,7 @@ import { NewFileInput } from "./NewFileForm";
 import { File } from "./File";
 import { Link } from "react-router-dom";
 
-import { Mainnet, DAppProvider, useEtherBalance, useEthers, Config, Goerli } from '@usedapp/core'
-import { formatEther } from '@ethersproject/units'
-import { getDefaultProvider } from 'ethers'
+import { useEthers } from '@usedapp/core'
 import { MetamaskConnect } from '../components/MetamaskConnect'
 
 export const Files = () => {
