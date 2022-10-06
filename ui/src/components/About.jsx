@@ -7,8 +7,7 @@ export const About = () => {
       <h3>About</h3>
       <p>This is it folks, this is why we do it.</p>
       <p>
-        Todos is an app that helps you (yes you) finally get organized and get
-        your life together.
+        Supercluster is an app that helps your DAO get organized.
       </p>
 
       <Link className="nav-link" to={"/"}>

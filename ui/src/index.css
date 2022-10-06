@@ -18,7 +18,7 @@ body {
   margin-left: auto;
 }
 
-.todo {
+.file {
   display: flex;
   align-items: center;
 
@@ -44,13 +44,13 @@ body {
   margin-right: 1.5rem;
 }
 
-.todo-input {
+.file-input {
   flex-grow: 1;
   border: none;
   border-bottom: 1px solid #c3c9d4;
 }
 
-.todo-input:focus {
+.file-input:focus {
   outline: none;
 }
 
@@ -79,4 +79,31 @@ body {
 
 .nav-link {
   float: right;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width:100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-main {
+  position:fixed;
+  background: white;
+  width: 80%;
+  height: auto;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+}
+
+.display-block {
+  display: block;
+}
+
+.display-none {
+  display: none;
 }

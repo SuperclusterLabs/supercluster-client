@@ -1,23 +1,28 @@
 package api
 
-type AllTodos map[string]todo
+type AllFiles map[string]file
 
 type ListResponse struct {
-	Todos []todo `json:"todos"`
+	Files []file `json:"files"`
 }
 
 type CreatePayload struct {
-	Description string `json:"description"`
+	Name     string `json:"name"`
+	Contents string `json:"contents"`
 }
 
 type CreateResponse struct {
-	Todo todo `json:"todo"`
+	File file `json:"file"`
 }
 
-type CheckPayload struct {
-	Completed bool `json:"completed"`
+type ModifyPayload struct {
+	Contents string `json:"contents"`
 }
 
-type CheckResponse struct {
-	Todo todo `json:"todo"`
+type ModifyResponse struct {
+	File file `json:"file"`
+}
+
+type ResponseError struct {
+	Error string `json:"error"`
 }

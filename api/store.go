@@ -2,107 +2,154 @@ package api
 
 import (
 	"errors"
+	"io/ioutil"
+	"log"
+	"os"
 	"sort"
 	"time"
-
-	"github.com/google/uuid"
 )
 
-var ErrNotFound = errors.New("not found")
+const StoreName = "store"
+
+var ErrNotFound = errors.New("File does not exist")
+var ErrFileExists = errors.New("File already exists")
+var ErrRequestUnmarshalled = errors.New("Request could not be unmarshalled")
+var ErrCannotCreate = errors.New("File could not be created")
+var ErrExistingFileRead = errors.New("Could not read existing file:")
 
 type Store interface {
-	Create(description string) todo
-	Check(id string, completed bool) (todo, error)
-	Delete(id string)
-	List() []todo
+	Create(name, contents string) (*file, error)
+	Modify(name, contents string) (*file, error)
+	Delete(name string) error
+	List() ([]file, error)
 }
 
 type store struct {
-	todos map[string]*todo
+	files map[string]*file
 }
 
-type todo struct {
-	// UUID, equal to the key in the todos map
-	ID string `json:"id"`
-	// The text of the Todo
-	Description string `json:"description"`
-	// Boolean of whether the Todo is completed
-	Completed bool `json:"completed"`
+type file struct {
+	// Name of the file
+	Name string `json:"name"`
+	// The contents of the file
+	Contents string `json:"contents"`
 	// Unix timestamp of creation
 	CreatedAt int64 `json:"createdAt"`
 }
 
-func newStore() Store {
+func newStore() (Store, error) {
 	s := &store{
-		todos: make(map[string]*todo),
+		files: make(map[string]*file),
 	}
-	s.Seed()
-	return s
+	err := os.Mkdir(StoreName, 0777)
+	if err != nil {
+		log.Println("Could not create file: ", err.Error())
+		return nil, err
+	}
+	return s, nil
 }
 
-func (s *store) Seed() {
-	id1 := uuid.NewString()
-	s.todos[id1] = &todo{
-		ID:          id1,
-		Description: "Pick up dry cleaning",
-		Completed:   true,
-		CreatedAt:   1,
+func (s *store) Create(name, contents string) (*file, error) {
+	new := &file{
+		Name:      name,
+		Contents:  contents,
+		CreatedAt: time.Now().Unix(),
+	}
+	if _, ok := s.files[name]; ok {
+		log.Println("Could not create file: ", ErrFileExists.Error())
+		return nil, ErrFileExists
+	}
+	s.files[name] = new
+
+	f, err := os.Create(StoreName + "/" + name)
+	if err != nil {
+		log.Println("Could not create file: ", err.Error())
+		return nil, err
 	}
 
-	id2 := uuid.NewString()
-	s.todos[id2] = &todo{
-		ID:          id2,
-		Description: "Grab coffee",
-		Completed:   false,
-		CreatedAt:   2,
+	_, err = f.WriteString(contents)
+	if err != nil {
+		log.Println("Could not create file: ", err.Error())
+		return nil, err
 	}
 
-	id3 := uuid.NewString()
-	s.todos[id3] = &todo{
-		ID:          id3,
-		Description: "Solve world hunger",
-		Completed:   false,
-		CreatedAt:   3,
+	f.Close()
+	if err != nil {
+		log.Println("Could not close file: ", err.Error())
+		return nil, err
 	}
+
+	return new, nil
 }
 
-func (s *store) Create(description string) todo {
-	id := uuid.NewString()
-	new := &todo{
-		ID:          id,
-		Description: description,
-		CreatedAt:   time.Now().Unix(),
-	}
-	s.todos[id] = new
-	return *new
-}
-
-func (s *store) Check(id string, completed bool) (todo, error) {
-	var checked *todo = s.todos[id]
-
-	if checked == nil {
-		return *checked, ErrNotFound
+func (s *store) Modify(name, contents string) (*file, error) {
+	filename := StoreName + "/" + name
+	if err := os.Truncate(filename, 0); err != nil {
+		log.Println("Failed to truncate: ", err)
+		return nil, err
 	}
 
-	checked.Completed = completed
-
-	return *checked, nil
-}
-
-func (s *store) Delete(id string) {
-	delete(s.todos, id)
-}
-
-func (s *store) List() []todo {
-	todos := make([]todo, 0)
-
-	for _, t := range s.todos {
-		todos = append(todos, *t)
+	f, err := os.OpenFile(filename, os.O_RDWR, 0777)
+	if err != nil {
+		log.Println("Could not modify file: ", err.Error())
+		return nil, err
 	}
 
-	sort.Slice(todos, func(i, j int) bool {
-		return todos[i].CreatedAt < todos[j].CreatedAt
+	_, err = f.WriteString(contents)
+	if err != nil {
+		log.Println("Could not modify file: ", err.Error())
+		return nil, err
+	}
+
+	var modified *file = s.files[name]
+	modified.Contents = contents
+
+	return modified, nil
+}
+
+func (s *store) Delete(name string) error {
+	err := os.Remove(StoreName + "/" + name)
+	if err != nil {
+		log.Println("Could not delete file: ", err.Error())
+		return err
+	}
+	delete(s.files, name)
+	return nil
+}
+
+func (s *store) List() ([]file, error) {
+	files := make([]file, 0)
+	existing, err := ioutil.ReadDir(StoreName)
+	if err != nil {
+		log.Fatal("`store` dir could not be accessed:", err.Error())
+		return nil, err
+	}
+
+	for _, fInfo := range existing {
+		c, err := os.ReadFile(StoreName + "/" + fInfo.Name())
+		if err != nil {
+			// fatal if required dir is not working
+			log.Println(ErrExistingFileRead, err.Error())
+			return nil, err
+		}
+		f := file{
+			Name:      fInfo.Name(),
+			Contents:  string(c),
+			CreatedAt: fInfo.ModTime().Unix(),
+		}
+
+		if _, ok := s.files[f.Name]; !ok {
+			s.files[f.Name] = &f
+		}
+	}
+
+	for _, f := range s.files {
+		files = append(files, *f)
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return files[i].CreatedAt < files[j].CreatedAt
 	})
 
-	return todos
+	return files, nil
 }

@@ -35,45 +35,74 @@ func wshandler(ctx *gin.Context, _ Store) {
 	}
 }
 
-func createTodo(ctx *gin.Context, s Store) {
+func createFile(ctx *gin.Context, s Store) {
 	payload := &CreatePayload{}
 	if err := ctx.BindJSON(payload); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrRequestUnmarshalled.Error(),
+		})
+		return
+	}
+
+	file, err := s.Create(payload.Name, payload.Contents)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: ErrCannotCreate.Error(),
+		})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, CreateResponse{
-		Todo: s.Create(payload.Description),
+		File: *file,
 	})
 }
 
-func deleteTodo(ctx *gin.Context, s Store) {
-	id := ctx.Param("id")
-	s.Delete(id)
-}
+func deleteFile(ctx *gin.Context, s Store) {
+	name := ctx.Param("name")
 
-func checkTodo(ctx *gin.Context, s Store) {
-	id := ctx.Param("id")
-
-	payload := &CheckPayload{}
-	if err := ctx.BindJSON(payload); err != nil {
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	t, err := s.Check(id, payload.Completed)
+	err := s.Delete(name)
 	if err != nil {
-		ctx.AbortWithError(http.StatusNotFound, err)
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrNotFound.Error(),
+		})
+		return
+	}
+	ctx.Status(http.StatusOK)
+}
+
+func modifyFile(ctx *gin.Context, s Store) {
+	name := ctx.Param("name")
+
+	payload := &ModifyPayload{}
+	if err := ctx.BindJSON(payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrRequestUnmarshalled.Error(),
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, CheckResponse{
-		Todo: t,
+	f, err := s.Modify(name, payload.Contents)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrNotFound.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, ModifyResponse{
+		File: *f,
 	})
 }
 
-func listTodos(ctx *gin.Context, s Store) {
+func listFiles(ctx *gin.Context, s Store) {
+	fs, err := s.List()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: ErrExistingFileRead.Error(),
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, ListResponse{
-		Todos: s.List(),
+		Files: fs,
 	})
 }

@@ -9,8 +9,9 @@ cd ..
 go build
 
 # start app
-./supercluster-client
+rm -rf store/
 if [[ -n "$BROWSER" ]]; then
     # TODO: extract port as commandline param
     $BROWSER http://localhost:4000
 fi
+./supercluster-client
