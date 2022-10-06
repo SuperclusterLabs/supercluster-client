@@ -33,7 +33,7 @@ export const Files = () => {
     setFiles([...files, newFile]);
   }
 
-  const { account, deactivate} = useEthers();
+  const { account, deactivate } = useEthers();
 
   return (
     <>
