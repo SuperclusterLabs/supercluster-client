@@ -5,6 +5,9 @@ import { NewFileInput } from "./NewFileForm";
 import { File } from "./File";
 import { Link } from "react-router-dom";
 
+import { useEthers } from '@usedapp/core'
+import { MetamaskConnect } from '../components/MetamaskConnect'
+
 export const Files = () => {
   const [files, setFiles] = useState([]);
 
@@ -28,8 +31,12 @@ export const Files = () => {
     setFiles([...files, newFile]);
   }
 
+  const { account, deactivate } = useEthers();
+
   return (
     <>
+      {account && <button onClick={() => deactivate()}>Disconnect</button>}
+      {!account && <MetamaskConnect />}
       <h3>Store:</h3>
       <div className="files">
         {files.map((file) => (

@@ -4,6 +4,8 @@
   "private": true,
   "proxy": "http://localhost:4000",
   "dependencies": {
+    "@usedapp/core": "^1.1.5",
+    "ethers": "^5.7.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.4.1",
