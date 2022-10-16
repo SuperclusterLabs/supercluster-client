@@ -12,6 +12,8 @@ type Store interface {
 }
 
 type file struct {
+	// Identifier for the file
+	ID string `json:"id"`
 	// Name of the file
 	Name string `json:"name"`
 	// The contents of the file
