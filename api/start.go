@@ -7,7 +7,8 @@ import (
 )
 
 func Start() {
-	store, err := newStore()
+	// TODO: figure out how IPFS context should work here
+	store, _, err := newIpfsStore()
 	if err != nil {
 		panic("Cannot create store: " + err.Error())
 	}
