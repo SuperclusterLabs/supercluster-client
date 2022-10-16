@@ -7,6 +7,7 @@ import (
 	"os"
 	"sort"
 	"time"
+	"context"
 )
 
 const StoreName = "store"
@@ -26,6 +27,10 @@ type Store interface {
 
 type store struct {
 	files map[string]*file
+	Create(ctx context.Context, name, contents string) (*file, error)
+	Modify(ctx context.Context, name, contents string) (*file, error)
+	Delete(ctx context.Context, name string) error
+	List(ctx context.Context) ([]file, error)
 }
 
 type file struct {

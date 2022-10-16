@@ -44,7 +44,7 @@ func createFile(ctx *gin.Context, s Store) {
 		return
 	}
 
-	file, err := s.Create(payload.Name, payload.Contents)
+	file, err := s.Create(ctx, payload.Name, payload.Contents)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: ErrCannotCreate.Error(),
@@ -60,7 +60,7 @@ func createFile(ctx *gin.Context, s Store) {
 func deleteFile(ctx *gin.Context, s Store) {
 	name := ctx.Param("name")
 
-	err := s.Delete(name)
+	err := s.Delete(ctx, name)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrNotFound.Error(),
@@ -81,7 +81,7 @@ func modifyFile(ctx *gin.Context, s Store) {
 		return
 	}
 
-	f, err := s.Modify(name, payload.Contents)
+	f, err := s.Modify(ctx, name, payload.Contents)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrNotFound.Error(),
@@ -95,7 +95,7 @@ func modifyFile(ctx *gin.Context, s Store) {
 }
 
 func listFiles(ctx *gin.Context, s Store) {
-	fs, err := s.List()
+	fs, err := s.List(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: ErrExistingFileRead.Error(),
