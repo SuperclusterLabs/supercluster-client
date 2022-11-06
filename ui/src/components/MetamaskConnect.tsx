@@ -6,6 +6,7 @@ export function MetamaskConnect() {
   const navigate = useNavigate();
 
   function login() {
+    activateBrowserWallet();
     navigate(`onboardingname`);
   }
 

@@ -9,8 +9,17 @@ function OnboardingAccess() {
   const navigate = useNavigate();
 
   function confirmAccess() {
-    console.log(accessControl);
-    navigate("/onboardinginvite");
+    switch (accessControl) {
+      case "nft":
+        navigate("/nftselection");
+        break;
+      case "token":
+        navigate("/tokenselection");
+        break;
+      case "addresses":
+        navigate("/addressselection");
+        break;
+    }
   }
 
   return (

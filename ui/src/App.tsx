@@ -10,6 +10,7 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { useEthers } from "@usedapp/core";
 import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
+import NFTSelection from "./pages/NftSelection";
 
 const client = new W3CWebSocket("ws://127.0.0.1:4000/api/ws");
 
@@ -26,25 +27,28 @@ function App() {
       console.log(message);
     };
   });
+
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/"
           element={
-            account ? (
-              <div className="container">
-                <Files />
-              </div>
-            ) : (
-              <Welcome />
-            )
+            // account ? (
+            //   <div className="container">
+            //     <Files />
+            //   </div>
+            // ) : (
+            //   <Welcome />
+            // )
+            <Welcome />
           }
         />
         <Route path="/onboardingname" element={<OnboardingName />} />
         <Route path="/onboardingadmins" element={<OnboardingAdmins />} />
         <Route path="/onboardingaccess" element={<OnboardingAccess />} />
         <Route path="/onboardinginvite" element={<OnboardingInvite />} />
+        <Route path="/nftselection" element={<NFTSelection />} />
         <Route
           path="/about"
           element={
