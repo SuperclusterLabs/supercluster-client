@@ -27,13 +27,13 @@ go.mod: FORCE
 
 FORCE:
 
-example-plugin.so: main/main.go go.mod
+supercluster-plugin.so: main/main.go go.mod
 	$(GOCC) build $(GOFLAGS) -buildmode=plugin -o "$@" "$<"
 	chmod +x "$@"
 
-build: example-plugin.so
+build: supercluster-plugin.so
 	@echo "Built against" $(IPFS_VERSION)
 
 install: build
 	mkdir -p "$(IPFS_PATH)/plugins/"
-	cp -f example-plugin.so "$(IPFS_PATH)/plugins/example-plugin.so"
+	cp -f supercluster-plugin.so "$(IPFS_PATH)/plugins/supercluster-plugin.so"
