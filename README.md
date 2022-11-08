@@ -12,15 +12,32 @@ Packages:
 **NOTE 1:** Plugins only work on Linux and MacOS at the moment. You can track the progress of this issue here: https://github.com/golang/go/issues/19282
 
 ## Building and Installing
-First install frontend dependencies:
+### Tl;dr
+- First install frontend dependencies:
 
 ``` sh
 cd ui
 yarn # or npm install
 ```
 
+- clone [kubo](https://github.com/ipfs/kubo)
+- install it by running the following command in the kubo dir:
+go install "-trimpath" -ldflags="-X "github.com/ipfs/kubo".CurrentCommit=38117db6f-dirty" -asmflags=all=-trimpath="" -gcflags=all=-trimpath="" ./cmd/ipfs
+- point the plugin to kubo's dir by setting the IPFS_VERSION env variable, for e.g.: export IPFS_VERSION=~/dev/kubo
+- from the plugin dir, run make install
+- If everything goes well IPFS will have some extra info:
 
-You can *build* the supercluster plugin by running `make build`. You can then install it into your local IPFS repo by running `make install`.
+``` bash
+$ ipfs version
+Hello init!
+ipfs version 0.16.0
+```
+
+- You can now run the backend by running `ipfs daemon` (it'll spin up our server on port 3000)
+
+### More details
+
+You can build the supercluster plugin by running `make build`. You can then install it into your local IPFS repo by running `make install`.
 
 Plugins need to be built against the correct version of Kubo. This package generally tracks the latest Kubo release but if you need to build against a different version, please set the `IPFS_VERSION` environment variable.
 
