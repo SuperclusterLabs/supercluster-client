@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { Files } from "./components/Files";
+// import { Files } from "./components/Files";
 import { About } from "./components/About";
 import Welcome from "./pages/Welcome";
 import OnboardingName from "./pages/OnboardingName";
@@ -15,7 +15,7 @@ import NFTSelection from "./pages/NftSelection";
 const client = new W3CWebSocket("ws://127.0.0.1:4000/api/ws");
 
 function App() {
-  const { account } = useEthers();
+  // const { account } = useEthers();
 
   useEffect(() => {
     console.log("starting websocket client");
