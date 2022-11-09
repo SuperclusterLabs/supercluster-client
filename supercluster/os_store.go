@@ -1,7 +1,7 @@
-package api
+package supercluster
 
 import (
-	"errors"
+	"context"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,34 +11,12 @@ import (
 
 const StoreName = "store"
 
-var ErrNotFound = errors.New("File does not exist")
-var ErrFileExists = errors.New("File already exists")
-var ErrRequestUnmarshalled = errors.New("Request could not be unmarshalled")
-var ErrCannotCreate = errors.New("File could not be created")
-var ErrExistingFileRead = errors.New("Could not read existing file:")
-
-type Store interface {
-	Create(name, contents string) (*file, error)
-	Modify(name, contents string) (*file, error)
-	Delete(name string) error
-	List() ([]file, error)
-}
-
-type store struct {
+type osStore struct {
 	files map[string]*file
 }
 
-type file struct {
-	// Name of the file
-	Name string `json:"name"`
-	// The contents of the file
-	Contents string `json:"contents"`
-	// Unix timestamp of creation
-	CreatedAt int64 `json:"createdAt"`
-}
-
-func newStore() (Store, error) {
-	s := &store{
+func newOSStore() (Store, error) {
+	s := &osStore{
 		files: make(map[string]*file),
 	}
 	err := os.Mkdir(StoreName, 0777)
@@ -49,7 +27,7 @@ func newStore() (Store, error) {
 	return s, nil
 }
 
-func (s *store) Create(name, contents string) (*file, error) {
+func (s *osStore) Create(ctx context.Context, name, contents string) (*file, error) {
 	new := &file{
 		Name:      name,
 		Contents:  contents,
@@ -82,7 +60,7 @@ func (s *store) Create(name, contents string) (*file, error) {
 	return new, nil
 }
 
-func (s *store) Modify(name, contents string) (*file, error) {
+func (s *osStore) Modify(ctx context.Context, name, contents string) (*file, error) {
 	filename := StoreName + "/" + name
 	if err := os.Truncate(filename, 0); err != nil {
 		log.Println("Failed to truncate: ", err)
@@ -107,7 +85,7 @@ func (s *store) Modify(name, contents string) (*file, error) {
 	return modified, nil
 }
 
-func (s *store) Delete(name string) error {
+func (s *osStore) Delete(ctx context.Context, name string) error {
 	err := os.Remove(StoreName + "/" + name)
 	if err != nil {
 		log.Println("Could not delete file: ", err.Error())
@@ -117,7 +95,7 @@ func (s *store) Delete(name string) error {
 	return nil
 }
 
-func (s *store) List() ([]file, error) {
+func (s *osStore) List(ctx context.Context) ([]file, error) {
 	files := make([]file, 0)
 	existing, err := ioutil.ReadDir(StoreName)
 	if err != nil {

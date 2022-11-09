@@ -1,4 +1,4 @@
-package api
+package supercluster
 
 type AllFiles map[string]file
 
