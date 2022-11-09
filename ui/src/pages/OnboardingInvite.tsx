@@ -1,14 +1,17 @@
 import superclusterLogo from "../assets/superclusterLogo.svg";
 import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonSecondary from "../components/ButtonSecondary";
+import { useNavigate } from "react-router-dom";
 
 function OnboardingInvite() {
+  const navigate = useNavigate();
+
   function generateShareLink() {
     console.log("Generating share link");
   }
 
   function skip() {
-    console.log("skipping");
+    navigate("Files");
   }
   return (
     <div className="flex h-screen bg-onboarding-bg">

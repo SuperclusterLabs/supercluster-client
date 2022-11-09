@@ -2,11 +2,16 @@ import { useState, useEffect } from "react";
 import superclusterLogo from "../assets/superclusterLogo.svg";
 import { Alchemy, Network } from "alchemy-sdk";
 import { useEthers } from "@usedapp/core";
+import _ from "underscore";
+import ButtonPrimary from "../components/ButtonPrimary";
+import { useNavigate } from "react-router-dom";
 
 function NFTSelection() {
   const [userNfts, setUserNfts] = useState<Array<any>>([]);
+  const [accessNft, setAccessNft] = useState<any>();
 
   const { account } = useEthers();
+  const navigate = useNavigate();
 
   const mainnetConfig = {
     apiKey: "98t_tAtPTdjvDoog8DbHxbpSRZgDAxv2",
@@ -37,12 +42,21 @@ function NFTSelection() {
       if (userPolygonNfts.ownedNfts.length > 0) {
         allNfts = allNfts.concat(userPolygonNfts.ownedNfts);
       }
+      console.log(allNfts);
       setUserNfts(allNfts);
     };
 
     getNfts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function selectNft(nft: any) {
+    setAccessNft(nft);
+  }
+
+  function confirmNft() {
+    navigate("/onboardinginvite");
+  }
 
   return (
     <div className="flex h-screen bg-onboarding-bg">
@@ -62,17 +76,26 @@ function NFTSelection() {
             your cluster.
           </p>
           <div className="columns-5 mt-11">
-            {userNfts.map((nft) => {
+            {userNfts.map((nft: any, i: number) => {
               return (
-                <div key={nft.tokenId} className="mb-4 bg-l-slateblue-primary">
-                  <h1 className="text-l-slateblue-700 font-bold text-sm">
-                    {nft.title}
-                  </h1>
+                <div
+                  key={i}
+                  onClick={() => selectNft(nft)}
+                  className={`mb-4 p-4 rounded-2xl overflow-scroll cursor-pointer ${
+                    _.isEqual(nft, accessNft)
+                      ? "text-l-slateblue-primary bg-l-slateblue-700"
+                      : "text-l-slateblue-700 bg-l-slateblue-primary"
+                  }`}
+                >
+                  <h1 className="font-bold text-m">{nft.title}</h1>
                 </div>
               );
             })}
           </div>
         </div>
+        {accessNft ? (
+          <ButtonPrimary onClick={confirmNft} text="Confirm NFT" />
+        ) : null}
       </div>
     </div>
   );
