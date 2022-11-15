@@ -19,21 +19,22 @@ function OnboardingName() {
   const [ens, setEns] = useState<String>("");
   const [loading, setLoading] = useState<boolean>(true);
 
-  // useEffect(() => {
-  //   const getENS = async () => {
-  //     const walletAddress: any = account; // replace with wallet address
-  //     const ensContractAddress = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85";
-  //     const nfts = await alchemy.nft.getNftsForOwner(walletAddress, {
-  //       contractAddresses: [ensContractAddress],
-  //     });
-  //     if (nfts.totalCount > 0) {
-  //       setEns(nfts.ownedNfts[0].title);
-  //     }
-  //     setLoading(false);
-  //   };
-  //   getENS().catch(console.error);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  useEffect(() => {
+    localStorage.setItem("onboardingDone", "true");
+    const getENS = async () => {
+      const walletAddress: any = account; // replace with wallet address
+      const ensContractAddress = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85";
+      const nfts = await alchemy.nft.getNftsForOwner(walletAddress, {
+        contractAddresses: [ensContractAddress],
+      });
+      if (nfts.totalCount > 0) {
+        setEns(nfts.ownedNfts[0].title);
+      }
+      setLoading(false);
+    };
+    getENS().catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function confirmName() {
     console.log(clusterName);

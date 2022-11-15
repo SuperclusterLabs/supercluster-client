@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { Files } from "./components/Files";
 import Main from "./Main";
@@ -18,6 +18,8 @@ const client = new W3CWebSocket("ws://127.0.0.1:4000/api/ws");
 function App() {
   const { account } = useEthers();
 
+  const [onboardingDone, setOnboardingDone] = useState<boolean>(false);
+
   useEffect(() => {
     console.log("starting websocket client");
     client.onopen = () => {
@@ -29,9 +31,21 @@ function App() {
     };
   });
 
+  useEffect(() => {
+    const onboardingDone = JSON.parse(
+      localStorage.getItem("onboardingDone") || "false"
+    );
+
+    if (onboardingDone === "false") {
+      setOnboardingDone(false);
+    } else {
+      setOnboardingDone(true);
+    }
+  }, []);
+
   return (
     <BrowserRouter>
-      {account ? (
+      {account && onboardingDone ? (
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/about" element={<About />} />
