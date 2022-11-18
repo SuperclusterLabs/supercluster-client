@@ -1,7 +1,8 @@
 package supercluster
 
 import (
-	"fmt"
+	"context"
+	"log"
 
 	firebase "firebase.google.com/go"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
@@ -29,7 +30,6 @@ func (*SuperclusterPlugin) Version() string {
 // Init initializes plugin, satisfying the plugin.Plugin interface. Put any
 // initialization logic here.
 func (*SuperclusterPlugin) Init(env *plugin.Environment) error {
-	fmt.Println("Hello init!")
 	return nil
 }
 
@@ -77,12 +77,14 @@ func (*SuperclusterPlugin) Start(c coreiface.CoreAPI) error {
 		addRoutes(r, store)
 		ui.AddRoutes(r)
 
+		// TODO: add version dynamically
+		log.Println("Supercluster started!")
+
 		r.Run(":3000")
 	}(c)
 	return nil
 }
 
 func (*SuperclusterPlugin) Close() error {
-	fmt.Println("Goodbye!")
 	return nil
 }
