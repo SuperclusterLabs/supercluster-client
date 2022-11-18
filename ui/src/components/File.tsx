@@ -1,7 +1,7 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import { TrashCanIcon } from "./TrashCanSvg";
 
-export const File = (props) => {
+export const File = (props: any) => {
   const [contents, setContents] = useState(props.file.contents);
   const name = props.file.name;
   const [showDelete, setShowDelete] = useState(false);
@@ -21,7 +21,7 @@ export const File = (props) => {
     setContents(file.contents);
   }
 
-  async function handleDelete(_) {
+  async function handleDelete(_: any) {
     await fetch(`/api/files/${props.file.name}`, { method: "DELETE" });
     props.onDeleteSuccess();
   }

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { Modal } from "./Modal";
 
-export const NewFileInput = (props) => {
+export const NewFileInput = (props: any) => {
   const [showInput, setShowInput] = useState(false);
   const [name, setName] = useState("");
   const [value, setValue] = useState("");
@@ -11,7 +11,7 @@ export const NewFileInput = (props) => {
   function handleClose() {
     setShowModal(false);
   }
-  async function handleSave(e) {
+  async function handleSave(e: any) {
     e.preventDefault();
     if (name.length === 0) {
       setShowModal(true);
@@ -71,5 +71,5 @@ export const NewFileInput = (props) => {
         </div>
       )}
     </div>
-  )
+  );
 };

@@ -5,17 +5,17 @@ import { NewFileInput } from "./NewFileForm";
 import { File } from "./File";
 import { Link } from "react-router-dom";
 
-import { useEthers } from '@usedapp/core'
-import { MetamaskConnect } from '../components/MetamaskConnect'
+import { useEthers } from "@usedapp/core";
+import { MetamaskConnect } from "../components/MetamaskConnect";
 
 export const Files = () => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<any>([]);
 
   const fetchFiles = useCallback(async () => {
     const resp = await fetch("/api/files");
     const body = await resp.json();
     const { files } = body;
-    console.log(files)
+    console.log(files);
     setFiles(files);
   }, [setFiles]);
 
@@ -27,7 +27,7 @@ export const Files = () => {
     fetchFiles();
   }
 
-  function onCreateSuccess(newFile) {
+  function onCreateSuccess(newFile: any) {
     setFiles([...files, newFile]);
   }
 
@@ -39,7 +39,7 @@ export const Files = () => {
       {!account && <MetamaskConnect />}
       <h3>Store:</h3>
       <div className="files">
-        {files.map((file) => (
+        {files.map((file: any) => (
           <File key={file.name} file={file} onDeleteSuccess={onDeleteSuccess} />
         ))}
       </div>

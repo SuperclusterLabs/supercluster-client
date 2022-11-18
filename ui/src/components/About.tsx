@@ -6,9 +6,7 @@ export const About = () => {
     <>
       <h3>About</h3>
       <p>This is it folks, this is why we do it.</p>
-      <p>
-        Supercluster is an app that helps your DAO get organized.
-      </p>
+      <p>Supercluster is an app that helps your DAO get organized.</p>
 
       <Link className="nav-link" to={"/"}>
         Return

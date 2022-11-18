@@ -1,7 +1,9 @@
-export const Modal = (props) => {
-  const showHideClassName = props.show ? "modal display-block" : "modal display-none";
+export const Modal = (props: any) => {
+  const showHideClassName = props.show
+    ? "modal display-block"
+    : "modal display-none";
 
-  async function handleClose(e) {
+  async function handleClose(e: any) {
     e.preventDefault();
     props.handleClose();
   }
