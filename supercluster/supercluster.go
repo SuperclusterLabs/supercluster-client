@@ -3,6 +3,7 @@ package supercluster
 import (
 	"context"
 	"log"
+	"os"
 
 	firebase "firebase.google.com/go"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
@@ -39,7 +40,12 @@ func (*SuperclusterPlugin) Start(c coreiface.CoreAPI) error {
 
 	// TODO: remove firebase
 	// initialize firebase
-	opt := option.WithCredentialsFile("/home/gov/dev/supercluster-client/supercluster-2d071-firebase-adminsdk-8qkm4-6688c64d73.json")
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(dirname)
+	opt := option.WithCredentialsFile(dirname + "/.ipfs/keystore/supercluster-2d071-firebase-adminsdk-8qkm4-6688c64d73.json")
 	config := &firebase.Config{
 		DatabaseURL: "https://supercluster-2d071-default-rtdb.firebaseio.com/",
 	}
