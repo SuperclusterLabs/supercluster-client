@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { Files } from "./components/Files";
 import Main from "./Main";
 import { About } from "./components/About";
 import Welcome from "./pages/Welcome";
+import Home from "./pages/Home";
 import OnboardingName from "./pages/OnboardingName";
 import OnboardingAccess from "./pages/OnboardingAccess";
+import Pinned from "./pages/Pinned";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { useEthers } from "@usedapp/core";
@@ -38,8 +39,10 @@ function App() {
 
     if (onboardingDone === "false") {
       setOnboardingDone(false);
+      console.log("Local storage not found")
     } else {
       setOnboardingDone(true);
+      console.log("Local Storage found")
     }
   }, []);
 
@@ -47,12 +50,15 @@ function App() {
     <BrowserRouter>
       {account && onboardingDone ? (
         <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/about" element={<About />} />
+          <Route element={<Main />}>
+            <Route index element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pinned" element={<Pinned />} />
+          </Route>
         </Routes>
       ) : (
         <Routes>
-          <Route path="/" element={<Welcome />} />
+          <Route element={<Welcome />} />
           <Route path="onboardingname" element={<OnboardingName />} />
           <Route path="onboardingadmins" element={<OnboardingAdmins />} />
           <Route path="onboardingaccess" element={<OnboardingAccess />} />

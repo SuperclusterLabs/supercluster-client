@@ -20,6 +20,7 @@ function OnboardingName() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log("Onboarding Name triggered")
     localStorage.setItem("onboardingDone", "true");
     const getENS = async () => {
       const walletAddress: any = account; // replace with wallet address
