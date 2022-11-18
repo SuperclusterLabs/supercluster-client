@@ -4,9 +4,11 @@ import { Outlet } from "react-router-dom";
 
 function Main() {
   return (
-    <div>
+    <div className="flex h-screen">
       <Sidebar />
-      <Outlet />
+      <div className="bg-l-slateblue-300 w-screen p-12">
+        <Outlet />
+      </div>
     </div>
   );
 }

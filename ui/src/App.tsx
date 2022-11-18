@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import Main from "./Main";
-import { About } from "./components/About";
+import About from "./components/About";
 import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
 import OnboardingName from "./pages/OnboardingName";
