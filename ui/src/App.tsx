@@ -28,6 +28,10 @@ function App() {
     };
   });
 
+  useEffect(() => {
+    console.log(process.env);
+  });
+
   return (
     <BrowserRouter>
       <Routes>
@@ -44,11 +48,11 @@ function App() {
             <Welcome />
           }
         />
-        <Route path="/onboardingname" element={<OnboardingName />} />
-        <Route path="/onboardingadmins" element={<OnboardingAdmins />} />
-        <Route path="/onboardingaccess" element={<OnboardingAccess />} />
-        <Route path="/onboardinginvite" element={<OnboardingInvite />} />
-        <Route path="/nftselection" element={<NFTSelection />} />
+        <Route path="/onboarding-name" element={<OnboardingName />} />
+        <Route path="/onboarding-admins" element={<OnboardingAdmins />} />
+        <Route path="/onboarding-access" element={<OnboardingAccess />} />
+        <Route path="/onboarding-invite" element={<OnboardingInvite />} />
+        <Route path="/nft-selection" element={<NFTSelection />} />
         <Route
           path="/about"
           element={

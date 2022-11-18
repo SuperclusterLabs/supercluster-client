@@ -12,7 +12,7 @@ function OnboardingAdmins() {
   const navigate = useNavigate();
 
   function confirmAdmins() {
-    navigate("/onboardingaccess");
+    navigate("/onboarding-access");
   }
 
   function addAddress() {
@@ -51,6 +51,7 @@ function OnboardingAdmins() {
           cluster’s settings. Make sure you trust them!
         </p>
         <TextInput
+          // TODO: Add input validation for ETH addresses
           onChange={handleInputChange}
           placeholder="Enter address or ENS"
         />

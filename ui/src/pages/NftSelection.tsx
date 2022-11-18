@@ -14,12 +14,12 @@ function NFTSelection() {
   const navigate = useNavigate();
 
   const mainnetConfig = {
-    apiKey: "98t_tAtPTdjvDoog8DbHxbpSRZgDAxv2",
+    apiKey: process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY,
     network: Network.ETH_MAINNET,
   };
 
   const polygonConfig = {
-    apiKey: "hKo6uza_jM6M9SI9MhumJJEU1qlswEXx",
+    apiKey: process.env.REACT_APP_ALCHEMY_MATIC_API_KEY,
     network: Network.MATIC_MAINNET,
   };
 
@@ -55,7 +55,7 @@ function NFTSelection() {
   }
 
   function confirmNft() {
-    navigate("/onboardinginvite");
+    navigate("/onboarding-invite");
   }
 
   return (
