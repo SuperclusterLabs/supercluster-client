@@ -10,7 +10,7 @@ function OnboardingName() {
   const navigate = useNavigate();
   const { account } = useEthers();
   const config = {
-    apiKey: "98t_tAtPTdjvDoog8DbHxbpSRZgDAxv2",
+    apiKey: process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY,
     network: Network.ETH_MAINNET,
   };
   const alchemy = new Alchemy(config);
@@ -39,7 +39,7 @@ function OnboardingName() {
 
   function confirmName() {
     console.log(clusterName);
-    navigate("/onboardingadmins");
+    navigate("/onboarding-admins");
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
