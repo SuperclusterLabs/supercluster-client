@@ -58,7 +58,7 @@ function App() {
         </Routes>
       ) : (
         <Routes>
-          <Route element={<Welcome />} />
+          <Route index element={<Welcome />} />
           <Route path="onboardingname" element={<OnboardingName />} />
           <Route path="onboardingadmins" element={<OnboardingAdmins />} />
           <Route path="onboardingaccess" element={<OnboardingAccess />} />
