@@ -5,108 +5,106 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func createUser(ctx *gin.Context) {
-	user := &User{}
-	if err := ctx.BindJSON(user); err != nil {
+	u := &User{}
+	if err := ctx.BindJSON(u); err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrRequestUnmarshalled.Error(),
 		})
 		return
 	}
-	client, err := db.instance.Database(ctx)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
-			Error: err.Error(),
-		})
-		return
-	}
-	ref := client.NewRef("users")
-
-	// create if user doesn't already exist
-	q := ref.OrderByChild("ethAddr").EqualTo(user.EthAddr)
-
-	// smartypants at google decided that firebase queries
-	// should be returned as {{item1}, {item2}, ...} and
-	// not [{item1}, {item2}, ...]
-	var result map[string]interface{}
-	if err := q.Get(ctx, &result); err != nil {
+	_, err := db.getUserByEthAddr(ctx, u.EthAddr)
+	if err != nil && err != ErrUserNotFound {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
 
 		return
-	} else {
-		if len(result) != 0 {
-			ctx.JSON(http.StatusInternalServerError, ResponseError{
-				Error: ErrUserExists.Error(),
-			})
+	} else if err == ErrUserNotFound {
+		log.Print("creating user: ", u.Id.String())
 
-			return
-		}
-		user.Id = uuid.New()
-		log.Print("creating user: ", user.Id.String())
-		if err := client.NewRef("users/"+user.Id.String()).Set(ctx, user); err != nil {
+		u, err = db.createUser(ctx, *u)
+		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
 			})
 
 			return
 		}
+	} else {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: ErrUserExists.Error(),
+		})
+
+		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, u)
 }
 
 func modifyUser(ctx *gin.Context) {
-
-	payload := &ModifyPayload{}
-	if err := ctx.BindJSON(payload); err != nil {
+	u := &User{}
+	if err := ctx.BindJSON(u); err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrRequestUnmarshalled.Error(),
 		})
 		return
 	}
-
-	ctx.JSON(http.StatusOK, ModifyResponse{})
-}
-
-func getUser(ctx *gin.Context) {
-	user := &User{}
-	if err := ctx.BindJSON(user); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrRequestUnmarshalled.Error(),
-		})
+	uDB, err := db.getUserByEthAddr(ctx, u.EthAddr)
+	if err != nil {
+		if err == ErrUserNotFound {
+			ctx.JSON(http.StatusBadRequest, ResponseError{
+				Error: ErrUserNotFound.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
+				Error: err.Error(),
+			})
+		}
 		return
 	}
-	client, err := db.instance.Database(ctx)
+	// trust that any change to the struct is intentional
+	// TODO: as there are more fields, will this assumption still
+	// hold? Else we'll need to prepopulate the user struct
+	// with a seemingly unnecessary extra db call so that
+	// this func doesn't scrub data
+	u.Id = uDB.Id
+	u, err = db.createUser(ctx, *u)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
+
 		return
 	}
-	ref := client.NewRef("users")
 
-	q := ref.OrderByChild("ethAddr").EqualTo(user.EthAddr)
-	var result User
-	if err := q.Get(ctx, &result); err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
-			Error: err.Error(),
+	ctx.JSON(http.StatusOK, u)
+}
+
+func getUser(ctx *gin.Context) {
+	ethAddr := ctx.Query("ethAddr")
+	if ethAddr == "" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrMissingParam.Error() + "ethAddr",
 		})
-
 		return
-	} else {
-		if result.EthAddr == "" {
-			ctx.JSON(http.StatusInternalServerError, ResponseError{
+	}
+
+	u, err := db.getUserByEthAddr(ctx, ethAddr)
+	if err != nil {
+		if err == ErrUserNotFound {
+			ctx.JSON(http.StatusBadRequest, ResponseError{
 				Error: ErrUserNotFound.Error(),
 			})
-
-			return
+		} else {
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
+				Error: err.Error(),
+			})
 		}
+		return
 	}
 
-	ctx.JSON(http.StatusOK, result)
+	ctx.JSON(http.StatusOK, u)
 }
