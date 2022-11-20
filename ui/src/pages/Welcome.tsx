@@ -1,7 +1,12 @@
 import { MetamaskConnect } from "../components/MetamaskConnect";
 import superclusterLogo from "../assets/superclusterLogo.svg";
+import { useAppSelector, useAppDispatch } from '../hooks'
+import { setAccount } from "../slices/accountSlice"
 
 function Welcome() {
+  const address = useAppSelector((state) => state.account.address)
+  const dispatch = useAppDispatch()
+
   return (
     <div className="flex h-screen bg-onboarding-bg">
       <div className="m-auto text-center">
@@ -17,6 +22,8 @@ function Welcome() {
           Share files with your team with maximum decentralization.
         </p>
         <MetamaskConnect />
+        <button onClick={() => dispatch(setAccount("redux"))}>Try Redux</button>
+        <h1 className="text-white">{address}</h1>
       </div>
     </div>
   );
