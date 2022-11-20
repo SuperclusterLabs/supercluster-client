@@ -1,7 +1,7 @@
 function Pinned() {
   return (
     <div>
-      <h1>Pinned Page</h1>
+      <h1 className="text-4xl font-bold text-onboarding-bg">Pinned Page</h1>
     </div>
   );
 }
