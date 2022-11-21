@@ -28,8 +28,8 @@ func addRoutes(r *gin.Engine, store Store) {
 	api.PUT("/user", func(ctx *gin.Context) { modifyUser(ctx) })
 
 	// cluster API
-	// api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx, store) })
+	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })
 
-	// api.GET("/cluster:clusterId", func(ctx *gin.Context) { getCluster(ctx, store) })
-	// api.PUT("/cluster:clusterId", func(ctx *gin.Context) { modifyCluster(ctx, store) })
+	api.GET("/cluster/:clusterId", func(ctx *gin.Context) { getCluster(ctx) })
+	api.PUT("/cluster/:clusterId", func(ctx *gin.Context) { modifyCluster(ctx) })
 }

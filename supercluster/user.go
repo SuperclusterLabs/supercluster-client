@@ -11,4 +11,6 @@ type User struct {
 	Clusters []string  `json:"clusters"`
 	EthAddr  string    `json:"ethAddr" binding:"required"`
 	IpfsAddr string    `json:"ipfsAddr"`
+	// this would be a bool but gin doesn't unmarshal it properly
+	Activated string `json:"activated"`
 }

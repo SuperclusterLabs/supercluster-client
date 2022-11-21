@@ -15,7 +15,10 @@ func createUser(ctx *gin.Context) {
 		})
 		return
 	}
-	_, err := db.getUserByEthAddr(ctx, u.EthAddr)
+
+	uDb, err := db.getUserByEthAddr(ctx, u.EthAddr)
+	log.Println(uDb)
+
 	if err != nil && err != ErrUserNotFound {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
@@ -23,9 +26,8 @@ func createUser(ctx *gin.Context) {
 
 		return
 	} else if err == ErrUserNotFound {
-		log.Print("creating user: ", u.Id.String())
-
-		u, err = db.createUser(ctx, *u)
+		u.Activated = "true"
+		u, err = db.updateUser(ctx, *u)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
@@ -33,8 +35,12 @@ func createUser(ctx *gin.Context) {
 
 			return
 		}
+	} else if uDb.Activated == "false" {
+		uDb.Activated = "true"
+		_, _ = db.updateUser(ctx, *uDb)
+		u = uDb
 	} else {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrUserExists.Error(),
 		})
 
@@ -49,6 +55,12 @@ func modifyUser(ctx *gin.Context) {
 	if err := ctx.BindJSON(u); err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrRequestUnmarshalled.Error(),
+		})
+		return
+	}
+	if u.Activated != "true" && u.Activated != "false" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrNeedActivation.Error(),
 		})
 		return
 	}
@@ -71,7 +83,7 @@ func modifyUser(ctx *gin.Context) {
 	// with a seemingly unnecessary extra db call so that
 	// this func doesn't scrub data
 	u.Id = uDB.Id
-	u, err = db.createUser(ctx, *u)
+	u, err = db.updateUser(ctx, *u)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
