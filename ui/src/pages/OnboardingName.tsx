@@ -20,6 +20,8 @@ function OnboardingName() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log("Onboarding Name triggered")
+    localStorage.setItem("onboardingDone", "true");
     const getENS = async () => {
       const walletAddress: any = account; // replace with wallet address
       const ensContractAddress = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85";
@@ -53,7 +55,7 @@ function OnboardingName() {
           alt="Supercluster logo"
         />
         {!account && loading && <h1>Getting account</h1>}
-        {account && !loading && (
+        {!loading && (
           <div>
             <h1 className="text-4xl font-bold text-white mb-10">
               Hey 👋🏼, {ens === "" ? account : ens}! What should we name your

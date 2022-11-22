@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-// import { Files } from "./components/Files";
-import { About } from "./components/About";
+import Main from "./Main";
+import About from "./components/About";
 import Welcome from "./pages/Welcome";
+import Home from "./pages/Home";
 import OnboardingName from "./pages/OnboardingName";
 import OnboardingAccess from "./pages/OnboardingAccess";
+import Pinned from "./pages/Pinned";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-// import { useEthers } from "@usedapp/core";
+import { useEthers } from "@usedapp/core";
 import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
 import NFTSelection from "./pages/NftSelection";
@@ -15,7 +17,9 @@ import NFTSelection from "./pages/NftSelection";
 const client = new W3CWebSocket("ws://127.0.0.1:4000/api/ws");
 
 function App() {
-  // const { account } = useEthers();
+  const { account } = useEthers();
+
+  const [onboardingDone, setOnboardingDone] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("starting websocket client");
@@ -29,39 +33,39 @@ function App() {
   });
 
   useEffect(() => {
-    console.log(process.env);
-  });
+    const onboardingDone = JSON.parse(
+      localStorage.getItem("onboardingDone") || "false"
+    );
+
+    if (onboardingDone === "false") {
+      setOnboardingDone(false);
+      console.log("Local storage not found")
+    } else {
+      setOnboardingDone(true);
+      console.log("Local Storage found")
+    }
+  }, []);
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            // account ? (
-            //   <div className="container">
-            //     <Files />
-            //   </div>
-            // ) : (
-            //   <Welcome />
-            // )
-            <Welcome />
-          }
-        />
-        <Route path="/onboarding-name" element={<OnboardingName />} />
-        <Route path="/onboarding-admins" element={<OnboardingAdmins />} />
-        <Route path="/onboarding-access" element={<OnboardingAccess />} />
-        <Route path="/onboarding-invite" element={<OnboardingInvite />} />
-        <Route path="/nft-selection" element={<NFTSelection />} />
-        <Route
-          path="/about"
-          element={
-            <div className="container">
-              <About />
-            </div>
-          }
-        />
-      </Routes>
+      {account && onboardingDone ? (
+        <Routes>
+          <Route element={<Main />}>
+            <Route index element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/pinned" element={<Pinned />} />
+          </Route>
+        </Routes>
+      ) : (
+        <Routes>
+          <Route index element={<Welcome />} />
+          <Route path="onboarding-name" element={<OnboardingName />} />
+          <Route path="onboarding-admins" element={<OnboardingAdmins />} />
+          <Route path="onboarding-access" element={<OnboardingAccess />} />
+          <Route path="onboarding-invite" element={<OnboardingInvite />} />
+          <Route path="nft-selection" element={<NFTSelection />} />
+        </Routes>
+      )}
     </BrowserRouter>
   );
 }
