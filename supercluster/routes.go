@@ -21,4 +21,15 @@ func addRoutes(r *gin.Engine, store Store) {
 	api.DELETE("/files/:name", func(ctx *gin.Context) { deleteFile(ctx, store) })
 	api.PUT("/files/:name", func(ctx *gin.Context) { modifyFile(ctx, store) })
 	api.GET("/ws", func(ctx *gin.Context) { wshandler(ctx, store) })
+
+	// user API
+	api.GET("/user", func(ctx *gin.Context) { getUser(ctx) })
+	api.POST("/user", func(ctx *gin.Context) { createUser(ctx) })
+	api.PUT("/user", func(ctx *gin.Context) { modifyUser(ctx) })
+
+	// cluster API
+	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })
+
+	api.GET("/cluster/:clusterId", func(ctx *gin.Context) { getCluster(ctx) })
+	api.PUT("/cluster/:clusterId", func(ctx *gin.Context) { modifyCluster(ctx) })
 }

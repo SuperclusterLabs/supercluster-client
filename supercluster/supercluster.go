@@ -8,7 +8,6 @@ import (
 	firebase "firebase.google.com/go"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	coreiface "github.com/ipfs/interface-go-ipfs-core"
 	plugin "github.com/ipfs/kubo/plugin"
 	"google.golang.org/api/option"
@@ -55,23 +54,6 @@ func (*SuperclusterPlugin) Start(c coreiface.CoreAPI) error {
 		panic("error initializing app: " + err.Error())
 	}
 	db = DB{instance: app}
-
-	/** test **/
-	ctx := context.Background()
-	acc := User{
-		Id:       uuid.New(),
-		EthAddr:  "0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8510",
-		IpfsAddr: "12D3KooWCk54bkeehLMDv52vmjTEvsB7EvXyA7s3E9WsGFUYudoY",
-	}
-	client, err := app.Database(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("test")
-	if err := client.NewRef("accounts/alice").Set(ctx, acc); err != nil {
-		log.Fatal(err)
-	}
-	/**/
 
 	go func(c coreiface.CoreAPI) {
 		r := gin.Default()
