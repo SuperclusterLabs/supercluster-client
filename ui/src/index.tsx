@@ -5,6 +5,8 @@ import App from "./App";
 import { Mainnet, DAppProvider } from "@usedapp/core";
 import { getDefaultProvider } from "ethers";
 import reportWebVitals from "./reportWebVitals";
+import { store } from "./store/store"
+import { Provider } from "react-redux"
 
 const config = {
   readOnlyChainId: Mainnet.chainId,
@@ -18,9 +20,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <DAppProvider config={config}>
-      <App />
-    </DAppProvider>
+    <Provider store={store}>
+      <DAppProvider config={config}>
+        <App />
+      </DAppProvider>
+    </Provider>
   </React.StrictMode>
 );
 
