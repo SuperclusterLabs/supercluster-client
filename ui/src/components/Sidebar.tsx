@@ -12,7 +12,7 @@ function Sidebar() {
         />
       </Link>
       <div className="flex flex-col space-y-6">
-        <Link to="clusters">🪐 Clusters</Link>
+        <Link to="cluster">🪐 Clusters</Link>
         <Link to="pinned">📌 Pinned</Link>
         <Link to="shared">📁 Shared</Link>
         <Link to="settings">🧰 Settings</Link>
