@@ -17,8 +17,13 @@ func addRoutes(r *gin.Engine, store Store) {
 		panic(err)
 	}
 
-	// middleware
+	/** middleware/config **/
+	// cors allow all
+	// TODO: should we be doing this?
 	r.Use(cors.Default())
+	// set a lower memory limit for multipart forms (default is 32 MiB)
+	// see https://gin-gonic.com/docs/examples/upload-file/single-file/
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	api := r.Group("/api")
 	api.GET("/files", func(ctx *gin.Context) { listFiles(ctx, store) })
