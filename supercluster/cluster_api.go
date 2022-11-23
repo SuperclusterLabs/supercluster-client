@@ -165,3 +165,18 @@ func getCluster(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, c)
 }
+
+func listPinnedFiles(ctx *gin.Context) {
+	ipfs := *getCoreAPIInstance()
+	var ps []string
+	pch, err := ipfs.Pin().Ls(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+	}
+	for p := range pch {
+		ps = append(ps, p.Path().Cid().String())
+	}
+	ctx.JSON(http.StatusOK, ps)
+}

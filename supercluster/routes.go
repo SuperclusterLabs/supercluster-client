@@ -39,7 +39,12 @@ func addRoutes(r *gin.Engine, store Store) {
 
 	// cluster API
 	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })
+	api.GET("/cluster/files", func(ctx *gin.Context) { listPinnedFiles(ctx) })
 
 	api.GET("/cluster/:clusterId", func(ctx *gin.Context) { getCluster(ctx) })
 	api.PUT("/cluster/:clusterId", func(ctx *gin.Context) { modifyCluster(ctx) })
+
+	// file API
+	api.POST("/cluster/:clusterId", func(ctx *gin.Context) { createFile(ctx, store) })
+	api.DELETE("/cluster/:clusterId/:fileCid", func(ctx *gin.Context) { deleteFile(ctx, store) })
 }

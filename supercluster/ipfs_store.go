@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	files "github.com/ipfs/go-ipfs-files"
 	icorepath "github.com/ipfs/interface-go-ipfs-core/path"
 )
@@ -27,7 +28,7 @@ func newIpfsStore() (*ipfsStore, error) {
 	return s, nil
 }
 
-func (s *ipfsStore) Create(ctx context.Context, name, contents string) (*file, error) {
+func (s *ipfsStore) Create(ctx *gin.Context, name string, contents []byte) (*file, error) {
 	ipfs := *getCoreAPIInstance()
 
 	if _, ok := s.files[name]; ok {
@@ -35,7 +36,7 @@ func (s *ipfsStore) Create(ctx context.Context, name, contents string) (*file, e
 		return nil, ErrFileExists
 	}
 
-	peerCid, err := ipfs.Unixfs().Add(ctx, files.NewBytesFile([]byte(contents)))
+	peerCid, err := ipfs.Unixfs().Add(ctx, files.NewBytesFile(contents))
 	if err != nil {
 		log.Println("Could not create file: ", err.Error())
 		return nil, err
@@ -44,7 +45,6 @@ func (s *ipfsStore) Create(ctx context.Context, name, contents string) (*file, e
 	new := &file{
 		ID:        peerCid.Cid().String(),
 		Name:      name,
-		Contents:  contents,
 		CreatedAt: time.Now().Unix(),
 	}
 	s.files[name] = new
@@ -57,53 +57,53 @@ func (s *ipfsStore) Create(ctx context.Context, name, contents string) (*file, e
 }
 
 func (s *ipfsStore) Modify(ctx context.Context, name, contents string) (*file, error) {
-	if _, ok := s.files[name]; !ok {
-		log.Println("Could not modify file: ", ErrNotFound.Error())
-		return nil, ErrNotFound
-	}
+	// if _, ok := s.files[name]; !ok {
+	// log.Println("Could not modify file: ", ErrNotFound.Error())
+	// return nil, ErrNotFound
+	// }
 
-	ipfs := *getCoreAPIInstance()
+	// ipfs := *getCoreAPIInstance()
 
 	// remove old cid
-	f := s.files[name]
-	icp := icorepath.New(f.ID)
-	err := ipfs.Pin().Rm(ctx, icp)
-	if err != nil {
-		log.Println("Could not remove old cid ", err.Error())
-		return nil, err
-	}
+	// f := s.files[name]
+	// icp := icorepath.New(f.ID)
+	// err := ipfs.Pin().Rm(ctx, icp)
+	// if err != nil {
+	// log.Println("Could not remove old cid ", err.Error())
+	// return nil, err
+	// }
 
 	// upload+pin file and update cid
-	peerCid, err := ipfs.Unixfs().Add(ctx, files.NewBytesFile([]byte(contents)))
-	if err != nil {
-		log.Println("Could not create file: ", err.Error())
-		return nil, err
-	}
+	// peerCid, err := ipfs.Unixfs().Add(ctx, files.NewBytesFile([]byte(contents)))
+	// if err != nil {
+	// log.Println("Could not create file: ", err.Error())
+	// return nil, err
+	// }
 
-	f.ID = peerCid.Cid().String()
-	f.Contents = contents
-	ipfs.Pin().Add(ctx, peerCid)
+	// f.ID = peerCid.Cid().String()
+	// f.Contents = contents
+	// ipfs.Pin().Add(ctx, peerCid)
 
-	return f, nil
+	return nil, nil
 }
 
-func (s *ipfsStore) Delete(ctx context.Context, name string) error {
-	if _, ok := s.files[name]; !ok {
-		log.Println("Could not modify file: ", ErrNotFound.Error())
-		return ErrNotFound
-	}
+func (s *ipfsStore) Delete(ctx context.Context, cId string) error {
+	// if _, ok := s.files[cId]; !ok {
+	// log.Println("Could not modify file: ", ErrNotFound.Error())
+	// return ErrNotFound
+	// }
 
 	ipfs := *getCoreAPIInstance()
 
-	f := s.files[name]
-	icp := icorepath.New(f.ID)
+	// f := s.files[name]
+	icp := icorepath.New(cId)
 	err := ipfs.Pin().Rm(ctx, icp)
 	if err != nil {
 		log.Println("Could not remove file ", err.Error())
 		return err
 	}
 
-	delete(s.files, name)
+	// delete(s.files, name)
 
 	return nil
 }

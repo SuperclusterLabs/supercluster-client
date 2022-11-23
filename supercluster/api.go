@@ -1,7 +1,10 @@
 package supercluster
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -36,15 +39,23 @@ func wshandler(ctx *gin.Context, _ Store) {
 }
 
 func createFile(ctx *gin.Context, s Store) {
-	payload := &CreatePayload{}
-	if err := ctx.BindJSON(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrRequestUnmarshalled.Error(),
-		})
+	f, h, err := ctx.Request.FormFile("file")
+	if err != nil {
+		ctx.Status(http.StatusBadRequest)
+		log.Println("err: ", err.Error())
 		return
 	}
 
-	file, err := s.Create(ctx, payload.Name, payload.Contents)
+	// read file into bytes from request
+	log.Println(h.Filename)
+	defer f.Close()
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, f); err != nil {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	file, err := s.Create(ctx, h.Filename, buf.Bytes())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: ErrCannotCreate.Error(),
@@ -58,12 +69,12 @@ func createFile(ctx *gin.Context, s Store) {
 }
 
 func deleteFile(ctx *gin.Context, s Store) {
-	name := ctx.Param("name")
+	name := ctx.Param("fileCid")
 
 	err := s.Delete(ctx, name)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrNotFound.Error(),
+			Error: err.Error(),
 		})
 		return
 	}
