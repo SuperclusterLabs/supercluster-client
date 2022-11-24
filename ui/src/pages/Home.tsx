@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useEthers } from "@usedapp/core";
 import { Alchemy, Network } from "alchemy-sdk";
-import XMTPManager from "../utils/xmtp";
-import { ethers } from "ethers";
 import TextInput from "../components/TextInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 
@@ -33,24 +31,8 @@ function Home() {
     getENS().catch(console.error);
   }, [account, alchemy.nft]);
 
-  useEffect(() => {
-    async function connectXMTP() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
-      const signer = provider.getSigner();
-      await XMTPManager.getInstance(signer);
-    }
-
-    if (!XMTPManager.connected()) {
-      connectXMTP()
-    }
-  }, [])
-
   async function sendMessage() {
-    await XMTPManager.sendMessage(address, "test message")
-  }
-
-  function getMessages() {
-    XMTPManager.getMessages(address)
+    console.log("sending a message")
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -74,7 +56,6 @@ function Home() {
           <h1 className="text-4xl font-bold text-onboarding-bg">👋 Welcome, {ens}!</h1>
           <TextInput value={address} placeholder="Recipient Address" onChange={handleInputChange} />
           <ButtonPrimary onClick={sendMessage} text="Send Message" />
-          <ButtonPrimary onClick={getMessages} text="Get Messages" />
         </div>
       </div>
     );
