@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-family: "Montserrat"
+}
+
 .plus {
   margin-left: auto;
 }
