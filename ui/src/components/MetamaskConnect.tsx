@@ -4,16 +4,10 @@ import useWalletProvider from "../hooks/useWalletProvider";
 import { useAppStore } from "../store/app";
 
 export function MetamaskConnect() {
-  const client = useAppStore((state) => state.client)
   const { initClient } = useInitXmtpClient()
-  const walletAddress = useAppStore((state) => state.address)
   const signer = useAppStore((state) => state.signer)
 
-  const { connect: connectWallet, disconnect: disconnectWallet } = useWalletProvider();
-
-  const handleDisconnect = useCallback(async () => {
-    await disconnectWallet()
-  }, [disconnectWallet])
+  const { connect: connectWallet } = useWalletProvider();
 
   const handleLogin = useCallback(async () => {
     await connectWallet()

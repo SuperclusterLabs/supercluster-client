@@ -3,7 +3,7 @@ import superclusterLogo from "../assets/superclusterLogo.svg";
 
 function Sidebar() {
   return (
-    <div className="flex flex-col bg-onboarding-bg text-r-slateblue-primary pt-6 px-9">
+    <div className="flex flex-col bg-[#111827] text-[#B8C4D6] pt-6 px-9">
       <Link className="mb-10" to="/">
         <img
           className="max-w-none h-[16px]"

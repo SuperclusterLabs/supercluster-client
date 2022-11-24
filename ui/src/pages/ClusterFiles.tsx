@@ -102,7 +102,7 @@ function ClusterFiles() {
         <tbody>
           {files.map((file) => {
             return (
-              <tr>
+              <tr key={file.id}>
                 <td>{file.type}</td>
                 <td>{file.name}</td>
                 <td>{file.size}</td>
