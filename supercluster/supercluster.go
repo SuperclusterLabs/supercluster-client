@@ -55,6 +55,8 @@ func (*SuperclusterPlugin) Start(c coreiface.CoreAPI) error {
 	db = DB{instance: app}
 
 	go func(c coreiface.CoreAPI) {
+		defer close(wsCh)
+
 		r := gin.Default()
 		store, err := newIpfsStore()
 		if err != nil {

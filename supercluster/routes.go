@@ -3,10 +3,25 @@ package supercluster
 import (
 	"context"
 	"log"
+	"net/http"
 
 	cors "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
+
+var wsupgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	// FIXME: This is for development ONLY! We need
+	// to set this for local development and not
+	// all reqs!
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+var wsCh chan map[string]string = make(chan map[string]string)
 
 func addRoutes(r *gin.Engine, store Store) {
 	c := *getCoreAPIInstance()

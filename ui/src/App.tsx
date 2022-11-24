@@ -20,7 +20,7 @@ import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
 import NFTSelection from "./pages/NftSelection";
 
-const client = new W3CWebSocket("ws://127.0.0.1:4000/api/ws");
+const client = new W3CWebSocket("ws://127.0.0.1:3000/api/ws");
 
 function App() {
   const { account } = useEthers();
