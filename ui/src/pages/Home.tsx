@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { useEthers } from "@usedapp/core";
 import { Alchemy, Network } from "alchemy-sdk";
+import XMTPManager from "../utils/xmtp";
+import { ethers } from "ethers";
+import TextInput from "../components/TextInput";
+import ButtonPrimary from "../components/ButtonPrimary";
 
 function Home() {
   const [ens, setEns] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [address, setAddress] = useState<string>("");
 
   const { account } = useEthers();
   const config = {
@@ -26,8 +31,31 @@ function Home() {
       setLoading(false);
     };
     getENS().catch(console.error);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [account, alchemy.nft]);
+
+  useEffect(() => {
+    async function connectXMTP() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+      const signer = provider.getSigner();
+      await XMTPManager.getInstance(signer);
+    }
+
+    if (!XMTPManager.connected()) {
+      connectXMTP()
+    }
+  }, [])
+
+  async function sendMessage() {
+    await XMTPManager.sendMessage(address, "test message")
+  }
+
+  function getMessages() {
+    XMTPManager.getMessages(address)
+  }
+
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setAddress(e.target.value);
+  }
 
   if (loading) {
     return (
@@ -40,11 +68,13 @@ function Home() {
   }
 
   if (ens !== "") {
-
     return (
       <div>
-        <div className="flex">
+        <div className="flex flex-col">
           <h1 className="text-4xl font-bold text-onboarding-bg">👋 Welcome, {ens}!</h1>
+          <TextInput value={address} placeholder="Recipient Address" onChange={handleInputChange} />
+          <ButtonPrimary onClick={sendMessage} text="Send Message" />
+          <ButtonPrimary onClick={getMessages} text="Get Messages" />
         </div>
       </div>
     );
