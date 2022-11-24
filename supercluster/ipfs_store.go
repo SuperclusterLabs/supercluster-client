@@ -31,10 +31,11 @@ func newIpfsStore() (*ipfsStore, error) {
 func (s *ipfsStore) Create(ctx *gin.Context, name string, contents []byte) (*file, error) {
 	ipfs := *getCoreAPIInstance()
 
-	if _, ok := s.files[name]; ok {
-		log.Println("Could not create file: ", ErrFileExists.Error())
-		return nil, ErrFileExists
-	}
+	// Allow the same file to be pinned again for now, no harm
+	// if _, ok := s.files[name]; ok {
+	// log.Println("Could not create file: ", ErrFileExists.Error())
+	// return nil, ErrFileExists
+	// }
 
 	peerCid, err := ipfs.Unixfs().Add(ctx, files.NewBytesFile(contents))
 	if err != nil {

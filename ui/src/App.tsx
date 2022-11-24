@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import Main from "./Main";
 import About from "./components/About";
@@ -16,16 +16,16 @@ import Settings from "./pages/Settings";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { useEthers } from "@usedapp/core";
+import CreateLayout from "./pages/CreateLayout";
 import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
 import NFTSelection from "./pages/NftSelection";
+import AddressSelection from "./pages/AddressSelection";
 
 const client = new W3CWebSocket("ws://127.0.0.1:3000/api/ws");
 
 function App() {
   const { account } = useEthers();
-
-  const [onboardingDone, setOnboardingDone] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("starting websocket client");
@@ -38,23 +38,9 @@ function App() {
     };
   });
 
-  useEffect(() => {
-    const onboardingDone = JSON.parse(
-      localStorage.getItem("onboardingDone") || "false"
-    );
-
-    if (onboardingDone === "false") {
-      setOnboardingDone(false);
-      console.log("Local storage not found")
-    } else {
-      setOnboardingDone(true);
-      console.log("Local Storage found")
-    }
-  }, []);
-
   return (
     <BrowserRouter>
-      {account && onboardingDone ? (
+      {account ? (
         <Routes>
           <Route path="/" element={<Main />}>
             <Route index element={<Home />} />
@@ -67,16 +53,19 @@ function App() {
             <Route path="pinned" element={<Pinned />} />
             <Route path="shared" element={<Shared />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="create" element={<CreateLayout />}>
+              <Route index element={<OnboardingName />} />
+              <Route path="onboarding-admins" element={<OnboardingAdmins />} />
+              <Route path="onboarding-access" element={<OnboardingAccess />} />
+              <Route path="nft-selection" element={<NFTSelection />} />
+              <Route path="address-selection" element={<AddressSelection />} />
+              <Route path="onboarding-invite" element={<OnboardingInvite />} />
+            </Route>
           </Route>
         </Routes>
       ) : (
         <Routes>
           <Route index element={<Welcome />} />
-          <Route path="onboarding-name" element={<OnboardingName />} />
-          <Route path="onboarding-admins" element={<OnboardingAdmins />} />
-          <Route path="onboarding-access" element={<OnboardingAccess />} />
-          <Route path="onboarding-invite" element={<OnboardingInvite />} />
-          <Route path="nft-selection" element={<NFTSelection />} />
         </Routes>
       )}
     </BrowserRouter>

@@ -82,7 +82,7 @@ function ClusterFiles() {
       </div>
       <div className="flex items-center mt-6">
         <h2 className="font-bold text-3xl mr-6">Files</h2>
-        <TextInput placeholder="Search for file" onChange={handleInputChange} onKeyDown={handleKeyDown} />
+        <TextInput value={search} placeholder="Search for file" onChange={handleInputChange} onKeyDown={handleKeyDown} />
       </div>
       <div className="flex mt-4">
         <Dropzone multiple={true} onChange={handleFileUpload} />
@@ -102,7 +102,7 @@ function ClusterFiles() {
         <tbody>
           {files.map((file) => {
             return (
-              <tr>
+              <tr key={file.id}>
                 <td>{file.type}</td>
                 <td>{file.name}</td>
                 <td>{file.size}</td>

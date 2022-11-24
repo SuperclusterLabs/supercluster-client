@@ -3,7 +3,7 @@ import superclusterLogo from "../assets/superclusterLogo.svg";
 
 function Welcome() {
   return (
-    <div className="flex h-screen bg-onboarding-bg">
+    <div className="flex h-screen bg-[#111827]">
       <div className="m-auto text-center">
         <img
           className="max-w-none h-[37px]"
@@ -13,7 +13,7 @@ function Welcome() {
         <h1 className="text-7xl font-bold text-white mb-10">
           Supercluster Files
         </h1>
-        <p className="text-2xl text-l-slategray-50">
+        <p className="text-2xl text-white">
           Share files with your team with maximum decentralization.
         </p>
         <MetamaskConnect />
