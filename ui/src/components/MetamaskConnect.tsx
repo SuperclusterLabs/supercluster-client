@@ -1,13 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import { useEthers } from "@usedapp/core";
 
 export function MetamaskConnect() {
   const { activateBrowserWallet } = useEthers();
-  const navigate = useNavigate();
 
   function login() {
     activateBrowserWallet();
-    navigate(`onboardingname`);
   }
 
   return (

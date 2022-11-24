@@ -1,8 +1,8 @@
 type Props = {
   text: string;
   onClick?:
-    | ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void)
-    | undefined;
+  | ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void)
+  | undefined;
 };
 
 function ButtonPrimary(props: Props) {

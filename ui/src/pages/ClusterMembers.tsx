@@ -54,6 +54,7 @@ function ClusterMembers() {
       <div>
         <h2 className="font-bold text-xl mb-4">Invite member</h2>
         <TextInput
+          value={address}
           onChange={handleInputChange}
           placeholder="Enter address or ENS"
         />
