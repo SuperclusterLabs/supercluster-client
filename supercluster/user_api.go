@@ -40,11 +40,11 @@ func createUser(ctx *gin.Context) {
 		_, _ = db.updateUser(ctx, *uDb)
 		u = uDb
 	} else {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrUserExists.Error(),
-		})
+		// ctx.JSON(http.StatusBadRequest, ResponseError{
+		// Error: ErrUserExists.Error(),
+		// })
 
-		return
+		u = uDb
 	}
 
 	ctx.JSON(http.StatusOK, u)
