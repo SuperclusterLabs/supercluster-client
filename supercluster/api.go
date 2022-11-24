@@ -16,8 +16,6 @@ func wshandler(ctx *gin.Context, _ Store) {
 		return
 	}
 
-	log.Println("wss hello")
-
 	go func() {
 		log.Println("wss channel opening")
 

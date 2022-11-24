@@ -1,8 +1,6 @@
 package supercluster
 
 import (
-	"context"
-	"log"
 	"net/http"
 
 	cors "github.com/gin-contrib/cors"
@@ -24,14 +22,6 @@ var wsupgrader = websocket.Upgrader{
 var wsCh chan map[string]string = make(chan map[string]string)
 
 func addRoutes(r *gin.Engine, store Store) {
-	c := *getCoreAPIInstance()
-	var ctx context.Context
-	n, err := c.Key().Self(ctx)
-	log.Println("Still alive? ", n.ID().String())
-	if err != nil {
-		panic(err)
-	}
-
 	/** middleware/config **/
 	// cors allow all
 	// TODO: should we be doing this?
