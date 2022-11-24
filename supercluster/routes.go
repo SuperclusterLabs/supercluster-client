@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	cors "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,10 @@ func addRoutes(r *gin.Engine, store Store) {
 	if err != nil {
 		panic(err)
 	}
+
+	// middleware
+	r.Use(cors.Default())
+
 	api := r.Group("/api")
 	api.GET("/files", func(ctx *gin.Context) { listFiles(ctx, store) })
 	api.POST("/files", func(ctx *gin.Context) { createFile(ctx, store) })
