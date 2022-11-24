@@ -33,19 +33,30 @@ function Home() {
     return (
       <div>
         <div className="flex">
-          <h1 className="text-4xl font-bold text-onboarding-bg">Loading... </h1>
+          <h1 className="text-4xl font-bold text-onboarding-bg">🤔 Loading... </h1>
         </div>
       </div>
     )
   }
 
-  return (
-    <div>
-      <div className="flex">
-        <h1 className="text-4xl font-bold text-onboarding-bg">Welcome, {ens} </h1>
+  if (ens !== "") {
+
+    return (
+      <div>
+        <div className="flex">
+          <h1 className="text-4xl font-bold text-onboarding-bg">👋 Welcome, {ens}!</h1>
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div>
+        <div className="flex">
+          <h1 className="text-4xl font-bold text-onboarding-bg">👋 Welcome to Supercluster Files!</h1>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default Home;

@@ -10,7 +10,7 @@ function OnboardingInvite() {
   }
 
   function skip() {
-    navigate("Files");
+    navigate("/cluster");
   }
   return (
     <div className="text-l-slateblue-700">
