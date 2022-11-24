@@ -3,9 +3,25 @@ package supercluster
 import (
 	"context"
 	"log"
+	"net/http"
 
+	cors "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
+
+var wsupgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	// FIXME: This is for development ONLY! We need
+	// to set this for local development and not
+	// all reqs!
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+var wsCh chan map[string]string = make(chan map[string]string)
 
 func addRoutes(r *gin.Engine, store Store) {
 	c := *getCoreAPIInstance()
@@ -15,6 +31,15 @@ func addRoutes(r *gin.Engine, store Store) {
 	if err != nil {
 		panic(err)
 	}
+
+	/** middleware/config **/
+	// cors allow all
+	// TODO: should we be doing this?
+	r.Use(cors.Default())
+	// set a lower memory limit for multipart forms (default is 32 MiB)
+	// see https://gin-gonic.com/docs/examples/upload-file/single-file/
+	r.MaxMultipartMemory = 8 << 20 // 8 MiB
+
 	api := r.Group("/api")
 	api.GET("/files", func(ctx *gin.Context) { listFiles(ctx, store) })
 	api.POST("/files", func(ctx *gin.Context) { createFile(ctx, store) })
@@ -29,7 +54,12 @@ func addRoutes(r *gin.Engine, store Store) {
 
 	// cluster API
 	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })
+	api.GET("/cluster/files", func(ctx *gin.Context) { listPinnedFiles(ctx) })
 
 	api.GET("/cluster/:clusterId", func(ctx *gin.Context) { getCluster(ctx) })
 	api.PUT("/cluster/:clusterId", func(ctx *gin.Context) { modifyCluster(ctx) })
+
+	// file API
+	api.POST("/cluster/:clusterId", func(ctx *gin.Context) { createFile(ctx, store) })
+	api.DELETE("/cluster/:clusterId/:fileCid", func(ctx *gin.Context) { deleteFile(ctx, store) })
 }

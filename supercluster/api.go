@@ -1,30 +1,30 @@
 package supercluster
 
 import (
-	"fmt"
+	"bytes"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
-
-var wsupgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	// FIXME: This is for development ONLY! We need
-	// to set this for local development and not
-	// all reqs!
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 func wshandler(ctx *gin.Context, _ Store) {
 	conn, err := wsupgrader.Upgrade(ctx.Writer, ctx.Request, nil)
 	if err != nil {
-		fmt.Println("Failed to set websocket upgrade: ", err)
+		log.Println("Failed to set websocket upgrade: ", err)
 		return
 	}
+
+	log.Println("wss hello")
+
+	go func() {
+		log.Println("wss channel opening")
+
+		for m := range wsCh {
+			conn.WriteJSON(m)
+		}
+	}()
 
 	for {
 		t, msg, err := conn.ReadMessage()
@@ -36,15 +36,24 @@ func wshandler(ctx *gin.Context, _ Store) {
 }
 
 func createFile(ctx *gin.Context, s Store) {
-	payload := &CreatePayload{}
-	if err := ctx.BindJSON(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrRequestUnmarshalled.Error(),
-		})
+	log.Println(ctx.Request)
+	f, h, err := ctx.Request.FormFile("file")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest,
+			ResponseError{Error: err.Error()})
 		return
 	}
 
-	file, err := s.Create(ctx, payload.Name, payload.Contents)
+	// read file into bytes from request
+	log.Println(h.Filename)
+	defer f.Close()
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, f); err != nil {
+		ctx.Status(http.StatusBadRequest)
+		return
+	}
+
+	file, err := s.Create(ctx, h.Filename, buf.Bytes())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: ErrCannotCreate.Error(),
@@ -52,21 +61,32 @@ func createFile(ctx *gin.Context, s Store) {
 		return
 	}
 
+	// let frontend know to transmit xmtp msg
+	n := make(map[string]string)
+	n["cid"] = *&file.ID
+	n["action"] = "pin"
+	wsCh <- n
+
 	ctx.JSON(http.StatusOK, CreateResponse{
 		File: *file,
 	})
 }
 
 func deleteFile(ctx *gin.Context, s Store) {
-	name := ctx.Param("name")
+	cid := ctx.Param("fileCid")
 
-	err := s.Delete(ctx, name)
+	err := s.Delete(ctx, cid)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrNotFound.Error(),
+			Error: err.Error(),
 		})
 		return
 	}
+	// let frontend know to transmit xmtp msg
+	n := make(map[string]string)
+	n["cid"] = cid
+	n["action"] = "unpin"
+	wsCh <- n
 	ctx.Status(http.StatusOK)
 }
 

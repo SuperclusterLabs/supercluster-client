@@ -7,6 +7,8 @@ import (
 	"os"
 	"sort"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 const StoreName = "store"
@@ -27,10 +29,9 @@ func newOSStore() (Store, error) {
 	return s, nil
 }
 
-func (s *osStore) Create(ctx context.Context, name, contents string) (*file, error) {
+func (s *osStore) Create(_ *gin.Context, name string, contents []byte) (*file, error) {
 	new := &file{
 		Name:      name,
-		Contents:  contents,
 		CreatedAt: time.Now().Unix(),
 	}
 	if _, ok := s.files[name]; ok {
@@ -45,7 +46,7 @@ func (s *osStore) Create(ctx context.Context, name, contents string) (*file, err
 		return nil, err
 	}
 
-	_, err = f.WriteString(contents)
+	_, err = f.WriteString(string(contents))
 	if err != nil {
 		log.Println("Could not create file: ", err.Error())
 		return nil, err
@@ -79,10 +80,7 @@ func (s *osStore) Modify(ctx context.Context, name, contents string) (*file, err
 		return nil, err
 	}
 
-	var modified *file = s.files[name]
-	modified.Contents = contents
-
-	return modified, nil
+	return nil, nil
 }
 
 func (s *osStore) Delete(ctx context.Context, name string) error {
@@ -104,15 +102,8 @@ func (s *osStore) List(ctx context.Context) ([]file, error) {
 	}
 
 	for _, fInfo := range existing {
-		c, err := os.ReadFile(StoreName + "/" + fInfo.Name())
-		if err != nil {
-			// fatal if required dir is not working
-			log.Println(ErrExistingFileRead, err.Error())
-			return nil, err
-		}
 		f := file{
 			Name:      fInfo.Name(),
-			Contents:  string(c),
 			CreatedAt: fInfo.ModTime().Unix(),
 		}
 

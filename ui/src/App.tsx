@@ -6,7 +6,13 @@ import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
 import OnboardingName from "./pages/OnboardingName";
 import OnboardingAccess from "./pages/OnboardingAccess";
+import ClusterLayout from "./pages/ClusterLayout";
+import ClusterFiles from "./pages/ClusterFiles";
+import ClusterMembers from "./pages/ClusterMembers";
+import ClusterSettings from "./pages/ClusterSettings";
 import Pinned from "./pages/Pinned";
+import Shared from "./pages/Shared";
+import Settings from "./pages/Settings";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { useEthers } from "@usedapp/core";
@@ -14,7 +20,7 @@ import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
 import NFTSelection from "./pages/NftSelection";
 
-const client = new W3CWebSocket("ws://127.0.0.1:4000/api/ws");
+const client = new W3CWebSocket("ws://127.0.0.1:3000/api/ws");
 
 function App() {
   const { account } = useEthers();
@@ -50,10 +56,17 @@ function App() {
     <BrowserRouter>
       {account && onboardingDone ? (
         <Routes>
-          <Route element={<Main />}>
+          <Route path="/" element={<Main />}>
             <Route index element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/pinned" element={<Pinned />} />
+            <Route path="cluster" element={<ClusterLayout />}>
+              <Route index element={<ClusterFiles />} />
+              <Route path="members" element={<ClusterMembers />} />
+              <Route path="settings" element={<ClusterSettings />} />
+            </Route>
+            <Route path="about" element={<About />} />
+            <Route path="pinned" element={<Pinned />} />
+            <Route path="shared" element={<Shared />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       ) : (
