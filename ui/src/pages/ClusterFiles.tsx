@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import TextInput from "../components/TextInput";
 import Dropzone from "../components/Dropzone";
+import { useAppStore } from "../store/app"
 
 const exampleFiles: Array<any> = [
   {
@@ -37,24 +37,22 @@ const exampleFiles: Array<any> = [
 
 
 function ClusterFiles() {
+  const cluster = useAppStore((state) => state.activeCluster)
   // TODO: Need to get the files from the Cluster
-  const [search, setSearch] = useState<string>("");
   const [files, setFiles] = useState<Array<any>>([]);
+  const [numberOfFiles, setNumberOfFiles] = useState<number>(0);
 
   // TODO: Change to get Files from API
   useEffect(() => {
     setFiles(exampleFiles)
-  }, [])
+    if (cluster) {
+      if (cluster.files) {
+        setNumberOfFiles(cluster.files.length)
+      }
 
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearch(e.target.value);
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      console.log(search)
+      setFiles(cluster.files)
     }
-  }
+  }, [])
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     console.log(e.target.files)
@@ -65,24 +63,15 @@ function ClusterFiles() {
       <div className="bg-white flex px-6 py-8 mt-8 rounded-2xl space-x-10 text-l-slateblue-700 drop-shadow">
         <div className="text-center">
           <h2>Files pinned</h2>
-          <p className="mt-2 font-bold text-3xl text-center">1</p>
-        </div>
-        <div className="text-center">
-          <h2>Data used</h2>
-          <p className="mt-2 font-bold text-3xl">4.3 MB</p>
+          <p className="mt-2 font-bold text-3xl text-center">{numberOfFiles}</p>
         </div>
         <div className="text-center">
           <h2>Total members</h2>
           <p className="mt-2 font-bold text-3xl">14</p>
         </div>
-        <div className="text-center">
-          <h2>Active members</h2>
-          <p className="mt-2 font-bold text-3xl">1</p>
-        </div>
       </div>
       <div className="flex items-center mt-6">
         <h2 className="font-bold text-3xl mr-6">Files</h2>
-        <TextInput value={search} placeholder="Search for file" onChange={handleInputChange} onKeyDown={handleKeyDown} />
       </div>
       <div className="flex mt-4">
         <Dropzone multiple={true} onChange={handleFileUpload} />
@@ -100,9 +89,9 @@ function ClusterFiles() {
           </tr>
         </thead>
         <tbody>
-          {files.map((file) => {
+          {files && files.map((file, i) => {
             return (
-              <tr key={file.id}>
+              <tr key={i}>
                 <td>{file.type}</td>
                 <td>{file.name}</td>
                 <td>{file.size}</td>

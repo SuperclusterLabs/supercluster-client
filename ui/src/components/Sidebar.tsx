@@ -15,7 +15,7 @@ function Sidebar() {
         />
       </Link>
       <div className="flex flex-col space-y-6">
-        <Link to="cluster">🪐 Clusters</Link>
+        <p>🪐 Clusters</p>
         {activeCluster && <Link className="pl-5" to="cluster">{activeCluster.name}</Link>}
         <Link className="pl-5" to="create">Create cluster</Link>
         <Link to="pinned">📌 Pinned</Link>

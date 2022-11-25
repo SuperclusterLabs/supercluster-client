@@ -18,7 +18,7 @@ function Main() {
       }
     }
     getActiveCluster()
-  }, [userClusters])
+  }, [userClusters, getClusterMetadata, setActiveCluster])
 
   return (
     <div className="flex h-screen">
