@@ -20,8 +20,8 @@ type ipfsStore struct {
 
 var _ Store = (*ipfsStore)(nil)
 
-func newIpfsStore() (*ipfsStore, error) {
-	s := &ipfsStore{
+func newIpfsStore() (ipfsStore, error) {
+	s := ipfsStore{
 		files: make(map[string]*file),
 	}
 
@@ -121,4 +121,35 @@ func (s *ipfsStore) List(ctx context.Context) ([]file, error) {
 	})
 
 	return files, nil
+}
+
+func (s *ipfsStore) GetInfo(ctx context.Context) (*AddrsResponse, error) {
+	var addrs []string
+	ipfs := *getCoreAPIInstance()
+	mas, err := ipfs.Swarm().LocalAddrs(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, ma := range mas {
+		addrs = append(addrs, ma.String())
+	}
+
+	n, err := ipfs.Key().Self(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &AddrsResponse{
+		ID:    n.ID().String(),
+		Addrs: addrs,
+	}, nil
+}
+
+func (s *ipfsStore) pinFile(ctx *gin.Context, c string) error {
+	ipfs := *getCoreAPIInstance()
+
+	cCid := icorepath.New(c)
+	err := ipfs.Pin().Add(ctx, cCid)
+
+	return err
 }

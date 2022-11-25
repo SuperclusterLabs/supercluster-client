@@ -19,9 +19,9 @@ var wsupgrader = websocket.Upgrader{
 	},
 }
 
-var wsCh chan map[string]string = make(chan map[string]string)
+var wsCh chan map[string]interface{} = make(chan map[string]interface{})
 
-func addRoutes(r *gin.Engine, store Store) {
+func addRoutes(r *gin.Engine, store ipfsStore) {
 	/** middleware/config **/
 	// cors allow all
 	// TODO: should we be doing this?
@@ -41,6 +41,8 @@ func addRoutes(r *gin.Engine, store Store) {
 	api.GET("/user", func(ctx *gin.Context) { getUser(ctx) })
 	api.POST("/user", func(ctx *gin.Context) { createUser(ctx) })
 	api.PUT("/user", func(ctx *gin.Context) { modifyUser(ctx) })
+	api.POST("/user/connectPeer", func(ctx *gin.Context) { connectPeer(ctx) })
+	api.GET("/user/myAddr", func(ctx *gin.Context) { getAddrs(ctx) })
 
 	// cluster API
 	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })

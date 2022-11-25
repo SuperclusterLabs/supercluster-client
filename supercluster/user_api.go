@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/multiformats/go-multiaddr"
 )
 
 func createUser(ctx *gin.Context) {
@@ -119,4 +121,50 @@ func getUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, u)
+}
+
+func connectPeer(ctx *gin.Context) {
+	a := &AddrsResponse{}
+	if err := ctx.BindJSON(a); err != nil {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrRequestUnmarshalled.Error() + err.Error(),
+		})
+		return
+	}
+
+	var mas []multiaddr.Multiaddr
+	for _, addr := range a.Addrs {
+		ma, err := multiaddr.NewMultiaddr(addr)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, ResponseError{
+				Error: ErrInvalidAddrs.Error() + err.Error() + " : " + addr,
+			})
+		}
+		mas = append(mas, ma)
+	}
+
+	ipfs := *getCoreAPIInstance()
+	err := ipfs.Swarm().Connect(ctx, peer.AddrInfo{
+		ID:    peer.ID(a.ID),
+		Addrs: mas,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+		return
+	}
+	ctx.Status(http.StatusOK)
+}
+
+func getAddrs(ctx *gin.Context) {
+	var s ipfsStore
+	info, err := s.GetInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+	}
+
+	ctx.JSON(http.StatusOK, info)
 }
