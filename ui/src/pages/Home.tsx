@@ -1,11 +1,14 @@
-import { useState, useCallback, useRef, useMemo } from "react"
+import { useEffect, useState, useCallback, useRef, useMemo } from "react"
 import { useAppStore } from "../store/app"
 import TextInput from "../components/TextInput"
 import ButtonPrimary from "../components/ButtonPrimary"
 import useConversation from "../hooks/useConversation"
+import useClusters from "../hooks/useClusters"
 
 function Home() {
   const [address, setAddress] = useState<string>("0x6eD68a1982ac2266ceB9C1907B629649aAd9AC20")
+
+  const userClusters = useAppStore((state) => state.userClusters)
 
   const convoMessages = useAppStore((state) => state.convoMessages)
   const loadingConversations = useAppStore(
@@ -29,7 +32,16 @@ function Home() {
     scrollToMessagesEndRef
   )
 
+  const { getClusterMetadata } = useClusters()
+
   const hasMessages = messages.length > 0
+
+  useEffect(() => {
+    console.log('user clusters:', userClusters)
+    if (userClusters && userClusters !== undefined) {
+      getClusterMetadata(userClusters[0])
+    }
+  }, [userClusters, getClusterMetadata])
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setAddress(e.target.value)

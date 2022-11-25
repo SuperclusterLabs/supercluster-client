@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
 import { Alchemy, Network } from "alchemy-sdk";
-import { useEthers } from "@usedapp/core";
 import _ from "underscore";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
+import { useAppStore } from "../store/app"
+import axios from "axios";
 
 function NFTSelection() {
   const [userNfts, setUserNfts] = useState<Array<any>>([]);
   const [accessNft, setAccessNft] = useState<any>();
+  const createdCluster = useAppStore((state) => state.createdCluster)
 
-  const { account } = useEthers();
+  const address = useAppStore((state) => state.address)
+
   const navigate = useNavigate();
 
   const mainnetConfig = {
@@ -28,7 +31,7 @@ function NFTSelection() {
   useEffect(() => {
     const getNfts = async () => {
       let allNfts: Array<Object> = [];
-      const walletAddress: any = account;
+      const walletAddress: any = address;
       let userMainnetNfts = await mainnetAlchemy.nft.getNftsForOwner(
         walletAddress
       );
@@ -53,8 +56,27 @@ function NFTSelection() {
     setAccessNft(nft);
   }
 
-  function confirmNft() {
-    navigate("../onboarding-invite");
+  async function confirmNft() {
+    console.log(accessNft);
+    let data = createdCluster
+    data.nftAddr = accessNft.contract.address
+    let config = {
+      method: 'put',
+      url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      data: data
+    };
+
+    await axios(config)
+      .then(function(response) {
+        console.log(JSON.stringify(response.data));
+        navigate("../onboarding-invite");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   return (

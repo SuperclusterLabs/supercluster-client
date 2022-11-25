@@ -3,15 +3,43 @@ import { Delete } from "react-feather";
 import TextInput from "../components/TextInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
+import { useAppStore } from "../store/app"
+import axios from "axios"
 
 function OnboardingAdmins() {
   const [adminList, setAdminList] = useState<Array<string>>([]);
   const [adminAddress, setAdminAddress] = useState<string>("");
+  const createdCluster = useAppStore((state) => state.createdCluster)
 
   const navigate = useNavigate();
 
-  function confirmAdmins() {
-    navigate("../onboarding-access");
+  async function confirmAdmins() {
+    console.log(createdCluster);
+    if (createdCluster) {
+
+      let data = createdCluster;
+      data.admins = adminList;
+
+      console.log(data);
+      let config = {
+        method: 'put',
+        url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        data: data
+      };
+
+      await axios(config)
+        .then(function(response: any) {
+          console.log(JSON.stringify(response.data));
+          navigate("../onboarding-access");
+        })
+        .catch(function(error: any) {
+          console.log(error);
+        });
+    }
+
   }
 
   function addAddress() {

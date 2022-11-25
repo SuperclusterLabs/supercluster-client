@@ -3,7 +3,8 @@ import { ethers } from 'ethers';
 import { useAppStore } from "../store/app"
 import Web3Modal, { IProviderOptions, providers } from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-//
+import axios from "axios";
+
 // Ethereum mainnet
 const ETH_CHAIN_ID = 1
 
@@ -16,6 +17,8 @@ let provider: ethers.providers.Web3Provider
 const useWalletProvider = () => {
   const setAddress = useAppStore((state) => state.setAddress)
   const setSigner = useAppStore((state) => state.setSigner)
+  const setClusterUserId = useAppStore((state) => state.setClusterUserId)
+  const setUserClusters = useAppStore((state) => state.setUserClusters)
 
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
 
@@ -62,6 +65,25 @@ const useWalletProvider = () => {
       const newSigner = provider.getSigner()
       setSigner(newSigner)
       setAddress(await newSigner.getAddress())
+
+      let config = {
+        method: 'post',
+        url: 'http://localhost:3000/api/user',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        data: { "ethAddr": await newSigner.getAddress() }
+      };
+
+      axios(config)
+        .then(function(response: any) {
+          console.log(JSON.stringify(response.data));
+          setClusterUserId(response.data.id);
+          setUserClusters(response.data.clusters)
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     }
     initCached()
   }, [web3Modal, setSigner, setAddress])
@@ -114,6 +136,28 @@ const useWalletProvider = () => {
       const newSigner = provider.getSigner()
       setSigner(newSigner)
       setAddress(await newSigner.getAddress())
+
+      let config = {
+        method: 'post',
+        url: 'http://localhost:3000/api/user',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        data: { "ethAddr": await newSigner.getAddress() }
+      };
+
+      axios(config)
+        .then(function(response: any) {
+          console.log(JSON.stringify(response.data));
+          setClusterUserId(response.id);
+          if (response.clusters !== null) {
+            setUserClusters(response.clusters)
+          }
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
       return newSigner
     } catch (e) {
       // TODO: better error handling/surfacing here.
@@ -121,7 +165,7 @@ const useWalletProvider = () => {
       // modal, as "User closed modal"
       console.log('error', e)
     }
-  }, [web3Modal, setSigner, setAddress])
+  }, [web3Modal, setSigner, setAddress, setClusterUserId, setUserClusters])
 
   const disconnect = useCallback(() => {
     if (!web3Modal) return

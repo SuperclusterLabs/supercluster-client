@@ -15,6 +15,12 @@ interface AppState {
   setLoadingConversations: (loadingConversations: boolean) => void
   convoMessages: Map<string, DecodedMessage[]>
   setConvoMessages: (value: Map<string, DecodedMessage[]>) => void
+  clusterUserId: string | undefined
+  setClusterUserId: (clusterUserId: string | undefined) => void
+  userClusters: Array<string> | undefined | null
+  setUserClusters: (userClusters: Array<string> | undefined | null) => void
+  createdCluster: any | undefined
+  setCreatedCluster: (createdCluster: any) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -33,4 +39,10 @@ export const useAppStore = create<AppState>((set) => ({
   convoMessages: new Map(),
   setConvoMessages: (convoMessages: Map<string, DecodedMessage[]>) =>
     set(() => ({ convoMessages })),
+  clusterUserId: undefined,
+  setClusterUserId: (clusterUserId: string | undefined) => set(() => ({ clusterUserId })),
+  userClusters: undefined,
+  setUserClusters: (userClusters: Array<string> | undefined | null) => set(() => ({ userClusters })),
+  createdCluster: undefined,
+  setCreatedCluster: (createdCluster: any) => set(() => ({ createdCluster }))
 }))
