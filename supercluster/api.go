@@ -60,14 +60,14 @@ func createFile(ctx *gin.Context, s ipfsStore) {
 	}
 
 	// let frontend know to transmit xmtp msg
-	info, err := s.GetInfo(ctx)
-	n := make(map[string]interface{})
-	n["cid"] = *&file.ID
-	n["action"] = "pin"
-	n["ipfsAddr"] = info.ID
-	n["addrs"] = info.Addrs
+	// info, err := s.GetInfo(ctx)
+	// n := make(map[string]interface{})
+	// n["cid"] = *&file.ID
+	// n["action"] = "pin"
+	// n["ipfsAddr"] = info.ID
+	// n["addrs"] = info.Addrs
 
-	wsCh <- n
+	// wsCh <- n
 
 	ctx.JSON(http.StatusOK, CreateResponse{
 		File: *file,
@@ -85,10 +85,11 @@ func deleteFile(ctx *gin.Context, s ipfsStore) {
 		return
 	}
 	// let frontend know to transmit xmtp msg
-	n := make(map[string]interface{})
-	n["cid"] = cid
-	n["action"] = "unpin"
-	wsCh <- n
+	// n := make(map[string]interface{})
+	// n["cid"] = cid
+	// n["action"] = "unpin"
+	// wsCh <- n
+
 	ctx.Status(http.StatusOK)
 }
 
