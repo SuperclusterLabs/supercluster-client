@@ -21,6 +21,9 @@ interface AppState {
   setUserClusters: (userClusters: Array<string> | undefined | null) => void
   createdCluster: any | undefined
   setCreatedCluster: (createdCluster: any) => void
+  // TODO: Delete this. This is only for demo purposes
+  activeCluster: any,
+  setActiveCluster: (activeCluster: any) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -44,5 +47,7 @@ export const useAppStore = create<AppState>((set) => ({
   userClusters: undefined,
   setUserClusters: (userClusters: Array<string> | undefined | null) => set(() => ({ userClusters })),
   createdCluster: undefined,
-  setCreatedCluster: (createdCluster: any) => set(() => ({ createdCluster }))
+  setCreatedCluster: (createdCluster: any) => set(() => ({ createdCluster })),
+  activeCluster: undefined,
+  setActiveCluster: (activeCluster: any) => set(() => ({ activeCluster }))
 }))

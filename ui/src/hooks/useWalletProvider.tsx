@@ -77,7 +77,6 @@ const useWalletProvider = () => {
 
       axios(config)
         .then(function(response: any) {
-          console.log(JSON.stringify(response.data));
           setClusterUserId(response.data.id);
           setUserClusters(response.data.clusters)
         })
@@ -148,10 +147,9 @@ const useWalletProvider = () => {
 
       axios(config)
         .then(function(response: any) {
-          console.log(JSON.stringify(response.data));
-          setClusterUserId(response.id);
+          setClusterUserId(response.data.id);
           if (response.clusters !== null) {
-            setUserClusters(response.clusters)
+            setUserClusters(response.data.clusters)
           }
         })
         .catch(function(error) {
