@@ -43,6 +43,7 @@ func addRoutes(r *gin.Engine, store ipfsStore) {
 	api.PUT("/user", func(ctx *gin.Context) { modifyUser(ctx) })
 	api.POST("/user/connectPeer", func(ctx *gin.Context) { connectPeer(ctx) })
 	api.GET("/user/myAddr", func(ctx *gin.Context) { getAddrs(ctx) })
+	api.POST("/user/pinFile", func(ctx *gin.Context) { createPin(ctx, store) })
 
 	// cluster API
 	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })

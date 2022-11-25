@@ -130,16 +130,17 @@ func listFiles(ctx *gin.Context, s ipfsStore) {
 }
 
 func createPin(ctx *gin.Context, s ipfsStore) {
-	c := ctx.GetString("cid")
-	if c == "" {
+	p := &PinRequest{}
+	if err := ctx.BindJSON(p); err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrMissingParam.Error() + "cid",
+			Error: ErrRequestUnmarshalled.Error() + err.Error(),
 		})
+		return
 	}
-	err := s.pinFile(ctx, c)
+	err := s.pinFile(ctx, p.Cid)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
-			Error: ErrExistingFileRead.Error(),
+			Error: ErrExistingFileRead.Error() + err.Error(),
 		})
 		return
 	}
