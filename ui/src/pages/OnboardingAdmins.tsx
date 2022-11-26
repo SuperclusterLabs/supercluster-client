@@ -64,10 +64,10 @@ function OnboardingAdmins() {
   }
 
   return (
-    <div className="text-l-slateblue-700">
-      <h1 className="text-2xl font-bold"> ⭐️ Awesome! Who are your cluster’s admins?
+    <div className="text-[#334574] mt-6">
+      <h1 className="text-2xl font-bold mt-4"> ⭐️ Awesome! Who are your cluster’s admins?
       </h1>
-      <p className="text-lg">
+      <p className="text-lg my-4">
         Admins can adjust permissions, remove team members, and change your
         cluster’s settings. Make sure you trust them!
       </p>

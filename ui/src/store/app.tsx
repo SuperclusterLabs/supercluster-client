@@ -24,6 +24,8 @@ interface AppState {
   // TODO: Delete this. This is only for demo purposes
   activeCluster: any,
   setActiveCluster: (activeCluster: any) => void
+  activeClusterNumberOfFiles: number
+  setActiveClusterNumberOfFiles: (activeClusterNumberOfFiles: number) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -49,5 +51,7 @@ export const useAppStore = create<AppState>((set) => ({
   createdCluster: undefined,
   setCreatedCluster: (createdCluster: any) => set(() => ({ createdCluster })),
   activeCluster: undefined,
-  setActiveCluster: (activeCluster: any) => set(() => ({ activeCluster }))
+  setActiveCluster: (activeCluster: any) => set(() => ({ activeCluster })),
+  activeClusterNumberOfFiles: 0,
+  setActiveClusterNumberOfFiles: (activeClusterNumberOfFiles: number) => set(() => ({ activeClusterNumberOfFiles }))
 }))

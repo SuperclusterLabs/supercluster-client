@@ -22,29 +22,29 @@ function OnboardingAccess() {
   }
 
   return (
-    <div className="text-l-slateblue-700">
-      <h1 className="text-2xl font-bold">
+    <div className="text-[#334574] mt-6">
+      <h1 className="text-2xl font-bold mt-4">
         Nice! ❤️ Next, let’s set up your cluster’s access controls.
       </h1>
-      <p className="text-lg">
+      <p className="text-lg mt-4">
         What type of access control does your team use? We’ll use this
         information to make sure your team can get the files they need.
       </p>
       <div className="py-8 columns-3">
         <div
-          className={`rounded-3xl drop-shadow text-center p-8 ${accessControl === "token"
-            ? "text-white bg-l-slateblue-700"
-            : "text-l-slateblue-700 bg-white"
+          className={`cursor-pointer rounded-3xl drop-shadow text-center p-8 ${accessControl === "token"
+            ? "text-white bg-[#334574]"
+            : "text-[#334574] bg-white"
             }`}
           onClick={() => setAccessControl("token")}
         >
           <h2 className="text-2xl font-bold mb-6">Token Gating</h2>
-          <p>Members can access files if they have X amount of DAO tokens.</p>
+          <p>Members can access files if they have a certain amount of your DAO's tokens.</p>
         </div>
         <div
-          className={`rounded-3xl drop-shadow text-center p-8 ${accessControl === "nft"
-            ? "text-white bg-l-slateblue-700"
-            : "text-l-slateblue-700 bg-white"
+          className={`cursor-pointer rounded-3xl drop-shadow text-center p-8 ${accessControl === "nft"
+            ? "text-white bg-[#334574]"
+            : "text-[#334574] bg-white"
             }`}
           onClick={() => setAccessControl("nft")}
         >
@@ -52,9 +52,9 @@ function OnboardingAccess() {
           <p>Members can access files if they own a specific NFT.</p>
         </div>
         <div
-          className={`rounded-3xl drop-shadow text-center p-8 ${accessControl === "addresses"
-            ? "text-white bg-l-slateblue-700"
-            : "text-l-slateblue-700 bg-white"
+          className={`cursor-pointer rounded-3xl drop-shadow text-center p-8 ${accessControl === "addresses"
+            ? "text-white bg-[#334574]"
+            : "text-[#334574] bg-white"
             }`}
           onClick={() => setAccessControl("addresses")}
         >

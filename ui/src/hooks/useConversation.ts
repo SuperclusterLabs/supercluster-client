@@ -93,7 +93,9 @@ const useConversation = (
   ])
 
   const handleSend = async (message: string) => {
+    console.log(conversation)
     if (!conversation) return
+    console.log("sending message:", message)
     await conversation.send(message)
   }
 

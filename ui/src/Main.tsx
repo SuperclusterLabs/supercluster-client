@@ -12,6 +12,7 @@ function Main() {
   useEffect(() => {
     const getActiveCluster = async () => {
       if (userClusters && userClusters !== undefined) {
+        console.log('user clusters:', userClusters)
         let activeCluster = await getClusterMetadata(userClusters[0])
         console.log("active cluster:", activeCluster)
         setActiveCluster(activeCluster)

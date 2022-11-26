@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import Main from "./Main";
 import About from "./components/About";
 import Welcome from "./pages/Welcome";
@@ -14,7 +12,6 @@ import Pinned from "./pages/Pinned";
 import Shared from "./pages/Shared";
 import Settings from "./pages/Settings";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
 import CreateLayout from "./pages/CreateLayout";
 import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
@@ -22,20 +19,8 @@ import NFTSelection from "./pages/NftSelection";
 import AddressSelection from "./pages/AddressSelection";
 import { useAppStore } from "./store/app"
 
-const client = new W3CWebSocket("ws://127.0.0.1:3000/api/ws");
-
 function App() {
   const address = useAppStore((state) => state.address)
-  useEffect(() => {
-    console.log("starting websocket client");
-    client.onopen = () => {
-      client.send("Hello server!");
-      console.log("WebSocket Client Connected");
-    };
-    client.onmessage = (message: any) => {
-      console.log(message);
-    };
-  });
 
   return (
     <BrowserRouter>

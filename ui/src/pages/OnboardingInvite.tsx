@@ -13,11 +13,11 @@ function OnboardingInvite() {
     navigate("/cluster");
   }
   return (
-    <div className="text-l-slateblue-700">
-      <h1 className="text-2xl font-bold">
+    <div className="text-[#334574] mt-6">
+      <h1 className="text-2xl font-bold mt-4">
         Perfect! 🤝 Lastly, invite your team members!
       </h1>
-      <p className="text-lg">
+      <p className="text-lg my-4">
         Share a link to your cluster with your team members. They’ll be able
         to easily join your cluster.
       </p>

@@ -2,6 +2,7 @@ import { useCallback } from "react"
 import useInitXmtpClient from "../hooks/useInitXmtpClient";
 import useWalletProvider from "../hooks/useWalletProvider";
 import { useAppStore } from "../store/app";
+import ButtonPrimary from "./ButtonPrimary";
 
 export function MetamaskConnect() {
   const { initClient } = useInitXmtpClient()
@@ -9,17 +10,14 @@ export function MetamaskConnect() {
 
   const { connect: connectWallet } = useWalletProvider();
 
-  const handleLogin = useCallback(async () => {
+  const handleLogin = useCallback(async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    event.preventDefault()
+
     await connectWallet()
     signer && (await initClient(signer))
   }, [connectWallet, initClient, signer])
 
   return (
-    <button
-      className="bg-gradient-to-b from-l-success-main to-l-success-700 py-4 px-14 rounded-2xl"
-      onClick={() => handleLogin()}
-    >
-      <span className="text-white font-bold text-md">Connect wallet</span>
-    </button>
+    <ButtonPrimary onClick={handleLogin} text="Connect wallet" />
   );
 }

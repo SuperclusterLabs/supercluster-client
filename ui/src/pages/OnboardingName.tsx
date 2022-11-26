@@ -43,11 +43,11 @@ function OnboardingName() {
   }
 
   return (
-    <div className="text-l-slateblue-700">
-      <h1 className="text-2xl font-bold">
+    <div className="text-[#334574] mt-6">
+      <h1 className="text-2xl font-bold mt-4">
         What should we name your cluster?
       </h1>
-      <p className="text-l">
+      <p className="text-lg my-4">
         You'll need a name for your cluster. It will help your teammates
         find you a little easier. You can always change this afterwards.
       </p>
