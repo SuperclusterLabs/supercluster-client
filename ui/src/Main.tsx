@@ -6,15 +6,17 @@ import useClusters from "./hooks/useClusters"
 
 function Main() {
   const userClusters = useAppStore((state) => state.userClusters)
+
+  // TODO: Instead of setting ActiveCluster here, we need to retrieve an array of the user's available
+  // cluster and then set it as a new entry into the Zustand state
   const setActiveCluster = useAppStore((state) => state.setActiveCluster)
   const { getClusterMetadata } = useClusters()
 
   useEffect(() => {
     const getActiveCluster = async () => {
       if (userClusters && userClusters !== undefined) {
-        console.log('user clusters:', userClusters)
+
         let activeCluster = await getClusterMetadata(userClusters[0])
-        console.log("active cluster:", activeCluster)
         setActiveCluster(activeCluster)
       }
     }
