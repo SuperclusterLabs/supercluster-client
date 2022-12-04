@@ -3,7 +3,7 @@ import superclusterLogo from "../assets/superclusterLogo.svg";
 
 function Welcome() {
   return (
-    <div className="flex h-screen bg-[#111827]">
+    <div className="flex h-screen bg-onboarding-bg">
       <div className="m-auto text-center">
         <img
           className="self-center max-w-none h-[37px] mb-10"
