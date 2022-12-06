@@ -85,7 +85,7 @@ const useWalletProvider = () => {
         });
     }
     initCached()
-  }, [web3Modal, setSigner, setAddress])
+  }, [web3Modal, setSigner, setAddress, setClusterUserId, setUserClusters])
 
   const resolveName = useCallback(async (name: string) => {
     if (cachedResolveName.has(name)) {

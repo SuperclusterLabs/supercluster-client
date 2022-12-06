@@ -13,7 +13,7 @@ function Home() {
       let activeCluster = getClusterMetadata(userClusters[0])
       setActiveCluster(activeCluster)
     }
-  }, [userClusters, getClusterMetadata])
+  }, [userClusters, getClusterMetadata, setActiveCluster])
   return (
     <div>
       <div className="flex flex-col">

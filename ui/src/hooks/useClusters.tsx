@@ -20,7 +20,7 @@ const useClusters = () => {
       .catch(function(error) {
         console.log(error);
       });
-  }, [])
+  }, [setActiveCluster])
 
   return {
     getClusterMetadata
