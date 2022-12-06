@@ -7,6 +7,9 @@ import useConversation from "../hooks/useConversation"
 function ClusterFiles() {
   const cluster = useAppStore((state) => state.activeCluster)
   const currentAddress = useAppStore((state) => state.address)
+
+  // TODO: Remove states below. There shouldn't be an "active" cluster - all clusters should be
+  // retrieved from the database and populated dynamically.
   const activeClusterNumberOfFiles = useAppStore((state) => state.activeClusterNumberOfFiles)
   const setActiveClusterNumberOfFiles = useAppStore((state) => state.setActiveClusterNumberOfFiles)
 
@@ -23,6 +26,8 @@ function ClusterFiles() {
       }
     }
 
+    // TODO: Remove this entire section. Instead of hardcoding the addresses, we should
+    // be looking up all owners of the NFT, and establish new XMTP channels with them.
     if (currentAddress === "0x6eD68a1982ac2266ceB9C1907B629649aAd9AC20") {
       setAddress("0xc45E269Bc5fe36B5b3D5934d4FF07BDD054787Ca")
     } else {
@@ -42,8 +47,9 @@ function ClusterFiles() {
 
   const messagesEndRef = useRef(null)
 
+  // TODO: Rename this function. This is the callback that happens when a new message
+  // is received from a channel.
   const scrollToMessagesEndRef = useCallback(() => {
-    setActiveClusterNumberOfFiles(2)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
@@ -57,7 +63,6 @@ function ClusterFiles() {
     const formData = new FormData();
 
     if (e.target.files) {
-      console.log(e.target.files[0])
       formData.append('file', e.target.files[0])
       var config = {
         method: 'post',
@@ -71,10 +76,6 @@ function ClusterFiles() {
         })
         .catch((error: any) => console.log(error))
     }
-  }
-
-  if (loadingConversations) {
-    console.log("Getting message", messages)
   }
 
   return (
@@ -97,6 +98,7 @@ function ClusterFiles() {
       </div>
       <div className="mt-8 space-y-3">
         {messages.map((message: any) => {
+          // TODO: Create a table for the files
           return (
             <div>{message.content}</div>
           )
