@@ -8,11 +8,6 @@ function ClusterFiles() {
   const cluster = useAppStore((state) => state.activeCluster)
   const currentAddress = useAppStore((state) => state.address)
 
-  // TODO: Remove states below. There shouldn't be an "active" cluster - all clusters should be
-  // retrieved from the database and populated dynamically.
-  const activeClusterNumberOfFiles = useAppStore((state) => state.activeClusterNumberOfFiles)
-  const setActiveClusterNumberOfFiles = useAppStore((state) => state.setActiveClusterNumberOfFiles)
-
   // TODO: Need to get the files from the Cluster
   const [numberOfFiles, setNumberOfFiles] = useState<number>(0);
 
@@ -36,9 +31,6 @@ function ClusterFiles() {
   }, [])
 
   const convoMessages = useAppStore((state) => state.convoMessages)
-  const loadingConversations = useAppStore(
-    (state) => state.loadingConversations
-  )
 
   const messages = useMemo(
     () => convoMessages.get(address) ?? [],
@@ -50,8 +42,8 @@ function ClusterFiles() {
   // TODO: Rename this function. This is the callback that happens when a new message
   // is received from a channel.
   const scrollToMessagesEndRef = useCallback(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
   const { sendMessage } = useConversation(
@@ -72,7 +64,6 @@ function ClusterFiles() {
       axios(config)
         .then(async (response: any) => {
           await sendMessage(response.data.file.id)
-          setActiveClusterNumberOfFiles(activeClusterNumberOfFiles + 1)
         })
         .catch((error: any) => console.log(error))
     }
@@ -83,7 +74,6 @@ function ClusterFiles() {
       <div className="bg-white flex px-6 py-8 mt-8 rounded-2xl space-x-10 text-l-slateblue-700 drop-shadow">
         <div className="text-center">
           <h2>Files pinned</h2>
-          <p className="mt-2 font-bold text-3xl text-center">{activeClusterNumberOfFiles}</p>
         </div>
         <div className="text-center">
           <h2>Total members</h2>
