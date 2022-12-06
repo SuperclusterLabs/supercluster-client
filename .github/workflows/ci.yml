@@ -29,8 +29,20 @@ jobs:
     - name: Build frontend
       run: cd ui && yarn build
 
-    - name: Build client
-      run: go build -v ./...
+    - name: Clone/Build/Install/Init kubo
+      run: |
+        cd .. && git clone https://github.com/ipfs/kubo && \
+        cd kubo && git checkout 38117db6f && \
+        go build  "-trimpath" -ldflags="-X "github.com/ipfs/kubo".CurrentCommit=38117db6f" \
+          -o "cmd/ipfs/ipfs" -asmflags=all=-trimpath="" -gcflags=all=-trimpath="" \
+          "github.com/ipfs/kubo/cmd/ipfs" && \
+        ./cmd/ipfs/ipfs init
+
+    - name: Build plugin
+      run: ls .. && ls ../.. && IPFS_VERSION=$(pwd)/../kubo make install
+
+    - name: Test ipfs plugin load
+      run: ../kubo/cmd/ipfs/ipfs version
 
     - name: Test client
       run: go test -v ./...
