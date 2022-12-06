@@ -47,8 +47,8 @@ function ClusterFiles() {
   // TODO: Rename this function. This is the callback that happens when a new message
   // is received from a channel.
   const scrollToMessagesEndRef = useCallback(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
   const { sendMessage } = useConversation(
@@ -106,4 +106,3 @@ function ClusterFiles() {
 }
 
 export default ClusterFiles;
-
