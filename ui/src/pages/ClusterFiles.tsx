@@ -14,17 +14,17 @@ function ClusterFiles() {
   const setActiveClusterNumberOfFiles = useAppStore((state) => state.setActiveClusterNumberOfFiles)
 
   // TODO: Need to get the files from the Cluster
-  const [numberOfFiles, setNumberOfFiles] = useState<number>(0);
+  /* const [numberOfFiles, setNumberOfFiles] = useState<number>(0); */
 
   const [address, setAddress] = useState<string>("")
 
   // TODO: Change to get Files from API
   useEffect(() => {
-    if (cluster) {
-      if (cluster.files) {
-        setNumberOfFiles(cluster.files.length)
-      }
-    }
+    /* if (cluster) { */
+    /* if (cluster.files) { */
+    /* setNumberOfFiles(cluster.files.length) */
+    /* } */
+    /* } */
 
     // TODO: Remove this entire section. Instead of hardcoding the addresses, we should
     // be looking up all owners of the NFT, and establish new XMTP channels with them.
@@ -33,12 +33,9 @@ function ClusterFiles() {
     } else {
       setAddress("0x6eD68a1982ac2266ceB9C1907B629649aAd9AC20")
     }
-  }, [])
+  }, [cluster, currentAddress])
 
   const convoMessages = useAppStore((state) => state.convoMessages)
-  const loadingConversations = useAppStore(
-    (state) => state.loadingConversations
-  )
 
   const messages = useMemo(
     () => convoMessages.get(address) ?? [],
@@ -50,8 +47,8 @@ function ClusterFiles() {
   // TODO: Rename this function. This is the callback that happens when a new message
   // is received from a channel.
   const scrollToMessagesEndRef = useCallback(() => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
   const { sendMessage } = useConversation(
@@ -109,4 +106,3 @@ function ClusterFiles() {
 }
 
 export default ClusterFiles;
-

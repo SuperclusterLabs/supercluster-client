@@ -13,14 +13,14 @@ const useClusters = () => {
     };
 
     axios(config)
-      .then(function(response) {
+      .then(function (response) {
         console.log("Getting metadata:", response.data)
         setActiveCluster(response.data)
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
-  }, [])
+  }, [setActiveCluster])
 
   return {
     getClusterMetadata
