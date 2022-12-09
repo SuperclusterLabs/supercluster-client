@@ -9,17 +9,17 @@ function ClusterFiles() {
   const currentAddress = useAppStore((state) => state.address)
 
   // TODO: Need to get the files from the Cluster
-  const [numberOfFiles, setNumberOfFiles] = useState<number>(0);
+  /* const [numberOfFiles, setNumberOfFiles] = useState<number>(0); */
 
   const [address, setAddress] = useState<string>("")
 
   // TODO: Change to get Files from API
   useEffect(() => {
-    if (cluster) {
-      if (cluster.files) {
-        setNumberOfFiles(cluster.files.length)
-      }
-    }
+    /* if (cluster) { */
+    /* if (cluster.files) { */
+    /* setNumberOfFiles(cluster.files.length) */
+    /* } */
+    /* } */
 
     // TODO: Remove this entire section. Instead of hardcoding the addresses, we should
     // be looking up all owners of the NFT, and establish new XMTP channels with them.
@@ -28,7 +28,7 @@ function ClusterFiles() {
     } else {
       setAddress("0x6eD68a1982ac2266ceB9C1907B629649aAd9AC20")
     }
-  }, [])
+  }, [cluster, currentAddress])
 
   const convoMessages = useAppStore((state) => state.convoMessages)
 
@@ -99,4 +99,3 @@ function ClusterFiles() {
 }
 
 export default ClusterFiles;
-

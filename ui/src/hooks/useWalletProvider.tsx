@@ -76,16 +76,16 @@ const useWalletProvider = () => {
       };
 
       axios(config)
-        .then(function(response: any) {
+        .then(function (response: any) {
           setClusterUserId(response.data.id);
           setUserClusters(response.data.clusters)
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
     }
     initCached()
-  }, [web3Modal, setSigner, setAddress])
+  }, [web3Modal, setSigner, setAddress, setClusterUserId, setUserClusters])
 
   const resolveName = useCallback(async (name: string) => {
     if (cachedResolveName.has(name)) {
@@ -146,13 +146,13 @@ const useWalletProvider = () => {
       };
 
       axios(config)
-        .then(function(response: any) {
+        .then(function (response: any) {
           setClusterUserId(response.data.id);
           if (response.clusters !== null) {
             setUserClusters(response.data.clusters)
           }
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.log(error);
         });
 
