@@ -11,7 +11,7 @@ import Pinned from "./pages/Pinned";
 import Shared from "./pages/Shared";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import { createBrowserRouter, RouterProvider, BrowserRouter, Routes, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateLayout from "./pages/CreateLayout";
 import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
@@ -26,7 +26,69 @@ const mainRouter = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        path: "cluster"
+        element: <Home />,
+        index: true
+      },
+      {
+        path: "cluster",
+        element: <ClusterLayout />,
+        children: [
+          {
+            path: "cluster/:clusterId",
+            index: true,
+            element: <ClusterFiles />
+          },
+          {
+            path: "cluster/:clusterId/members",
+            element: <ClusterMembers />
+          },
+          {
+            path: "cluster/:clusterId/settings",
+            element: <ClusterSettings />
+          }
+        ]
+      },
+      {
+        path: "pinned",
+        element: <Pinned />
+      },
+      {
+        path: "shared",
+        element: <Shared />
+      },
+      {
+        path: "settings",
+        element: <Settings />
+      },
+      {
+        path: "create",
+        element: <CreateLayout />,
+        children: [
+          {
+            element: <OnboardingName />,
+            index: true
+          },
+          {
+            path: "onboarding-admins",
+            element: <OnboardingAdmins />,
+          },
+          {
+            path: "onboarding-access",
+            element: <OnboardingAccess />
+          },
+          {
+            path: "nft-selection",
+            element: <NFTSelection />
+          },
+          {
+            path: "address-selection",
+            element: <AddressSelection />
+          },
+          {
+            path: "onboarding-invite",
+            element: <OnboardingInvite />
+          }
+        ]
       }
     ]
   }
@@ -45,29 +107,7 @@ function App() {
 
   if (address) {
     return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Main />}>
-            <Route index element={<Home />} />
-            <Route path="cluster" element={<ClusterLayout />}>
-              <Route index element={<ClusterFiles />} />
-              <Route path="members" element={<ClusterMembers />} />
-              <Route path="settings" element={<ClusterSettings />} />
-            </Route>
-            <Route path="pinned" element={<Pinned />} />
-            <Route path="shared" element={<Shared />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="create" element={<CreateLayout />}>
-              <Route index element={<OnboardingName />} />
-              <Route path="onboarding-admins" element={<OnboardingAdmins />} />
-              <Route path="onboarding-access" element={<OnboardingAccess />} />
-              <Route path="nft-selection" element={<NFTSelection />} />
-              <Route path="address-selection" element={<AddressSelection />} />
-              <Route path="onboarding-invite" element={<OnboardingInvite />} />
-            </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={mainRouter} />
     )
   }
 
