@@ -1,5 +1,4 @@
 import { Link, Outlet } from "react-router-dom"
-import { useAppStore } from "../store/app"
 
 function ClusterLayout() {
   return (
