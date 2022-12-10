@@ -10,7 +10,6 @@ const ETH_CHAIN_ID = 1
 
 const cachedLookupAddress = new Map<string, string | undefined>()
 const cachedResolveName = new Map<string, string | undefined>()
-const cachedGetAvatarUrl = new Map<string, string | undefined>()
 
 let provider: ethers.providers.Web3Provider
 
@@ -76,11 +75,11 @@ const useWalletProvider = () => {
       };
 
       axios(config)
-        .then(function (response: any) {
+        .then(function(response: any) {
           setClusterUserId(response.data.id);
           setUserClusters(response.data.clusters)
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(error);
         });
     }
@@ -117,15 +116,6 @@ const useWalletProvider = () => {
     return name
   }, [])
 
-  const getAvatarUrl = useCallback(async (name: string) => {
-    if (cachedGetAvatarUrl.has(name)) {
-      return cachedGetAvatarUrl.get(name)
-    }
-    const avatarUrl = (await provider?.getAvatar(name)) || undefined
-    cachedGetAvatarUrl.set(name, avatarUrl)
-    return avatarUrl
-  }, [])
-
   const connect = useCallback(async () => {
     if (!web3Modal) throw new Error('web3Modal not initialized')
     try {
@@ -146,13 +136,13 @@ const useWalletProvider = () => {
       };
 
       axios(config)
-        .then(function (response: any) {
+        .then(function(response: any) {
           setClusterUserId(response.data.id);
           if (response.clusters !== null) {
             setUserClusters(response.data.clusters)
           }
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(error);
         });
 
@@ -181,7 +171,6 @@ const useWalletProvider = () => {
   return {
     resolveName,
     lookupAddress,
-    getAvatarUrl,
     connect,
     disconnect,
   }
