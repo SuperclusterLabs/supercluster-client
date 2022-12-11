@@ -33,6 +33,42 @@ func (d *DB) getUserById(ctx context.Context, uId string) (*User, error) {
 	return &u, nil
 }
 
+func (d *DB) getClustersForUser(ctx context.Context, uId string) ([]*Cluster, error) {
+	client, err := d.instance.Database(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get the user from the User ID
+	var u User
+	if err := client.NewRef("users/"+uId).Get(ctx, &u); err != nil {
+		return nil, err
+	}
+	if u.Id == uuid.Nil {
+		return nil, ErrUserNotFound
+	}
+
+	var cs []string
+	if u.Clusters != nil {
+		is := u.Clusters
+		for _, i := range is {
+			cs = append(cs, i)
+		}
+	}
+
+	// Get cluster information for each cluster
+	var uClusters []*Cluster
+
+	for _, cId := range cs {
+		var c Cluster
+		if err := client.NewRef("clusters/"+cId).Get(ctx, &c); err != nil {
+			return nil, err
+		}
+		uClusters = append(uClusters, &c)
+	}
+	return uClusters, nil
+}
+
 func (d *DB) getUserByEthAddr(ctx context.Context, ethAddr string) (*User, error) {
 	client, err := d.instance.Database(ctx)
 	if err != nil {

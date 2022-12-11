@@ -30,20 +30,20 @@ const mainRouter = createBrowserRouter([
         index: true
       },
       {
-        path: "cluster",
+        path: "cluster/:clusterId",
         element: <ClusterLayout />,
+        errorElement: <NotFound />,
         children: [
           {
-            path: "cluster/:clusterId",
-            index: true,
-            element: <ClusterFiles />
+            element: <ClusterFiles />,
+            index: true
           },
           {
-            path: "cluster/:clusterId/members",
+            path: "members",
             element: <ClusterMembers />
           },
           {
-            path: "cluster/:clusterId/settings",
+            path: "settings",
             element: <ClusterSettings />
           }
         ]
@@ -103,7 +103,6 @@ const welcomeRouter = createBrowserRouter([
 
 function App() {
   const address = useAppStore((state) => state.address)
-  const userClusters = useAppStore((state) => state.userClusters)
 
   if (address) {
     return (

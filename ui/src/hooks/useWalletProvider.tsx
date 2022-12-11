@@ -77,6 +77,8 @@ const useWalletProvider = () => {
       axios(config)
         .then(function(response: any) {
           setClusterUserId(response.data.id);
+
+          // Check if the user has any clusters. If so, get the name for each cluster
           setUserClusters(response.data.clusters)
         })
         .catch(function(error) {
