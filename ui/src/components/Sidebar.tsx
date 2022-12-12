@@ -17,11 +17,11 @@ function Sidebar() {
       <div className="flex flex-col space-y-6">
         <p>🪐 Clusters</p>
         {userClusters.length ? (
-          <ul>
+          <ul className="pl-5">
             {userClusters.map((cluster: any) => (
-              <li key={cluster}>
+              <li className="py-2" key={cluster.id}>
                 <Link to={`cluster/${cluster}`}>
-                  {cluster}
+                  {cluster.name}
                 </Link>
               </li>
             ))}
