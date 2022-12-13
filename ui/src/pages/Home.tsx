@@ -1,19 +1,21 @@
 import { useEffect } from "react"
 import { useAppStore } from "../store/app"
-import useClusters from "../hooks/useClusters"
+import useClusters from "../hooks/useClusters";
 
 function Home() {
-  const userClusters = useAppStore((state) => state.userClusters)
-  const setActiveCluster = useAppStore((state) => state.setActiveCluster)
-
-  const { getClusterMetadata } = useClusters()
+  const clusterUserId = useAppStore((state) => state.clusterUserId)
+  const { getUserClusters } = useClusters();
 
   useEffect(() => {
-    if (userClusters && userClusters !== undefined) {
-      let activeCluster = getClusterMetadata(userClusters[0])
-      setActiveCluster(activeCluster)
+    const userClusters = async () => {
+      if (clusterUserId) {
+        await getUserClusters(clusterUserId)
+      }
     }
-  }, [userClusters, getClusterMetadata, setActiveCluster])
+
+    userClusters()
+  }, [clusterUserId, getUserClusters])
+
   return (
     <div>
       <div className="flex flex-col">

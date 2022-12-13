@@ -123,6 +123,33 @@ func getUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, u)
 }
 
+func getUserClusters(ctx *gin.Context) {
+	userId := ctx.Query("userId")
+	if userId == "" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: ErrMissingParam.Error() + "ethAddr",
+		})
+		return
+	}
+
+	uClusters, err := db.getClustersForUser(ctx, userId)
+
+	if err != nil {
+		if err == ErrUserNotFound {
+			ctx.JSON(http.StatusBadRequest, ResponseError{
+				Error: ErrUserNotFound.Error(),
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
+				Error: err.Error(),
+			})
+		}
+		return
+	}
+
+	ctx.JSON(http.StatusOK, uClusters)
+}
+
 func connectPeer(ctx *gin.Context) {
 	a := &AddrsResponse{}
 	if err := ctx.BindJSON(a); err != nil {
