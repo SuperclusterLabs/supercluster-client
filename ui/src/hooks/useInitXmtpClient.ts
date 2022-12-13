@@ -36,11 +36,11 @@ const useInitXmtpClient = () => {
     [client]
   )
 
-  // useEffect(() => {
-  //   if (!isRequestPending) {
-  //     signer ? initClient(signer) : disconnect()
-  //   }
-  // }, [signer, initClient])
+  useEffect(() => {
+    if (!isRequestPending) {
+      signer ? initClient(signer) : disconnect()
+    }
+  }, [signer, initClient])
 
   return {
     initClient,

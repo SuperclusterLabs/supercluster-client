@@ -38,7 +38,7 @@ const useClusters = () => {
       .catch(function(error) {
         console.log(error);
       })
-  }, [])
+  }, [setUserClusters])
 
   return {
     getClusterMetadata,

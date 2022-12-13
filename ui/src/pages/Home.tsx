@@ -4,7 +4,6 @@ import useClusters from "../hooks/useClusters";
 
 function Home() {
   const clusterUserId = useAppStore((state) => state.clusterUserId)
-  const setUserClusters = useAppStore((state) => state.setUserClusters)
   const { getUserClusters } = useClusters();
 
   useEffect(() => {
@@ -15,7 +14,7 @@ function Home() {
     }
 
     userClusters()
-  }, [clusterUserId])
+  }, [clusterUserId, getUserClusters])
 
   return (
     <div>

@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import Main from "./Main";
 import Welcome from "./pages/Welcome";
 import Home from "./pages/Home";
@@ -18,7 +17,6 @@ import OnboardingAdmins from "./pages/OnboardingAdmins";
 import OnboardingInvite from "./pages/OnboardingInvite";
 import NFTSelection from "./pages/NftSelection";
 import AddressSelection from "./pages/AddressSelection";
-import useClusters from "./hooks/useClusters";
 import { useAppStore } from "./store/app"
 
 const mainRouter = createBrowserRouter([

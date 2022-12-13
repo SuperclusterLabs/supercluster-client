@@ -1,34 +1,15 @@
-import { useState, useRef, useCallback, useMemo } from "react";
+// import { useRef, useCallback } from "react";
 import Dropzone from "../components/Dropzone";
-import { useAppStore } from "../store/app"
-import axios from "axios"
-import useConversation from "../hooks/useConversation"
 
 function ClusterFiles() {
-  const currentAddress = useAppStore((state) => state.address)
-
-  const [address, setAddress] = useState<string>("")
-
-  const convoMessages = useAppStore((state) => state.convoMessages)
-
-  const messages = useMemo(
-    () => convoMessages.get(address) ?? [],
-    [convoMessages, address]
-  )
-
-  const messagesEndRef = useRef(null)
+  // const messagesEndRef = useRef(null)
 
   // TODO: Rename this function. This is the callback that happens when a new message
   // is received from a channel.
-  const scrollToMessagesEndRef = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-
-  const { sendMessage } = useConversation(
-    address,
-    scrollToMessagesEndRef
-  )
+  // const scrollToMessagesEndRef = useCallback(() => {
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
+  // }, [])
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const formData = new FormData();
@@ -64,14 +45,6 @@ function ClusterFiles() {
       </div>
       <div className="flex mt-4">
         <Dropzone multiple={true} onChange={handleFileUpload} />
-      </div>
-      <div className="mt-8 space-y-3">
-        {messages.map((message: any) => {
-          // TODO: Create a table for the files
-          return (
-            <div>{message.content}</div>
-          )
-        })}
       </div>
     </div>
   );
