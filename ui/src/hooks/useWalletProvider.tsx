@@ -76,11 +76,10 @@ const useWalletProvider = () => {
 
       axios(config)
         .then(function(response: any) {
-          console.log("user response:", response.data)
           setClusterUserId(response.data.id);
         })
         .catch(function(error) {
-          console.log(error);
+          console.error(error);
         });
     }
     initCached()

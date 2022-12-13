@@ -33,7 +33,7 @@ func (d *DB) getUserById(ctx context.Context, uId string) (*User, error) {
 	return &u, nil
 }
 
-func (d *DB) getClustersForUser(ctx context.Context, uId string) ([]*Cluster, error) {
+func (d *DB) getClustersForUser(ctx context.Context, userId string) ([]*Cluster, error) {
 	client, err := d.instance.Database(ctx)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (d *DB) getClustersForUser(ctx context.Context, uId string) ([]*Cluster, er
 
 	// Get the user from the User ID
 	var u User
-	if err := client.NewRef("users/"+uId).Get(ctx, &u); err != nil {
+	if err := client.NewRef("users/"+userId).Get(ctx, &u); err != nil {
 		return nil, err
 	}
 	if u.Id == uuid.Nil {

@@ -124,15 +124,15 @@ func getUser(ctx *gin.Context) {
 }
 
 func getUserClusters(ctx *gin.Context) {
-	uId := ctx.Query("uId")
-	if uId == "" {
+	userId := ctx.Query("userId")
+	if userId == "" {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: ErrMissingParam.Error() + "ethAddr",
 		})
 		return
 	}
 
-	uClusters, err := db.getClustersForUser(ctx, uId)
+	uClusters, err := db.getClustersForUser(ctx, userId)
 
 	if err != nil {
 		if err == ErrUserNotFound {
