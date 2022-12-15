@@ -10,44 +10,57 @@ function OnboardingAdmins() {
   const [adminList, setAdminList] = useState<Array<string>>([]);
   const [adminAddress, setAdminAddress] = useState<string>("");
   const createdCluster = useAppStore((state) => state.createdCluster)
+  const setCreatedCluster = useAppStore((state) => state.setCreatedCluster)
 
   const navigate = useNavigate();
 
   async function confirmAdmins() {
-    console.log(createdCluster);
-    if (createdCluster) {
+    // if (createdCluster) {
+    //   let data = createdCluster;
+    //   data.admins = adminList;
+    //
+    //   let config = {
+    //     method: 'put',
+    //     url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
+    //     headers: {
+    //       'Content-Type': 'text/plain'
+    //     },
+    //     data: data
+    //   };
+    //
+    //   await axios(config)
+    //     .then(function(response: any) {
+    //       setCreatedCluster(response.data)
+    //       navigate("../onboarding-access");
+    //     })
+    //     .catch(function(error: any) {
+    //       console.log(error);
+    //     });
+    // }
+    navigate("../onboarding-access")
 
-      let data = createdCluster;
-      data.admins = adminList;
+  }
 
-      console.log(data);
-      let config = {
-        method: 'put',
-        url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
-        headers: {
-          'Content-Type': 'text/plain'
-        },
-        data: data
-      };
+  function checkAddress(address: string) {
+    const validETHAddress = new RegExp('^0x[a-fA-F0-9]{40}$')
+    const validENSAddress = new RegExp('[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?')
 
-      await axios(config)
-        .then(function(response: any) {
-          console.log(JSON.stringify(response.data));
-          navigate("../onboarding-access");
-        })
-        .catch(function(error: any) {
-          console.log(error);
-        });
+    if (!validETHAddress.test(address)) {
+      console.log("Not a valid ETH address")
     }
 
+    if (!validENSAddress.test(address)) {
+      console.log("Not a valid ENS address")
+    }
   }
 
   function addAddress() {
     if (adminList.includes(adminAddress)) {
       return;
     } else {
-      setAdminList([...adminList, adminAddress]);
-      setAdminAddress("");
+      checkAddress(adminAddress);
+      // setAdminList([...adminList, adminAddress]);
+      // setAdminAddress("");
     }
   }
 
@@ -64,10 +77,10 @@ function OnboardingAdmins() {
   }
 
   return (
-    <div className="text-[#334574] mt-6">
-      <h1 className="text-2xl font-bold mt-4"> ⭐️ Awesome! Who are your cluster’s admins?
+    <div className="text-l-slateblue-700 mt-6">
+      <h1 className="text-4xl font-bold"> ⭐️ Awesome! Who are your cluster’s admins?
       </h1>
-      <p className="text-lg my-4">
+      <p className="text-xl my-4">
         Admins can adjust permissions, remove team members, and change your
         cluster’s settings. Make sure you trust them!
       </p>
