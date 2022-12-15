@@ -80,25 +80,25 @@ function NFTSelection() {
   }
 
   return (
-    <div className="text-[#334574] mt-6">
+    <div className="text-l-slateblue-700 mt-6">
       <div>
-        <h1 className="text-2xl font-bold mt-4">
+        <h1 className="text-4xl font-bold">
           Alright! Which of your NFTs would you like to use for access
           control?
         </h1>
-        <p className="text-lg mt-4">
+        <p className="text-xl mt-4">
           You can specify which NFTs your user need to own in order to access
           your cluster.
         </p>
-        <div className="columns-5 my-8">
+        <div className="container columns-3 overflow-auto max-h-96 columns-3 my-8">
           {userNfts.map((nft: any, i: number) => {
             return (
               <div
                 key={i}
                 onClick={() => selectNft(nft)}
-                className={`drop-shadow mb-4 p-4 rounded-2xl cursor-pointer ${_.isEqual(nft, accessNft)
-                  ? "text-white bg-[#334574]"
-                  : "text-[#334574] bg-white"
+                className={`max-w-xs drop-shadow mb-4 p-4 rounded-2xl cursor-pointer ${_.isEqual(nft, accessNft)
+                  ? "text-white bg-l-slateblue-700"
+                  : "text-l-slateblue-700 bg-white"
                   }`}
               >
                 <h1 className="text-m">{nft.title}</h1>

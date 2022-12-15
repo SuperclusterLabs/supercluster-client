@@ -50,12 +50,14 @@ function OnboardingName() {
       <p className="text-xl my-6">
         You’ll need a name for your cluster. It will help your teammates find you a little easier. You can always change this afterwards.
       </p>
-      <TextInput
-        value={clusterName}
-        onChange={handleInputChange}
-        placeholder="Cluster name"
-      />
-      <ButtonPrimary onClick={confirmName} text="Confirm name" />
+      <div className="flex">
+        <TextInput
+          value={clusterName}
+          onChange={handleInputChange}
+          placeholder="Cluster name"
+        />
+        <ButtonPrimary onClick={confirmName} text="Confirm name" />
+      </div>
     </div>
   );
 }
