@@ -4,6 +4,7 @@ import TextInput from "../components/TextInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../store/app"
+import { checkIfPathIsEns, checkIfPathIsEth } from "../helpers/string"
 import axios from "axios"
 
 function OnboardingAdmins() {
@@ -42,26 +43,11 @@ function OnboardingAdmins() {
 
   }
 
-  function checkAddress(address: string) {
-    const validETHAddress = new RegExp('^0x[a-fA-F0-9]{40}$')
-    const validENSAddress = new RegExp('[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&\\/\\/=]*)?')
-    console.log("Address: ", address)
-
-    if (!validETHAddress.test(address)) {
-      return false
-    } else {
-      return true
-    }
-
-    // Add additional check for ENS names. The above RegEx isn't working for some
-    // annoying reason.
-  }
-
   function addAddress() {
     if (adminList.includes(adminAddress)) {
       return;
     } else {
-      if (checkAddress(adminAddress)) {
+      if (checkIfPathIsEth(adminAddress) || checkIfPathIsEns(adminAddress)) {
         setAdminList([...adminList, adminAddress]);
         setAdminAddress("");
       } else {

@@ -1,55 +1,24 @@
 import { useState, useEffect } from "react";
-import { Alchemy, Network } from "alchemy-sdk";
 import _ from "underscore";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../store/app"
+import useUser from "../hooks/useUser";
 import axios from "axios";
 
 function NFTSelection() {
-  const [userNfts, setUserNfts] = useState<Array<any>>([]);
+  const { getUserNfts } = useUser();
   const [accessNft, setAccessNft] = useState<any>();
   const createdCluster = useAppStore((state) => state.createdCluster)
-
   const address = useAppStore((state) => state.address)
+  const nfts = useAppStore((state) => state.nfts)
 
   const navigate = useNavigate();
 
-  const mainnetConfig = {
-    apiKey: process.env.REACT_APP_ALCHEMY_MAINNET_API_KEY,
-    network: Network.ETH_MAINNET,
-  };
-
-  const polygonConfig = {
-    apiKey: process.env.REACT_APP_ALCHEMY_MATIC_API_KEY,
-    network: Network.MATIC_MAINNET,
-  };
-
-  const mainnetAlchemy = new Alchemy(mainnetConfig);
-  const polygonAlchemy = new Alchemy(polygonConfig);
-
   useEffect(() => {
-    const getNfts = async () => {
-      let allNfts: Array<Object> = [];
-      const walletAddress: any = address;
-      let userMainnetNfts = await mainnetAlchemy.nft.getNftsForOwner(
-        walletAddress
-      );
-      let userPolygonNfts = await polygonAlchemy.nft.getNftsForOwner(
-        walletAddress
-      );
-      if (userMainnetNfts.ownedNfts.length > 0) {
-        allNfts = allNfts.concat(userMainnetNfts.ownedNfts);
-      }
-      if (userPolygonNfts.ownedNfts.length > 0) {
-        allNfts = allNfts.concat(userPolygonNfts.ownedNfts);
-      }
-      console.log(allNfts);
-      setUserNfts(allNfts);
-    };
-
-    getNfts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (address) {
+      getUserNfts(address)
+    }
   }, []);
 
   function selectNft(nft: any) {
@@ -57,7 +26,6 @@ function NFTSelection() {
   }
 
   async function confirmNft() {
-    console.log(accessNft);
     let data = createdCluster
     data.nftAddr = accessNft.contract.address
     let config = {
@@ -91,7 +59,7 @@ function NFTSelection() {
           your cluster.
         </p>
         <div className="container columns-3 overflow-auto max-h-96 columns-3 my-8">
-          {userNfts.map((nft: any, i: number) => {
+          {nfts.map((nft: any, i: number) => {
             return (
               <div
                 key={i}

@@ -8,6 +8,8 @@ export interface WalletSlice {
   setSigner: (signer: Signer | undefined) => void
   address: string | undefined
   setAddress: (address: string | undefined) => void
+  nfts: Array<any>
+  setNfts: (nfts: Array<any>) => void
 }
 
 export const createWalletSlice: StateCreator<
@@ -20,4 +22,6 @@ export const createWalletSlice: StateCreator<
   setSigner: (signer: Signer | undefined) => set(() => ({ signer })),
   address: undefined,
   setAddress: (address: string | undefined) => set(() => ({ address })),
+  nfts: [],
+  setNfts: (nfts: Array<any>) => set(() => ({ nfts }))
 })

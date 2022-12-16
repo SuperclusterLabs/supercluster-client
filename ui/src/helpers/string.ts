@@ -23,6 +23,16 @@ export const formatTime = (d: Date | undefined): string =>
     })
     : ''
 
+export const checkIfPathIsEth = (address: string): boolean => {
+  const validETHAddress = new RegExp('^0x[a-fA-F0-9]{40}$')
+
+  if (!validETHAddress.test(address)) {
+    return false
+  } else {
+    return true
+  }
+}
+
 export const checkPath = () => {
   return window.location.pathname !== '/' && window.location.pathname !== '/dm'
 }
