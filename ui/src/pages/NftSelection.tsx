@@ -19,6 +19,10 @@ function NFTSelection() {
     if (address) {
       getUserNfts(address)
     }
+
+    if (nfts) {
+      console.log(nfts)
+    }
   }, []);
 
   function selectNft(nft: any) {
@@ -47,6 +51,14 @@ function NFTSelection() {
       });
   }
 
+  function renderImage(metadata: any) {
+    console.log(metadata);
+    if (metadata.image) {
+      return metadata.image
+    }
+    return "";
+  }
+
   return (
     <div className="text-l-slateblue-700 mt-6">
       <div>
@@ -69,6 +81,7 @@ function NFTSelection() {
                   : "text-l-slateblue-700 bg-white"
                   }`}
               >
+                <img src={renderImage(nft.rawMetadata)} className="min-w-sm min-h-sm" />
                 <h1 className="text-m">{nft.title}</h1>
               </div>
             );
