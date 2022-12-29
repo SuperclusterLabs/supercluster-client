@@ -55,6 +55,8 @@ function NFTSelection() {
     console.log(metadata);
     if (metadata.image) {
       return metadata.image
+    } else if (metadata.image_url) {
+      return metadata.image_url
     }
     return "";
   }
@@ -70,19 +72,19 @@ function NFTSelection() {
           You can specify which NFTs your user need to own in order to access
           your cluster.
         </p>
-        <div className="container columns-3 overflow-auto max-h-96 columns-3 my-8">
+        <div className="columns-4 gap-y-4 my-8">
           {nfts.map((nft: any, i: number) => {
             return (
               <div
                 key={i}
                 onClick={() => selectNft(nft)}
-                className={`max-w-xs drop-shadow mb-4 p-4 rounded-2xl cursor-pointer ${_.isEqual(nft, accessNft)
+                className={`flex flex-col p-4 drop-shadow rounded-2xl cursor-pointer ${_.isEqual(nft, accessNft)
                   ? "text-white bg-l-slateblue-700"
                   : "text-l-slateblue-700 bg-white"
                   }`}
               >
-                <img src={renderImage(nft.rawMetadata)} className="min-w-sm min-h-sm" />
-                <h1 className="text-m">{nft.title}</h1>
+                <img src={renderImage(nft.rawMetadata)} />
+                <h1 className="text-l mt-6">{nft.title}</h1>
               </div>
             );
           })}
