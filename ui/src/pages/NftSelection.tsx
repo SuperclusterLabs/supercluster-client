@@ -9,6 +9,7 @@ import axios from "axios";
 function NFTSelection() {
   const { getUserNfts } = useUser();
   const [accessNft, setAccessNft] = useState<any>();
+
   const createdCluster = useAppStore((state) => state.createdCluster)
   const address = useAppStore((state) => state.address)
   const nfts = useAppStore((state) => state.nfts)
@@ -19,10 +20,6 @@ function NFTSelection() {
     if (address) {
       getUserNfts(address)
     }
-
-    if (nfts) {
-      console.log(nfts)
-    }
   }, []);
 
   function selectNft(nft: any) {
@@ -30,25 +27,27 @@ function NFTSelection() {
   }
 
   async function confirmNft() {
-    let data = createdCluster
-    data.nftAddr = accessNft.contract.address
-    let config = {
-      method: 'put',
-      url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
-      headers: {
-        'Content-Type': 'text/plain'
-      },
-      data: data
-    };
+    if (createdCluster) {
+      let data = createdCluster
+      data.nftAddr = accessNft.contract.address
+      let config = {
+        method: 'put',
+        url: `http://localhost:3000/api/cluster/${data.id}`,
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        data: data
+      };
 
-    await axios(config)
-      .then(function(response) {
-        console.log(JSON.stringify(response.data));
-        navigate("../onboarding-invite");
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+      await axios(config)
+        .then(function(response) {
+          console.log(JSON.stringify(response.data));
+          navigate("../onboarding-invite");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   }
 
   function renderImage(metadata: any) {

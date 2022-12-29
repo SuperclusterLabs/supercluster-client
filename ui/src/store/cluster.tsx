@@ -7,12 +7,18 @@ interface userCluster {
   id: string,
 }
 
+interface createdCluster {
+  name: string,
+  id: string,
+  nftAddr: string,
+}
+
 export interface ClusterSlice {
   clusterUserId: string | undefined
   setClusterUserId: (clusterUserId: string | undefined) => void
   userClusters: Array<userCluster>
   setUserClusters: (userClusters: Array<userCluster>) => void
-  createdCluster: any | undefined
+  createdCluster: createdCluster | undefined
   setCreatedCluster: (createdCluster: any) => void
 }
 
