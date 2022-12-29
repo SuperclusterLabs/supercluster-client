@@ -17,30 +17,28 @@ function OnboardingAdmins() {
   const navigate = useNavigate();
 
   async function confirmAdmins() {
-    // if (createdCluster) {
-    //   let data = createdCluster;
-    //   data.admins = adminList;
-    //
-    //   let config = {
-    //     method: 'put',
-    //     url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
-    //     headers: {
-    //       'Content-Type': 'text/plain'
-    //     },
-    //     data: data
-    //   };
-    //
-    //   await axios(config)
-    //     .then(function(response: any) {
-    //       setCreatedCluster(response.data)
-    //       navigate("../onboarding-access");
-    //     })
-    //     .catch(function(error: any) {
-    //       console.log(error);
-    //     });
-    // }
-    navigate("../onboarding-access")
+    if (createdCluster) {
+      let data = createdCluster;
+      data.admins = adminList;
 
+      let config = {
+        method: 'put',
+        url: `http://localhost:3000/api/cluster/${createdCluster.id}`,
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        data: data
+      };
+
+      await axios(config)
+        .then(function(response: any) {
+          setCreatedCluster(response.data)
+          navigate("../onboarding-access");
+        })
+        .catch(function(error: any) {
+          console.log(error);
+        });
+    }
   }
 
   function addAddress() {

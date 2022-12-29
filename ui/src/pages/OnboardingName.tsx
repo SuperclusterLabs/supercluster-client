@@ -13,29 +13,28 @@ function OnboardingName() {
   const [clusterName, setClusterName] = useState<string>("");
 
   async function confirmName() {
-    // let data = {
-    //   "name": clusterName,
-    //   "creator": address
-    // }
-    //
-    // const config = {
-    //   method: 'post',
-    //   url: 'http://localhost:3000/api/cluster',
-    //   headers: {
-    //     'Content-Type': 'text/plain'
-    //   },
-    //   data: data
-    // };
-    //
-    // axios(config)
-    //   .then(function(response) {
-    //     setCreatedCluster(response.data)
-    //     navigate("onboarding-admins");
-    //   })
-    //   .catch(function(error) {
-    //     console.log(error);
-    //   });
-    navigate("onboarding-admins");
+    let data = {
+      "name": clusterName,
+      "creator": address
+    }
+
+    const config = {
+      method: 'post',
+      url: 'http://localhost:3000/api/cluster',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      data: data
+    };
+
+    axios(config)
+      .then(function(response) {
+        setCreatedCluster(response.data)
+        navigate("onboarding-admins");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
