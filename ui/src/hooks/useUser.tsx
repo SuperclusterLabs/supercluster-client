@@ -35,7 +35,7 @@ const useUser = () => {
       allNfts = allNfts.concat(userPolygonNfts.ownedNfts);
     }
     setNfts(allNfts);
-  }, [])
+  }, [setNfts, polygonAlchemy.nft, mainnetAlchemy.nft])
 
   return {
     getUserNfts

@@ -11,6 +11,7 @@ interface createdCluster {
   name: string,
   id: string,
   nftAddr: string,
+  admins: Array<string>,
 }
 
 export interface ClusterSlice {

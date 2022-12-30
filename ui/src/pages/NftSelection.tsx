@@ -20,7 +20,7 @@ function NFTSelection() {
     if (address) {
       getUserNfts(address)
     }
-  }, []);
+  }, [address, getUserNfts]);
 
   function selectNft(nft: any) {
     setAccessNft(nft);
@@ -82,7 +82,7 @@ function NFTSelection() {
                   : "text-l-slateblue-700 bg-white"
                   }`}
               >
-                <img src={renderImage(nft.rawMetadata)} />
+                <img alt="Base profile of the NFT" src={renderImage(nft.rawMetadata)} />
                 <h1 className="text-l mt-6">{nft.title}</h1>
               </div>
             );
