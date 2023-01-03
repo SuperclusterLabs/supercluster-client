@@ -74,5 +74,10 @@
     "http": false,
     "https": false,
     "os": false
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "axios": "axios/dist/node/axios.cjs"
+    }
   }
 }
