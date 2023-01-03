@@ -8,7 +8,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "^29.2.3",
+    "@types/jest": "^29.2.5",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.10",
@@ -27,7 +27,7 @@
     "web3": "^1.8.1",
     "web3modal": "^1.9.10",
     "websocket": "^1.0.34",
-    "zustand": "^4.1.4"
+    "zustand": "^4.2.0"
   },
   "scripts": {
     "start": "PORT=3030 GENERATE_SOURCEMAP=false react-app-rewired start",
