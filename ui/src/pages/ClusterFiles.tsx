@@ -9,9 +9,9 @@ function ClusterFiles() {
   const { clusterId } = useParams();
   const userClusters = useAppStore((state) => state.userClusters);
 
-  const [clusterName, setClusterName] = useState<string>("")
   const [clusterAdmins, setClusterAdmins] = useState<Array<string>>([])
-  const [clusterMembers, setClusterMembers] = useState<Array<string>>([])
+  const [clusterMembers, setClusterMembers] = useState<Array<string> | null>([])
+  const [clusterFiles, setClusterFiles] = useState<Array<any> | null>([])
 
   // TODO: Rename this function. This is the callback that happens when a new message
   // is received from a channel.
@@ -22,10 +22,13 @@ function ClusterFiles() {
 
   // Filter the user's clusters to the current active ID and set the parameters into state variables
   useEffect(() => {
-    // Filter the user's cluster with current ID
     const cluster = _.where(userClusters, { id: clusterId })
-    console.log(cluster);
-  })
+    if (cluster) {
+      setClusterAdmins(cluster[0].admins)
+      setClusterMembers(cluster[0].members)
+      setClusterFiles(cluster[0].files)
+    }
+  }, [userClusters, clusterId])
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const formData = new FormData();
@@ -50,10 +53,11 @@ function ClusterFiles() {
       <div className="bg-white flex px-6 py-8 mt-8 rounded-2xl space-x-10 text-l-slateblue-700 drop-shadow">
         <div className="text-center">
           <h2>Files pinned</h2>
+          <p className="mt-2 font-bold text-3xl">{clusterFiles ? clusterFiles.length : 0}</p>
         </div>
         <div className="text-center">
           <h2>Total members</h2>
-          <p className="mt-2 font-bold text-3xl">2</p>
+          <p className="mt-2 font-bold text-3xl">{clusterMembers ? clusterMembers.length : 0}</p>
         </div>
       </div>
       <div className="flex items-center mt-6">

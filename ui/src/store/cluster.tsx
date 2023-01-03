@@ -2,9 +2,18 @@ import { StateCreator } from 'zustand'
 import { XMTPSlice } from './xmtp'
 import { WalletSlice } from "./wallet"
 
+interface file {
+  name: string,
+  cid: string,
+  creator: string,
+}
+
 interface userCluster {
   name: string,
   id: string,
+  admins: Array<string>,
+  members: Array<string> | null,
+  files: Array<file>,
 }
 
 interface createdCluster {
