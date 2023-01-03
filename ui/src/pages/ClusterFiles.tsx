@@ -1,8 +1,17 @@
-// import { useRef, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Dropzone from "../components/Dropzone";
+import { useAppStore } from "../store/app";
+import { useParams } from "react-router-dom";
+import _ from "underscore";
 
 function ClusterFiles() {
   // const messagesEndRef = useRef(null)
+  const { clusterId } = useParams();
+  const userClusters = useAppStore((state) => state.userClusters);
+
+  const [clusterName, setClusterName] = useState<string>("")
+  const [clusterAdmins, setClusterAdmins] = useState<Array<string>>([])
+  const [clusterMembers, setClusterMembers] = useState<Array<string>>([])
 
   // TODO: Rename this function. This is the callback that happens when a new message
   // is received from a channel.
@@ -10,6 +19,13 @@ function ClusterFiles() {
   //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   //   ; (messagesEndRef.current as any)?.scrollIntoView({ behavior: 'smooth' })
   // }, [])
+
+  // Filter the user's clusters to the current active ID and set the parameters into state variables
+  useEffect(() => {
+    // Filter the user's cluster with current ID
+    const cluster = _.where(userClusters, { id: clusterId })
+    console.log(cluster);
+  })
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const formData = new FormData();

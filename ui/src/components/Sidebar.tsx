@@ -20,7 +20,7 @@ function Sidebar() {
           <ul className="pl-5">
             {userClusters.map((cluster: any) => (
               <li className="py-2" key={cluster.id}>
-                <Link to={`cluster/${cluster}`}>
+                <Link to={`cluster/${cluster.id}`}>
                   {cluster.name}
                 </Link>
               </li>
