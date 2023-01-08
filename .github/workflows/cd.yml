@@ -7,37 +7,48 @@ on:
       - completed
   push:
     branches: [ "main" ]
-  # For testing only
+  # Uncomment for testing only
+  # (n.b. this will break waiting on CI to finish
+  # as that's only valid for default branch pushes
+  # for some reason)
   pull_request:
     branches: [ "main" ]
-
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # - name: Checkout Code
-        # uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v2
 
-      # - name: Get Next Version
-        # id: semver
-        # uses: ietf-tools/semver-action@v1
-        # with:
-          # token: ${{ github.token }}
-          # majorList: release
+    # - name: Get Next Version
+      # id: semver
+      # uses: ietf-tools/semver-action@v1
+      # with:
+        # token: ${{ github.token }}
+        # majorList: release
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: plugin-artifacts.zip
+    - name: Download artifacts from latest CI build
+      run: |
+        export CI_BUILD_WORKFLOW_ID=$(curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts | jq '.artifacts[0].id')
+        echo $CI_BUILD_WORKFLOW_ID
+        echo "https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts/$CI_BUILD_WORKFLOW_ID/zip"
+        curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" --output artifacts.zip https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts/$CI_BUILD_WORKFLOW_ID/zip
 
-      # - name: Create Release
-        # uses: ncipollo/release-action@v1
-        # with:
-          # allowUpdates: true
-          # artifacts: $GITHUB_WORKSPACE/path/to/my-artifact
-          # draft: false
-          # tag: ${{ steps.semver.outputs.next }}
-          # body: Changelog Contents
-          # token: ${{ github.token }}
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: plugin-artifacts
+        path: supercluster.zip
+
+    # - name: Create Release
+      # uses: ncipollo/release-action@v1
+      # with:
+        # allowUpdates: true
+        # artifacts: |
+          # $GITHUB_WORKSPACE/supercluster.zip
+          # $GITHUB_WORKSPACE/install.sh
+        # draft: false
+        # tag: ${{ steps.semver.outputs.next }}
+        # body: Changelog Contents
+        # token: ${{ github.token }}
