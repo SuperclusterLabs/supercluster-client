@@ -51,7 +51,6 @@ function NFTSelection() {
   }
 
   function renderImage(metadata: any) {
-    console.log(metadata);
     if (metadata.image) {
       return metadata.image
     } else if (metadata.image_url) {
