@@ -13,27 +13,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      # - name: Checkout Code
+        # uses: actions/checkout@v2
 
-      - name: Get Next Version
-        id: semver
-        uses: ietf-tools/semver-action@v1
-        with:
-          token: ${{ github.token }}
-          majorList: release
+      # - name: Get Next Version
+        # id: semver
+        # uses: ietf-tools/semver-action@v1
+        # with:
+          # token: ${{ github.token }}
+          # majorList: release
 
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: plugin-artifacts.zip
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: $GITHUB_WORKSPACE/path/to/my-artifact
-          draft: false
-          tag: ${{ steps.semver.outputs.next }}
-          body: Changelog Contents
-          token: ${{ github.token }}
+      # - name: Create Release
+        # uses: ncipollo/release-action@v1
+        # with:
+          # allowUpdates: true
+          # artifacts: $GITHUB_WORKSPACE/path/to/my-artifact
+          # draft: false
+          # tag: ${{ steps.semver.outputs.next }}
+          # body: Changelog Contents
+          # token: ${{ github.token }}
