@@ -1,3 +1,5 @@
+import web3 from "web3";
+
 export const truncate = (
   str: string | undefined,
   length: number
@@ -24,17 +26,9 @@ export const formatTime = (d: Date | undefined): string =>
     : ''
 
 export const checkIfPathIsEth = (address: string): boolean => {
-  const validETHAddress = new RegExp('^0x[a-fA-F0-9]{40}$')
+  const { isAddress } = web3.utils;
 
-  if (!validETHAddress.test(address)) {
-    return false
-  } else {
-    return true
-  }
-}
-
-export const checkPath = () => {
-  return window.location.pathname !== '/' && window.location.pathname !== '/dm'
+  return isAddress(address);
 }
 
 export const checkIfPathIsEns = (address: string): boolean => {
