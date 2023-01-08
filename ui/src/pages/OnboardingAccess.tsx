@@ -22,19 +22,19 @@ function OnboardingAccess() {
   }
 
   return (
-    <div className="text-[#334574] mt-6">
-      <h1 className="text-2xl font-bold mt-4">
+    <div className="text-l-slateblue-700 mt-6">
+      <h1 className="text-4xl font-bold">
         Nice! ❤️ Next, let’s set up your cluster’s access controls.
       </h1>
-      <p className="text-lg mt-4">
+      <p className="text-xl my-4">
         What type of access control does your team use? We’ll use this
         information to make sure your team can get the files they need.
       </p>
       <div className="py-8 columns-3">
         <div
           className={`cursor-pointer rounded-3xl drop-shadow text-center p-8 ${accessControl === "token"
-            ? "text-white bg-[#334574]"
-            : "text-[#334574] bg-white"
+            ? "text-white bg-l-slateblue-700"
+            : "text-l-slateblue-700 bg-white"
             }`}
           onClick={() => setAccessControl("token")}
         >
@@ -43,8 +43,8 @@ function OnboardingAccess() {
         </div>
         <div
           className={`cursor-pointer rounded-3xl drop-shadow text-center p-8 ${accessControl === "nft"
-            ? "text-white bg-[#334574]"
-            : "text-[#334574] bg-white"
+            ? "text-white bg-l-slateblue-700"
+            : "text-l-slateblue-700 bg-white"
             }`}
           onClick={() => setAccessControl("nft")}
         >
@@ -53,8 +53,8 @@ function OnboardingAccess() {
         </div>
         <div
           className={`cursor-pointer rounded-3xl drop-shadow text-center p-8 ${accessControl === "addresses"
-            ? "text-white bg-[#334574]"
-            : "text-[#334574] bg-white"
+            ? "text-white bg-l-slateblue-700"
+            : "text-l-slateblue-700 bg-white"
             }`}
           onClick={() => setAccessControl("addresses")}
         >

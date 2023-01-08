@@ -29,7 +29,6 @@ function OnboardingName() {
 
     axios(config)
       .then(function(response) {
-        console.log(JSON.stringify(response.data));
         setCreatedCluster(response.data)
         navigate("onboarding-admins");
       })
@@ -43,20 +42,21 @@ function OnboardingName() {
   }
 
   return (
-    <div className="text-[#334574] mt-6">
-      <h1 className="text-2xl font-bold mt-4">
+    <div className="text-l-slateblue-700 mt-6">
+      <h1 className="text-4xl font-bold">
         What should we name your cluster?
       </h1>
-      <p className="text-lg my-4">
-        You'll need a name for your cluster. It will help your teammates
-        find you a little easier. You can always change this afterwards.
+      <p className="text-xl my-6">
+        You’ll need a name for your cluster. It will help your teammates find you a little easier. You can always change this afterwards.
       </p>
-      <TextInput
-        value={clusterName}
-        onChange={handleInputChange}
-        placeholder="Cluster name"
-      />
-      <ButtonPrimary onClick={confirmName} text="Confirm name" />
+      <div className="flex">
+        <TextInput
+          value={clusterName}
+          onChange={handleInputChange}
+          placeholder="Cluster name"
+        />
+        <ButtonPrimary onClick={confirmName} text="Confirm name" />
+      </div>
     </div>
   );
 }

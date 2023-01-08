@@ -4,17 +4,21 @@ type Props = {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void | undefined;
   classes?: Array<string> | undefined;
+  error?: string | undefined;
 };
 
 function TextInput(props: Props) {
   return (
-    <input
-      className="mr-4 py-4 px-3.5 rounded-2xl shadow appearance-none border leading-tight focus:outline-none focus:shadow-outline"
-      value={props.value}
-      onChange={props.onChange}
-      placeholder={props.placeholder}
-      onKeyDown={props.onKeyDown}
-    />
+    <div>
+      <input
+        className="mr-4 py-4 px-3.5 rounded-2xl shadow appearance-none border leading-tight focus:outline-none focus:shadow-outline"
+        value={props.value}
+        onChange={props.onChange}
+        placeholder={props.placeholder}
+        onKeyDown={props.onKeyDown}
+      />
+      {props.error && <p className="text-l-critical-main mt-2">{props.error}</p>}
+    </div>
   );
 }
 
