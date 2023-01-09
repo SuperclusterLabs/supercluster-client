@@ -25,7 +25,7 @@ const useClusters = () => {
   const getUserClusters = useCallback(async (userId: string) => {
     var config = {
       method: 'get',
-      url: `http://localhost:3000/api/user/clusters?uId=${userId}`,
+      url: `http://localhost:3000/api/user/clusters?userId=${userId}`,
       headers: {}
     };
 
