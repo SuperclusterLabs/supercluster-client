@@ -1,7 +1,8 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Dropzone from "../components/Dropzone";
 import { useAppStore } from "../store/app";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import _ from "underscore";
 
 function ClusterFiles() {
@@ -35,16 +36,17 @@ function ClusterFiles() {
 
     if (e.target.files) {
       formData.append('file', e.target.files[0])
-      // var config = {
-      //   method: 'post',
-      //   url: `http://localhost:3000/api/cluster/${cluster.id}`,
-      //   data: formData
-      // };
-      // axios(config)
-      //   .then(async (response: any) => {
-      //     await sendMessage(response.data.file.id)
-      //   })
-      //   .catch((error: any) => console.log(error))
+      var config = {
+        method: 'post',
+        url: `http://localhost:3000/api/cluster/${clusterId}`,
+        data: formData
+      };
+      axios(config)
+        .then(async (response: any) => {
+          // await sendMessage(response.data.file.id)
+          console.log(response.data)
+        })
+        .catch((error: any) => console.log(error))
     }
   }
 
