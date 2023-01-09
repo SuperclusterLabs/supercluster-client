@@ -11,6 +11,12 @@ Packages:
 
 **NOTE 1:** Plugins only work on Linux and MacOS at the moment. You can track the progress of this issue here: https://github.com/golang/go/issues/19282
 
+## Quickstart
+If you're running Ubuntu 22.04, you can get started immediately with our pre-generated package from release. To do this:
+- Download the latest release binaries, shipped as `supercluster.zip`
+- Unzip the file
+- Run the install script after making it executable using `chmod +x ./install.sh && ./install.sh`
+
 ## Building and Installing
 ### Tl;dr
 - First install frontend dependencies:
