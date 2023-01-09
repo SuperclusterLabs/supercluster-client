@@ -13,9 +13,14 @@ fi
 chmod +x ipfs supercluster-plugin.so
 
 # init IPFS and move everything to their final resting places
-ipfs init
+./ipfs init
+mkdir ~/.ipfs/plugins
+mkdir ~/.ipfs/supercluster-logs
 mv supercluster-plugin.so ~/.ipfs/plugins/
-mv ipfs /usr/local/bin
+sudo mv ipfs /usr/local/bin
+
+# run ipfs in the background
+nohup /usr/local/bin/ipfs daemon >> ~/.ipfs/supercluster-logs/logs.txt &
 
 # check if everything works
 /usr/local/bin/ipfs version
