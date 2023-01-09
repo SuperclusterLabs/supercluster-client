@@ -13,11 +13,11 @@ const useClusters = () => {
     };
 
     axios(config)
-      .then(function(response) {
+      .then(function (response) {
         console.log("Getting metadata:", response.data)
         return response.data
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   }, [])
@@ -30,13 +30,13 @@ const useClusters = () => {
     };
 
     axios(config)
-      .then(function(response) {
+      .then(function (response) {
         console.log("Getting user clusters:", response.data)
         if (response.data) {
           setUserClusters(response.data)
         }
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       })
   }, [setUserClusters])
