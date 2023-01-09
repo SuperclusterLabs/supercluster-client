@@ -11,8 +11,8 @@ on:
   # (n.b. this will break waiting on CI to finish
   # as that's only valid for default branch pushes
   # for some reason)
-  pull_request:
-    branches: [ "main" ]
+  # pull_request:
+    # branches: [ "main" ]
 
 jobs:
   deploy:
@@ -21,12 +21,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    # - name: Get Next Version
-      # id: semver
-      # uses: ietf-tools/semver-action@v1
-      # with:
-        # token: ${{ github.token }}
-        # majorList: release
+    - name: Get Next Version
+      id: semver
+      uses: ietf-tools/semver-action@v1
+      with:
+        token: ${{ github.token }}
+        majorList: release
 
     - name: Download artifacts from latest CI build
       run: |
@@ -36,22 +36,14 @@ jobs:
         echo "https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts/$CI_BUILD_WORKFLOW_ID/zip"
         curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" --output artifacts.zip https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts/$CI_BUILD_WORKFLOW_ID/zip
 
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v3
+    - name: Create Release
+      uses: ncipollo/release-action@v1
       with:
-        name: plugin-artifacts
-        path: |
-          artifacts.zip
-          install.sh
-
-    # - name: Create Release
-      # uses: ncipollo/release-action@v1
-      # with:
-        # allowUpdates: true
-        # artifacts: |
-          # $GITHUB_WORKSPACE/supercluster.zip
-          # $GITHUB_WORKSPACE/install.sh
-        # draft: false
-        # tag: ${{ steps.semver.outputs.next }}
-        # body: Changelog Contents
-        # token: ${{ github.token }}
+        allowUpdates: true
+        artifacts: |
+          $GITHUB_WORKSPACE/supercluster.zip
+          $GITHUB_WORKSPACE/install.sh
+        draft: false
+        tag: ${{ steps.semver.outputs.next }}
+        body: Changelog Contents
+        token: ${{ github.token }}
