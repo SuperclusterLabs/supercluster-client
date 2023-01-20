@@ -27,11 +27,11 @@ go.mod: FORCE
 
 FORCE:
 
-supercluster-plugin.so: main/main.go go.mod
-	$(GOCC) build $(GOFLAGS) -buildmode=plugin -o "$@" "$<"
+supercluster: main.go
+	$(GOCC) build $(GOFLAGS) -o "$@" "$<"
 	chmod +x "$@"
 
-build: supercluster-plugin.so
+build: supercluster
 	@echo "Built against" $(IPFS_VERSION)
 
 install: build
