@@ -5,8 +5,8 @@ on:
     workflows: ["CI build"]
     types:
       - completed
-  push:
-    branches: [ "main" ]
+  # push:
+    # branches: [ "main" ]
   # Uncomment for testing only
   # (n.b. this will break waiting on CI to finish
   # as that's only valid for default branch pushes
