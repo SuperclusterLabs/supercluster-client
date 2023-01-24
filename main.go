@@ -32,6 +32,5 @@ func main() {
 	// TODO: add version here
 	log.Println("Supercluster started!")
 
-	r.Run(":3000")
-
+	r.Run(":3030")
 }
