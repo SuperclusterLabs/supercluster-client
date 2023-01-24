@@ -1,12 +1,16 @@
-package supercluster
+package store
 
 import (
 	"context"
+	"errors"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"time"
+
+	model "github.com/SuperclusterLabs/supercluster-client/model"
+	util "github.com/SuperclusterLabs/supercluster-client/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,12 +18,12 @@ import (
 const StoreName = "store"
 
 type osStore struct {
-	files map[string]*file
+	files map[string]*model.File
 }
 
-func newOSStore() (Store, error) {
+func NewOSStore() (P2PStore, error) {
 	s := &osStore{
-		files: make(map[string]*file),
+		files: make(map[string]*model.File),
 	}
 	err := os.Mkdir(StoreName, 0777)
 	if err != nil {
@@ -29,14 +33,14 @@ func newOSStore() (Store, error) {
 	return s, nil
 }
 
-func (s *osStore) Create(_ *gin.Context, name string, contents []byte) (*file, error) {
-	new := &file{
+func (s *osStore) Create(_ *gin.Context, name string, contents []byte) (*model.File, error) {
+	new := &model.File{
 		Name:      name,
 		CreatedAt: time.Now().Unix(),
 	}
 	if _, ok := s.files[name]; ok {
-		log.Println("Could not create file: ", ErrFileExists.Error())
-		return nil, ErrFileExists
+		log.Println("Could not create file: ", util.ErrFileExists.Error())
+		return nil, util.ErrFileExists
 	}
 	s.files[name] = new
 
@@ -61,7 +65,7 @@ func (s *osStore) Create(_ *gin.Context, name string, contents []byte) (*file, e
 	return new, nil
 }
 
-func (s *osStore) Modify(ctx context.Context, name, contents string) (*file, error) {
+func (s *osStore) Modify(ctx context.Context, name, contents string) (*model.File, error) {
 	filename := StoreName + "/" + name
 	if err := os.Truncate(filename, 0); err != nil {
 		log.Println("Failed to truncate: ", err)
@@ -93,8 +97,8 @@ func (s *osStore) Delete(ctx context.Context, name string) error {
 	return nil
 }
 
-func (s *osStore) List(ctx context.Context) ([]file, error) {
-	files := make([]file, 0)
+func (s *osStore) List(ctx context.Context) ([]model.File, error) {
+	files := make([]model.File, 0)
 	existing, err := ioutil.ReadDir(StoreName)
 	if err != nil {
 		log.Fatal("`store` dir could not be accessed:", err.Error())
@@ -102,7 +106,7 @@ func (s *osStore) List(ctx context.Context) ([]file, error) {
 	}
 
 	for _, fInfo := range existing {
-		f := file{
+		f := model.File{
 			Name:      fInfo.Name(),
 			CreatedAt: fInfo.ModTime().Unix(),
 		}
@@ -121,4 +125,16 @@ func (s *osStore) List(ctx context.Context) ([]file, error) {
 	})
 
 	return files, nil
+}
+
+func (s *osStore) GetInfo(ctx context.Context) (*util.AddrsResponse, error) {
+	return nil, errors.New("Not supported")
+}
+
+func (s *osStore) PinFile(ctx *gin.Context, c string) error {
+	return errors.New("Not supported")
+}
+
+func (s *osStore) ConnectPeer(ctx *gin.Context, addr ...string) error {
+	return errors.New("Not supported")
 }

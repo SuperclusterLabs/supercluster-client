@@ -1,8 +1,9 @@
-package supercluster
+package router
 
 import (
 	"net/http"
 
+	"github.com/SuperclusterLabs/supercluster-client/store"
 	cors "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -21,7 +22,7 @@ var wsupgrader = websocket.Upgrader{
 
 var wsCh chan map[string]interface{} = make(chan map[string]interface{})
 
-func addRoutes(r *gin.Engine, store ipfsStore) {
+func AddRoutes(r *gin.Engine, s store.P2PStore) {
 	/** middleware/config **/
 	// cors allow all
 	// TODO: should we be doing this?
@@ -31,29 +32,29 @@ func addRoutes(r *gin.Engine, store ipfsStore) {
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	api := r.Group("/api")
-	api.GET("/files", func(ctx *gin.Context) { listFiles(ctx, store) })
-	api.POST("/files", func(ctx *gin.Context) { createFile(ctx, store) })
-	api.DELETE("/files/:name", func(ctx *gin.Context) { deleteFile(ctx, store) })
-	api.PUT("/files/:name", func(ctx *gin.Context) { modifyFile(ctx, store) })
-	api.GET("/ws", func(ctx *gin.Context) { wshandler(ctx, store) })
+	api.GET("/files", func(ctx *gin.Context) { listFiles(ctx, s) })
+	api.POST("/files", func(ctx *gin.Context) { createFile(ctx, s) })
+	api.DELETE("/files/:name", func(ctx *gin.Context) { deleteFile(ctx, s) })
+	api.PUT("/files/:name", func(ctx *gin.Context) { modifyFile(ctx, s) })
+	api.GET("/ws", func(ctx *gin.Context) { wshandler(ctx, s) })
 
 	// user API
 	api.GET("/user", func(ctx *gin.Context) { getUser(ctx) })
 	api.POST("/user", func(ctx *gin.Context) { createUser(ctx) })
 	api.PUT("/user", func(ctx *gin.Context) { modifyUser(ctx) })
-	api.POST("/user/connectPeer", func(ctx *gin.Context) { connectPeer(ctx) })
-	api.GET("/user/myAddr", func(ctx *gin.Context) { getAddrs(ctx) })
+	api.POST("/user/connectPeer", func(ctx *gin.Context) { connectPeer(ctx, s) })
+	api.GET("/user/myAddr", func(ctx *gin.Context) { getAddrs(ctx, s) })
 	api.GET("/user/clusters", func(ctx *gin.Context) { getUserClusters(ctx) })
-	api.POST("/user/pinFile", func(ctx *gin.Context) { createPin(ctx, store) })
+	api.POST("/user/pinFile", func(ctx *gin.Context) { createPin(ctx, s) })
 
 	// cluster API
 	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })
-	api.GET("/cluster/files", func(ctx *gin.Context) { listPinnedFiles(ctx) })
+	api.GET("/cluster/files", func(ctx *gin.Context) { listPinnedFiles(ctx, s) })
 
 	api.GET("/cluster/:clusterId", func(ctx *gin.Context) { getCluster(ctx) })
 	api.PUT("/cluster/:clusterId", func(ctx *gin.Context) { modifyCluster(ctx) })
 
 	// file API
-	api.POST("/cluster/:clusterId", func(ctx *gin.Context) { createFile(ctx, store) })
-	api.DELETE("/cluster/:clusterId/:fileCid", func(ctx *gin.Context) { deleteFile(ctx, store) })
+	api.POST("/cluster/:clusterId", func(ctx *gin.Context) { createFile(ctx, s) })
+	api.DELETE("/cluster/:clusterId/:fileCid", func(ctx *gin.Context) { deleteFile(ctx, s) })
 }

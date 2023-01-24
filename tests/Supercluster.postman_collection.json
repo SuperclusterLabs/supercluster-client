@@ -1,0 +1,399 @@
+{
+	"info": {
+		"_postman_id": "abcf6edc-3122-4b3d-8fc7-639762ee918f",
+		"name": "Supercluster",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21329711"
+	},
+	"item": [
+		{
+			"name": "Create new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ethAddr\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get created user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user?ethAddr=0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					],
+					"query": [
+						{
+							"key": "ethAddr",
+							"value": "0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify created user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"0d4d326e-5452-4f0a-a973-d8d2e95bcded\",\n    \"clusters\": null,\n    \"ethAddr\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\",\n    \"ipfsAddr\": \"12D3KooWCk54bkeehLMDv52vmjTEvsB7EvXyA7s3E9WsGFUYudoY\",\n    \"activated\": \"true\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create cluster created user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"My cluster\",\n\t\"creator\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/cluster",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get created cluster",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add admin with unactivated account to cluster",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"f3055e01-ae2f-42a8-9ee8-30d62419d4a2\",\n    \"name\": \"My cluster\",\n    \"Description\": \"\",\n    \"nftAddr\": \"\",\n    \"files\": null,\n    \"admins\": [\"0x5E8dFFC1F19E3529fF1e072e6a4Efa8A91704670\"],\n    \"creator\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\",\n    \"members\": null\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User activates account with cluster",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ethAddr\": \"0x5E8dFFC1F19E3529fF1e072e6a4Efa8A91704670\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add admin with unactivated account to cluster Copy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"f3055e01-ae2f-42a8-9ee8-30d62419d4a2\",\n    \"name\": \"My cluster\",\n    \"Description\": \"\",\n    \"nftAddr\": \"\",\n    \"files\": null,\n    \"admins\": [\"0x5E8dFFC1F19E3529fF1e072e6a4Efa8A91704670\"],\n    \"creator\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\",\n    \"members\": null\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pin file",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/Downloads/ipfs.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete pinned file",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/Downloads/Grand-Mosque-of-Qom-12.jpg",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2/QmS2tWGQw3E2wR5hZcKhmpeBLMQ7ZG3T8LMCeAw3Mj45ff",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+						"QmS2tWGQw3E2wR5hZcKhmpeBLMQ7ZG3T8LMCeAw3Mj45ff"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get cluster files",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/Downloads/Grand-Mosque-of-Qom-12.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/cluster/files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"cluster",
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user addresses",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user/myAddr",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"myAddr"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User connects peer",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"12D3KooWCk54bkeehLMDv52vmjTEvsB7EvXyA7s3E9WsGFUYudoY\",\n    \"addrs\":[\"/ip4/192.168.1.40/tcp/4001\",\"/ip4/127.0.0.1/tcp/4001\",\"/ip6/2603:7000:2f00:e6::1dc0/tcp/4001\",\"/ip6/::1/tcp/4001\",\"/ip4/192.168.1.40/udp/4001/quic\",\"/ip4/127.0.0.1/udp/4001/quic\",\"/ip6/2603:7000:2f00:e6::1dc0/udp/4001/quic\",\"/ip6/::1/udp/4001/quic\",\"/ip4/67.243.220.205/tcp/16396\",\"/ip4/67.243.220.205/udp/16396/quic\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user/connectPeer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"connectPeer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User connects peer Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\":\"12D3KooWCk54bkeehLMDv52vmjTEvsB7EvXyA7s3E9WsGFUYudoY\",\n    \"addrs\":[\"/ip4/192.168.1.40/tcp/4001\",\"/ip4/127.0.0.1/tcp/4001\",\"/ip6/2603:7000:2f00:e6::1dc0/tcp/4001\",\"/ip6/::1/tcp/4001\",\"/ip4/192.168.1.40/udp/4001/quic\",\"/ip4/127.0.0.1/udp/4001/quic\",\"/ip6/2603:7000:2f00:e6::1dc0/udp/4001/quic\",\"/ip6/::1/udp/4001/quic\",\"/ip4/67.243.220.205/tcp/16396\",\"/ip4/67.243.220.205/udp/16396/quic\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user/connectPeer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"connectPeer"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

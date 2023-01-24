@@ -1,4 +1,4 @@
-package supercluster
+package model
 
 import (
 	"github.com/google/uuid"

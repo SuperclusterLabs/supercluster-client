@@ -1,9 +1,13 @@
-package supercluster
+package util
 
-type AllFiles map[string]file
+import (
+	"github.com/SuperclusterLabs/supercluster-client/model"
+)
+
+type AllFiles map[string]model.File
 
 type ListResponse struct {
-	Files []file `json:"files"`
+	Files []model.File `json:"files"`
 }
 
 type CreatePayload struct {
@@ -12,7 +16,7 @@ type CreatePayload struct {
 }
 
 type CreateResponse struct {
-	File file `json:"file"`
+	File model.File `json:"file"`
 }
 
 type ModifyPayload struct {
@@ -20,7 +24,7 @@ type ModifyPayload struct {
 }
 
 type ModifyResponse struct {
-	File file `json:"file"`
+	File model.File `json:"file"`
 }
 
 type ResponseError struct {

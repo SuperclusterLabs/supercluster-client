@@ -1,51 +1,75 @@
-package supercluster
+package db
 
 import (
 	"context"
 	"log"
+	"os"
+
+	"github.com/SuperclusterLabs/supercluster-client/model"
+	"github.com/SuperclusterLabs/supercluster-client/util"
 
 	firebase "firebase.google.com/go"
 	"github.com/google/uuid"
+	"google.golang.org/api/option"
 )
 
-type DB struct {
-	instance *firebase.App
+type FirebaseDB struct {
+	Instance *firebase.App
 }
 
-var db DB
+var _ SuperclusterDB = (*FirebaseDB)(nil)
 
 /** User routes **/
+func NewFirebaseDB() (SuperclusterDB, error) {
+	// initialize firebase
+	d, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	opt := option.WithCredentialsFile(d + "/.ipfs/keystore/supercluster-2d071-firebase-adminsdk-8qkm4-6688c64d73.json")
+	config := &firebase.Config{
+		DatabaseURL: "https://supercluster-2d071-default-rtdb.firebaseio.com/",
+	}
+	app, err := firebase.NewApp(context.Background(), config, opt)
+	if err != nil {
+		log.Println("Error initializing firebase: ", err.Error())
+		return nil, err
+	}
+	s := &FirebaseDB{Instance: app}
+
+	return s, nil
+}
 
 // TODO: figure out consistent way of taking/returning pointers
 
-func (d *DB) getUserById(ctx context.Context, uId string) (*User, error) {
-	client, err := d.instance.Database(ctx)
+func (d *FirebaseDB) GetUserById(ctx context.Context, uId string) (*model.User, error) {
+	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
 	}
-	var u User
+	var u model.User
 	if err := client.NewRef("users/"+uId).Get(ctx, &u); err != nil {
 		return nil, err
 	}
 	if u.Id == uuid.Nil {
-		return nil, ErrUserNotFound
+		return nil, util.ErrUserNotFound
 	}
 	return &u, nil
 }
 
-func (d *DB) getClustersForUser(ctx context.Context, userId string) ([]*Cluster, error) {
-	client, err := d.instance.Database(ctx)
+func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string) ([]*model.Cluster, error) {
+	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// Get the user from the User ID
-	var u User
+	var u model.User
 	if err := client.NewRef("users/"+userId).Get(ctx, &u); err != nil {
 		return nil, err
 	}
 	if u.Id == uuid.Nil {
-		return nil, ErrUserNotFound
+		return nil, util.ErrUserNotFound
 	}
 
 	var cs []string
@@ -57,10 +81,10 @@ func (d *DB) getClustersForUser(ctx context.Context, userId string) ([]*Cluster,
 	}
 
 	// Get cluster information for each cluster
-	var uClusters []*Cluster
+	var uClusters []*model.Cluster
 
 	for _, cId := range cs {
-		var c Cluster
+		var c model.Cluster
 		if err := client.NewRef("clusters/"+cId).Get(ctx, &c); err != nil {
 			return nil, err
 		}
@@ -69,8 +93,8 @@ func (d *DB) getClustersForUser(ctx context.Context, userId string) ([]*Cluster,
 	return uClusters, nil
 }
 
-func (d *DB) getUserByEthAddr(ctx context.Context, ethAddr string) (*User, error) {
-	client, err := d.instance.Database(ctx)
+func (d *FirebaseDB) GetUserByEthAddr(ctx context.Context, ethAddr string) (*model.User, error) {
+	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +110,7 @@ func (d *DB) getUserByEthAddr(ctx context.Context, ethAddr string) (*User, error
 		return nil, err
 	} else {
 		if len(result) == 0 {
-			return nil, ErrUserNotFound
+			return nil, util.ErrUserNotFound
 		}
 	}
 
@@ -115,7 +139,7 @@ func (d *DB) getUserByEthAddr(ctx context.Context, ethAddr string) (*User, error
 
 	log.Println(cs)
 	log.Println(u)
-	user := User{
+	user := model.User{
 		Id:        id,
 		EthAddr:   ethAddr,
 		IpfsAddr:  u["ipfsAddr"].(string),
@@ -126,11 +150,11 @@ func (d *DB) getUserByEthAddr(ctx context.Context, ethAddr string) (*User, error
 	return &user, nil
 }
 
-func (d *DB) updateUser(ctx context.Context, u User) (*User, error) {
+func (d *FirebaseDB) UpdateUser(ctx context.Context, u model.User) (*model.User, error) {
 	if u.Id == uuid.Nil {
 		u.Id = uuid.New()
 	}
-	client, err := d.instance.Database(ctx)
+	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -140,15 +164,15 @@ func (d *DB) updateUser(ctx context.Context, u User) (*User, error) {
 	return &u, nil
 }
 
-func (d *DB) updateUserClusters(ctx context.Context, eAddr string, cs ...string) (*User, error) {
-	u, err := d.getUserByEthAddr(ctx, eAddr)
+func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, eAddr string, cs ...string) (*model.User, error) {
+	u, err := d.GetUserByEthAddr(ctx, eAddr)
 	if err != nil {
 		return nil, err
 	}
 
 	u.Clusters = append(u.Clusters, cs...)
 
-	d.updateUser(ctx, *u)
+	d.UpdateUser(ctx, *u)
 	if err != nil {
 		return nil, err
 	}
@@ -158,26 +182,26 @@ func (d *DB) updateUserClusters(ctx context.Context, eAddr string, cs ...string)
 
 /** Cluster routes **/
 
-func (d *DB) getClusterById(ctx context.Context, cId string) (*Cluster, error) {
-	client, err := d.instance.Database(ctx)
+func (d *FirebaseDB) GetClusterById(ctx context.Context, cId string) (*model.Cluster, error) {
+	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
 	}
-	var c Cluster
+	var c model.Cluster
 	if err := client.NewRef("clusters/"+cId).Get(ctx, &c); err != nil {
 		return nil, err
 	}
 	if c.Id == uuid.Nil {
-		return nil, ErrClusterNotFound
+		return nil, util.ErrClusterNotFound
 	}
 	return &c, nil
 }
 
-func (d *DB) createCluster(ctx context.Context, c Cluster) (*Cluster, error) {
+func (d *FirebaseDB) CreateCluster(ctx context.Context, c model.Cluster) (*model.Cluster, error) {
 	if c.Id == uuid.Nil {
 		c.Id = uuid.New()
 	}
-	client, err := d.instance.Database(ctx)
+	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
 	}

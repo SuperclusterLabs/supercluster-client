@@ -1,42 +1,47 @@
-package supercluster
+package router
 
 import (
 	"log"
 	"net/http"
+
+	"github.com/SuperclusterLabs/supercluster-client/db"
+	"github.com/SuperclusterLabs/supercluster-client/model"
+	"github.com/SuperclusterLabs/supercluster-client/store"
+	"github.com/SuperclusterLabs/supercluster-client/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 // expects user ethAddr to be passed into `creator`
 func createCluster(ctx *gin.Context) {
-	c := &Cluster{}
+	c := &model.Cluster{}
 	if err := ctx.BindJSON(c); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrRequestUnmarshalled.Error(),
+		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			Error: util.ErrRequestUnmarshalled.Error(),
 		})
 
 		return
 	}
 
-	u, err := db.getUserByEthAddr(ctx, c.Creator)
+	u, err := db.AppDB.GetUserByEthAddr(ctx, c.Creator)
 	log.Println(u)
-	if err == ErrUserNotFound {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrUserNotFound.Error(),
+	if err == util.ErrUserNotFound {
+		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			Error: util.ErrUserNotFound.Error(),
 		})
 
 		return
 	} else if err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
+		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 			Error: err.Error(),
 		})
 
 		return
 	}
 
-	c, err = db.createCluster(ctx, *c)
+	c, err = db.AppDB.CreateCluster(ctx, *c)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
+		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 			Error: err.Error(),
 		})
 
@@ -44,9 +49,9 @@ func createCluster(ctx *gin.Context) {
 	}
 
 	// add cluster to creator's list of clusters
-	_, err = db.updateUserClusters(ctx, c.Creator, c.Id.String())
+	_, err = db.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
+		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 			Error: err.Error(),
 		})
 
@@ -57,10 +62,10 @@ func createCluster(ctx *gin.Context) {
 }
 
 func modifyCluster(ctx *gin.Context) {
-	c := &Cluster{}
+	c := &model.Cluster{}
 	if err := ctx.BindJSON(c); err != nil {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrRequestUnmarshalled.Error(),
+		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			Error: util.ErrRequestUnmarshalled.Error(),
 		})
 		return
 	}
@@ -68,10 +73,10 @@ func modifyCluster(ctx *gin.Context) {
 	// start by making sure new users have this cluster registered
 	// TODO: more complex rules, the following would break if
 	// a member is also an admin due to double-counting
-	cDb, err := db.getClusterById(ctx, c.Id.String())
+	cDb, err := db.AppDB.GetClusterById(ctx, c.Id.String())
 	oldUsers := append(cDb.Admins, cDb.Members...)
 	newUsers := append(c.Admins, c.Members...)
-	var updateUs []*User
+	var updateUs []*model.User
 	var createUs []string
 
 	for _, nUsr := range newUsers {
@@ -82,14 +87,14 @@ func modifyCluster(ctx *gin.Context) {
 			}
 		}
 		if !in {
-			u, err := db.getUserByEthAddr(ctx, nUsr)
+			u, err := db.AppDB.GetUserByEthAddr(ctx, nUsr)
 			if err != nil {
-				if err == ErrUserNotFound {
+				if err == util.ErrUserNotFound {
 					// add unregistered user to create list
 					createUs = append(createUs, nUsr)
 				} else {
 					// on failure discard updates
-					ctx.JSON(http.StatusInternalServerError, ResponseError{
+					ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 						Error: err.Error(),
 					})
 					return
@@ -104,17 +109,17 @@ func modifyCluster(ctx *gin.Context) {
 
 	// update existing users
 	for _, u := range updateUs {
-		_, err = db.updateUser(ctx, *u)
+		_, err = db.AppDB.UpdateUser(ctx, *u)
 	}
 
 	// create new unactivated users
 	for _, addr := range createUs {
-		u := User{
+		u := model.User{
 			EthAddr:   addr,
 			Activated: "false",
 			Clusters:  []string{c.Id.String()},
 		}
-		_, err = db.updateUser(ctx, u)
+		_, err = db.AppDB.UpdateUser(ctx, u)
 	}
 
 	if err != nil {
@@ -127,9 +132,9 @@ func modifyCluster(ctx *gin.Context) {
 	}
 
 	// finally, update cluster
-	c, err = db.createCluster(ctx, *c)
+	c, err = db.AppDB.CreateCluster(ctx, *c)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
+		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 			Error: err.Error(),
 		})
 
@@ -143,20 +148,20 @@ func getCluster(ctx *gin.Context) {
 	log.Println("get cluster")
 	clusterId := ctx.Param("clusterId")
 	if clusterId == "" {
-		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: ErrMissingParam.Error() + "ethAddr",
+		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			Error: util.ErrMissingParam.Error() + "ethAddr",
 		})
 		return
 	}
 
-	c, err := db.getClusterById(ctx, clusterId)
+	c, err := db.AppDB.GetClusterById(ctx, clusterId)
 	if err != nil {
-		if err == ErrClusterNotFound {
-			ctx.JSON(http.StatusBadRequest, ResponseError{
-				Error: ErrClusterNotFound.Error(),
+		if err == util.ErrClusterNotFound {
+			ctx.JSON(http.StatusBadRequest, util.ResponseError{
+				Error: util.ErrClusterNotFound.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusInternalServerError, ResponseError{
+			ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 				Error: err.Error(),
 			})
 		}
@@ -166,17 +171,12 @@ func getCluster(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, c)
 }
 
-func listPinnedFiles(ctx *gin.Context) {
-	ipfs := *getCoreAPIInstance()
-	var ps []string
-	pch, err := ipfs.Pin().Ls(ctx)
+func listPinnedFiles(ctx *gin.Context, s store.P2PStore) {
+	ps, err := s.List(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, ResponseError{
+		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
 			Error: err.Error(),
 		})
-	}
-	for p := range pch {
-		ps = append(ps, p.Path().Cid().String())
 	}
 	ctx.JSON(http.StatusOK, ps)
 }
