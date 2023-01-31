@@ -137,8 +137,6 @@ func (d *FirebaseDB) GetUserByEthAddr(ctx context.Context, ethAddr string) (*mod
 		}
 	}
 
-	log.Println(cs)
-	log.Println(u)
 	user := model.User{
 		Id:        id,
 		EthAddr:   ethAddr,

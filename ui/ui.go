@@ -7,15 +7,15 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/SuperclusterLabs/supercluster-client/util"
 	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin"
 )
 
 //go:embed build
 var staticFS embed.FS
 
 // AddRoutes serves the static file system for the UI React App.
-func AddRoutes(router gin.IRouter) {
+func AddRoutes(router util.SuperclusterRuntime) {
 	embeddedBuildFolder := newStaticFileSystem()
 	fallbackFileSystem := newFallbackFileSystem(embeddedBuildFolder)
 	router.Use(static.Serve("/", embeddedBuildFolder))
