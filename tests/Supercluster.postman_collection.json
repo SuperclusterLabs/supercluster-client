@@ -16,12 +16,12 @@
 					"raw": "{\n    \"ethAddr\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user",
+					"raw": "http://localhost:3030/api/user",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"user"
@@ -73,12 +73,12 @@
 					"raw": "{\n    \"id\": \"0d4d326e-5452-4f0a-a973-d8d2e95bcded\",\n    \"clusters\": null,\n    \"ethAddr\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\",\n    \"ipfsAddr\": \"12D3KooWCk54bkeehLMDv52vmjTEvsB7EvXyA7s3E9WsGFUYudoY\",\n    \"activated\": \"true\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user",
+					"raw": "http://localhost:3030/api/user",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"user"
@@ -97,12 +97,12 @@
 					"raw": "{\n\t\"name\": \"My cluster\",\n\t\"creator\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/cluster",
+					"raw": "http://localhost:3030/api/cluster",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"cluster"
@@ -117,12 +117,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"cluster",
@@ -142,12 +142,12 @@
 					"raw": "{\n    \"id\": \"f3055e01-ae2f-42a8-9ee8-30d62419d4a2\",\n    \"name\": \"My cluster\",\n    \"Description\": \"\",\n    \"nftAddr\": \"\",\n    \"files\": null,\n    \"admins\": [\"0x5E8dFFC1F19E3529fF1e072e6a4Efa8A91704670\"],\n    \"creator\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\",\n    \"members\": null\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"cluster",
@@ -167,12 +167,12 @@
 					"raw": "{\n    \"ethAddr\": \"0x5E8dFFC1F19E3529fF1e072e6a4Efa8A91704670\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user",
+					"raw": "http://localhost:3030/api/user",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"user"
@@ -191,12 +191,12 @@
 					"raw": "{\n    \"id\": \"f3055e01-ae2f-42a8-9ee8-30d62419d4a2\",\n    \"name\": \"My cluster\",\n    \"Description\": \"\",\n    \"nftAddr\": \"\",\n    \"files\": null,\n    \"admins\": [\"0x5E8dFFC1F19E3529fF1e072e6a4Efa8A91704670\"],\n    \"creator\": \"0xE4475EF8717d14Bef6dCBAd55E41dE64a0cc8512\",\n    \"members\": null\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"cluster",
@@ -257,12 +257,12 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2/QmcH7nMUgemcHD4hHu68J9UuXvPS6bj4QiszqHCSqnmMD7",
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2/QmcH7nMUgemcHD4hHu68J9UuXvPS6bj4QiszqHCSqnmMD7",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"cluster",
@@ -292,12 +292,12 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/cluster/files",
+					"raw": "http://localhost:3030/api/cluster/files",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"cluster",
@@ -320,12 +320,12 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user/myAddr",
+					"raw": "http://localhost:3030/api/user/myAddr",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"user",
@@ -350,12 +350,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user/connectPeer",
+					"raw": "http://localhost:3030/api/user/connectPeer",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"user",
@@ -380,12 +380,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user/connectPeer",
+					"raw": "http://localhost:3030/api/user/connectPeer",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "3000",
+					"port": "3030",
 					"path": [
 						"api",
 						"user",
