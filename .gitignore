@@ -18,3 +18,5 @@
 build
 ui/build
 
+# firebase config
+*firebase*.json
