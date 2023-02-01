@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/SuperclusterLabs/supercluster-client/util"
+
 	"github.com/gin-gonic/contrib/static"
 )
 
