@@ -3,24 +3,27 @@ GO111MODULE = on
 
 GOCC ?= go
 GOFLAGS ?=
+HOME_VAR = $(shell echo $$HOME)
+SUPERCLUSTER_DIR = $(HOME)"/.supercluster"
 
 # make reproducible
 GOFLAGS += -asmflags=all=-trimpath="$(GOPATH)" -gcflags=all=-trimpath="$(GOPATH)"
 
 .PHONY: install build
 
-go.mod: FORCE
-	./set-target.sh $(IPFS_VERSION)
-
-FORCE:
-
 supercluster: main.go
-	$(GOCC) build $(GOFLAGS) -o "$@" "$<"
-	chmod +x "$@"
+ifeq ($(wildcard ./build),)
+	cd scripts;	./setup.sh
+endif
+	$(GOCC) build $(GOFLAGS) -o "./build/$@" "$<"
 
 build: supercluster
 	@echo "Built $<"
 
 install: build
-	mkdir -p "$(IPFS_PATH)/plugins/"
-	cp -f supercluster-plugin.so "$(IPFS_PATH)/plugins/supercluster-plugin.so"
+	@mkdir -p $(SUPERCLUSTER_DIR)
+	@sudo cp build/supercluster /usr/local/bin/
+
+ifeq "$(wildcard $(SUPERCLUSTER_DIR)/kubo)" ""
+	@cp -r build/kubo ~/.supercluster
+endif
