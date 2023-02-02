@@ -8,8 +8,8 @@ on:
   push:
     branches: [ "main" ]
   # Uncomment for testing only
-  pull_request:
-    branches: [ "main" ]
+  # pull_request:
+    # branches: [ "main" ]
 
 jobs:
   deploy:
