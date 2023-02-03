@@ -2,15 +2,12 @@ name: CD release
 
 on:
   workflow_run:
-    workflows: ["CI build"]
+    workflows: ["CD build"]
     types:
       - completed
-  # push:
-    # branches: [ "main" ]
+  push:
+    branches: [ "main" ]
   # Uncomment for testing only
-  # (n.b. this will break waiting on CI to finish
-  # as that's only valid for default branch pushes
-  # for some reason)
   # pull_request:
     # branches: [ "main" ]
 
@@ -21,20 +18,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
+    - name: Build and package backend
+      run: |
+        make build
+        tar cvzf build.tar.gz build
+
     - name: Get Next Version
       id: semver
       uses: ietf-tools/semver-action@v1
       with:
         token: ${{ github.token }}
         majorList: release
-
-    - name: Download artifacts from latest CI build
-      run: |
-        sudo apt install unzip
-        export CI_BUILD_WORKFLOW_ID=$(curl  -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts | jq '.artifacts[0].id')
-        echo $CI_BUILD_WORKFLOW_ID
-        echo "https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts/$CI_BUILD_WORKFLOW_ID/zip"
-        curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" --output artifacts.zip https://api.github.com/repos/SuperclusterLabs/supercluster-client/actions/artifacts/$CI_BUILD_WORKFLOW_ID/zip
 
     - name: Create Release
       uses: ncipollo/release-action@v1

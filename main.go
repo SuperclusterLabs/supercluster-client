@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func init() {
+func main() {
 	// ensure requisite bins are found
 	dirName := ".supercluster"
 
@@ -26,17 +26,14 @@ func init() {
 	if err != nil {
 		panic("Supercluster dir doesn't exist")
 	}
-}
 
-func main() {
 	// TODO: remove firebase
-	var err error
 	db.AppDB, err = db.NewFirebaseDB()
 	if err != nil {
 		panic(err)
 	}
 
-	ipfs := util.NewProcessManager("./ipfs", []string{"daemon"})
+	ipfs := util.NewProcessManager(confDir+"/kubo/ipfs", []string{"daemon"})
 	if err = ipfs.Start(); err != nil {
 		panic(err)
 	}
