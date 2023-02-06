@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/SuperclusterLabs/supercluster-client/db"
+	"github.com/SuperclusterLabs/supercluster-client/proc"
 	"github.com/SuperclusterLabs/supercluster-client/router"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
-	"github.com/SuperclusterLabs/supercluster-client/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,12 +33,12 @@ func main() {
 		panic(err)
 	}
 
-	ipfs := util.NewProcessManager(confDir+"/kubo/ipfs", []string{"daemon"})
+	ipfs := proc.NewProcessManager(confDir+"/kubo/ipfs", []string{"daemon"})
 	if err = ipfs.Start(); err != nil {
 		panic(err)
 	}
 
-	r := util.SuperclusterRuntime{
+	r := proc.SuperclusterRuntime{
 		IpfsDaemon: ipfs,
 		Engine:     gin.Default(),
 	}
