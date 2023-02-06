@@ -1,10 +1,6 @@
-package util
+package router
 
-import (
-	"github.com/SuperclusterLabs/supercluster-client/model"
-)
-
-type AllFiles map[string]model.File
+import "github.com/SuperclusterLabs/supercluster-client/model"
 
 type ListResponse struct {
 	Files []model.File `json:"files"`

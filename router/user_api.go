@@ -15,7 +15,7 @@ import (
 func createUser(ctx *gin.Context) {
 	u := &model.User{}
 	if err := ctx.BindJSON(u); err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrRequestUnmarshalled.Error(),
 		})
 		return
@@ -25,7 +25,7 @@ func createUser(ctx *gin.Context) {
 	log.Println(uDb)
 
 	if err != nil && err != util.ErrUserNotFound {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
 
@@ -34,7 +34,7 @@ func createUser(ctx *gin.Context) {
 		u.Activated = "true"
 		u, err = db.AppDB.UpdateUser(ctx, *u)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
 			})
 
@@ -58,13 +58,13 @@ func createUser(ctx *gin.Context) {
 func modifyUser(ctx *gin.Context) {
 	u := &model.User{}
 	if err := ctx.BindJSON(u); err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrRequestUnmarshalled.Error(),
 		})
 		return
 	}
 	if u.Activated != "true" && u.Activated != "false" {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrNeedActivation.Error(),
 		})
 		return
@@ -72,11 +72,11 @@ func modifyUser(ctx *gin.Context) {
 	uDB, err := db.AppDB.GetUserByEthAddr(ctx, u.EthAddr)
 	if err != nil {
 		if err == util.ErrUserNotFound {
-			ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			ctx.JSON(http.StatusBadRequest, ResponseError{
 				Error: util.ErrUserNotFound.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
 			})
 		}
@@ -90,7 +90,7 @@ func modifyUser(ctx *gin.Context) {
 	u.Id = uDB.Id
 	u, err = db.AppDB.UpdateUser(ctx, *u)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
 
@@ -103,7 +103,7 @@ func modifyUser(ctx *gin.Context) {
 func getUser(ctx *gin.Context) {
 	ethAddr := ctx.Query("ethAddr")
 	if ethAddr == "" {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrMissingParam.Error() + "ethAddr",
 		})
 		return
@@ -112,11 +112,11 @@ func getUser(ctx *gin.Context) {
 	u, err := db.AppDB.GetUserByEthAddr(ctx, ethAddr)
 	if err != nil {
 		if err == util.ErrUserNotFound {
-			ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			ctx.JSON(http.StatusBadRequest, ResponseError{
 				Error: util.ErrUserNotFound.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
 			})
 		}
@@ -129,7 +129,7 @@ func getUser(ctx *gin.Context) {
 func getUserClusters(ctx *gin.Context) {
 	userId := ctx.Query("userId")
 	if userId == "" {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrMissingParam.Error() + "ethAddr",
 		})
 		return
@@ -139,11 +139,11 @@ func getUserClusters(ctx *gin.Context) {
 
 	if err != nil {
 		if err == util.ErrUserNotFound {
-			ctx.JSON(http.StatusBadRequest, util.ResponseError{
+			ctx.JSON(http.StatusBadRequest, ResponseError{
 				Error: util.ErrUserNotFound.Error(),
 			})
 		} else {
-			ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
 			})
 		}
@@ -156,7 +156,7 @@ func getUserClusters(ctx *gin.Context) {
 func connectPeer(ctx *gin.Context, s store.P2PStore) {
 	a := &util.AddrsResponse{}
 	if err := ctx.BindJSON(a); err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrRequestUnmarshalled.Error() + err.Error(),
 		})
 		return
@@ -164,7 +164,7 @@ func connectPeer(ctx *gin.Context, s store.P2PStore) {
 
 	err := s.ConnectPeer(ctx, a.Addrs...)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
 		return
@@ -175,7 +175,7 @@ func connectPeer(ctx *gin.Context, s store.P2PStore) {
 func getAddrs(ctx *gin.Context, s store.P2PStore) {
 	info, err := s.GetInfo(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
 	}

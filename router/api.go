@@ -8,6 +8,7 @@ import (
 
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/util"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,7 +41,7 @@ func createFile(ctx *gin.Context, s store.P2PStore) {
 	f, h, err := ctx.Request.FormFile("file")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest,
-			util.ResponseError{Error: err.Error()})
+			ResponseError{Error: err.Error()})
 		return
 	}
 
@@ -55,7 +56,7 @@ func createFile(ctx *gin.Context, s store.P2PStore) {
 
 	file, err := s.Create(ctx, h.Filename, buf.Bytes())
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: util.ErrCannotCreate.Error(),
 		})
 		return
@@ -71,7 +72,7 @@ func createFile(ctx *gin.Context, s store.P2PStore) {
 
 	// wsCh <- n
 
-	ctx.JSON(http.StatusOK, util.CreateResponse{
+	ctx.JSON(http.StatusOK, CreateResponse{
 		File: *file,
 	})
 }
@@ -81,7 +82,7 @@ func deleteFile(ctx *gin.Context, s store.P2PStore) {
 
 	err := s.Delete(ctx, cid)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: err.Error(),
 		})
 		return
@@ -98,9 +99,9 @@ func deleteFile(ctx *gin.Context, s store.P2PStore) {
 func modifyFile(ctx *gin.Context, s store.P2PStore) {
 	name := ctx.Param("name")
 
-	payload := &util.ModifyPayload{}
+	payload := &ModifyPayload{}
 	if err := ctx.BindJSON(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrRequestUnmarshalled.Error(),
 		})
 		return
@@ -108,13 +109,13 @@ func modifyFile(ctx *gin.Context, s store.P2PStore) {
 
 	f, err := s.Modify(ctx, name, payload.Contents)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrNotFound.Error(),
 		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, util.ModifyResponse{
+	ctx.JSON(http.StatusOK, ModifyResponse{
 		File: *f,
 	})
 }
@@ -122,27 +123,27 @@ func modifyFile(ctx *gin.Context, s store.P2PStore) {
 func listFiles(ctx *gin.Context, s store.P2PStore) {
 	fs, err := s.List(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: util.ErrExistingFileRead.Error(),
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, util.ListResponse{
+	ctx.JSON(http.StatusOK, ListResponse{
 		Files: fs,
 	})
 }
 
 func createPin(ctx *gin.Context, s store.P2PStore) {
-	p := &util.PinRequest{}
+	p := &PinRequest{}
 	if err := ctx.BindJSON(p); err != nil {
-		ctx.JSON(http.StatusBadRequest, util.ResponseError{
+		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrRequestUnmarshalled.Error() + err.Error(),
 		})
 		return
 	}
 	err := s.PinFile(ctx, p.Cid)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: util.ErrExistingFileRead.Error() + err.Error(),
 		})
 		return
