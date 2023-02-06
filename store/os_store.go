@@ -127,7 +127,7 @@ func (s *osStore) List(ctx context.Context) ([]model.File, error) {
 	return files, nil
 }
 
-func (s *osStore) GetInfo(ctx context.Context) (*util.AddrsResponse, error) {
+func (s *osStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
 	return nil, errors.New("Not supported")
 }
 

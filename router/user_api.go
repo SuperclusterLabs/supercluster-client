@@ -154,7 +154,7 @@ func getUserClusters(ctx *gin.Context) {
 }
 
 func connectPeer(ctx *gin.Context, s store.P2PStore) {
-	a := &util.AddrsResponse{}
+	a := &store.P2PNodeInfo{}
 	if err := ctx.BindJSON(a); err != nil {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrRequestUnmarshalled.Error() + err.Error(),

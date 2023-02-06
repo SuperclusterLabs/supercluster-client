@@ -27,11 +27,6 @@ type ResponseError struct {
 	Error string `json:"error"`
 }
 
-type AddrsResponse struct {
-	ID    string   `json:"id"`
-	Addrs []string `json:"addrs"`
-}
-
 type PinRequest struct {
 	Cid string `json:"cid"`
 }
