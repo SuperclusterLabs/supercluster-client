@@ -20,6 +20,9 @@ type P2PStore interface {
 }
 
 type P2PNodeInfo struct {
-	ID    string   `json:"id"`
-	Addrs []string `json:"addrs"`
+	ID              string
+	PublicKey       string
+	Addresses       []string
+	AgentVersion    string
+	ProtocolVersion string
 }

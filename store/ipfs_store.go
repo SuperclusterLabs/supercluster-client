@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -150,14 +151,18 @@ func (s *IpfsStore) List(ctx context.Context) ([]model.File, error) {
 }
 
 func (s *IpfsStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
-	n, err := s.ipfsApi.ID()
+	resp, err := http.Post("http://localhost:5001/api/v0/id", "application/json", nil)
 	if err != nil {
 		return nil, err
 	}
-	return &P2PNodeInfo{
-		ID:    n.ID,
-		Addrs: n.Addresses,
-	}, nil
+	defer resp.Body.Close()
+	var ar P2PNodeInfo
+	err = json.NewDecoder(resp.Body).Decode(&ar)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ar, nil
 }
 
 func (s *IpfsStore) PinFile(ctx *gin.Context, c string) error {

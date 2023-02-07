@@ -162,7 +162,7 @@ func connectPeer(ctx *gin.Context, s store.P2PStore) {
 		return
 	}
 
-	err := s.ConnectPeer(ctx, a.Addrs...)
+	err := s.ConnectPeer(ctx, a.Addresses...)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
