@@ -99,6 +99,34 @@ func (s *IpfsStore) List(ctx context.Context) ([]model.File, error) {
 		return nil, err
 	}
 
+	// since all files are directories, grab name from them
+	for p := range pins {
+		dir := false
+		es, err := s.ipfsApi.Unixfs().Ls(ctx, p.Path())
+		if err != nil {
+			return nil, err
+		}
+
+		// ignore indirect pins as they are necessarily files for now
+
+		for e := range es {
+			dir = true
+			files = append(files, model.File{
+				Cid:     e.Cid.String(),
+				Name:    e.Name,
+				Size:    int64(e.Size),
+				PinType: "indirect",
+			})
+		}
+
+		if dir {
+			files = append(files, model.File{
+				Cid:     p.Path().Cid().String(),
+				PinType: p.Type(),
+			})
+		}
+	}
+
 	return files, nil
 }
 

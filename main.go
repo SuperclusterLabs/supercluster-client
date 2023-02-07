@@ -42,7 +42,7 @@ func main() {
 		IpfsDaemon: ipfs,
 		Engine:     gin.Default(),
 	}
-	s := store.NewIpfsStore()
+	s, err := store.NewIpfsStore()
 	if err != nil {
 		panic("Cannot create store: " + err.Error())
 	}
