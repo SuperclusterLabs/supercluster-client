@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
-	"github.com/SuperclusterLabs/supercluster-client/util"
 
 	"github.com/gin-gonic/gin"
 	shell "github.com/ipfs/go-ipfs-api"
@@ -95,12 +94,12 @@ func (s *IpfsStore) List(ctx context.Context) ([]model.File, error) {
 	return files, nil
 }
 
-func (s *IpfsStore) GetInfo(ctx context.Context) (*util.AddrsResponse, error) {
+func (s *IpfsStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
 	n, err := s.ipfsApi.ID()
 	if err != nil {
 		return nil, err
 	}
-	return &util.AddrsResponse{
+	return &P2PNodeInfo{
 		ID:    n.ID,
 		Addrs: n.Addresses,
 	}, nil

@@ -1,10 +1,6 @@
-package util
+package router
 
-import (
-	"github.com/SuperclusterLabs/supercluster-client/model"
-)
-
-type AllFiles map[string]model.File
+import "github.com/SuperclusterLabs/supercluster-client/model"
 
 type ListResponse struct {
 	Files []model.File `json:"files"`
@@ -29,11 +25,6 @@ type ModifyResponse struct {
 
 type ResponseError struct {
 	Error string `json:"error"`
-}
-
-type AddrsResponse struct {
-	ID    string   `json:"id"`
-	Addrs []string `json:"addrs"`
 }
 
 type PinRequest struct {
