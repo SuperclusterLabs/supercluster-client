@@ -96,6 +96,17 @@ func deleteFile(ctx *gin.Context, s store.P2PStore) {
 	ctx.Status(http.StatusOK)
 }
 
+func deleteAll(ctx *gin.Context, s store.P2PStore) {
+	err := s.DeleteAll(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+			Error: err.Error(),
+		})
+		return
+	}
+	ctx.Status(http.StatusOK)
+}
+
 func modifyFile(ctx *gin.Context, s store.P2PStore) {
 	name := ctx.Param("name")
 

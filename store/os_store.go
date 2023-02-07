@@ -93,7 +93,24 @@ func (s *osStore) Delete(ctx context.Context, name string) error {
 		log.Println("Could not delete file: ", err.Error())
 		return err
 	}
-	delete(s.files, name)
+	return nil
+}
+
+func (s *osStore) DeleteAll(ctx context.Context) error {
+	fs, err := s.List(ctx)
+	if err != nil {
+		log.Println("Could not fetch pinned files ", err.Error())
+		return err
+	}
+
+	for _, f := range fs {
+		err := os.Remove(StoreName + "/" + f.Name)
+		if err != nil {
+			log.Println("Could not delete file: ", err.Error())
+			return err
+		}
+	}
+
 	return nil
 }
 

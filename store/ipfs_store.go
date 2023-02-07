@@ -91,6 +91,25 @@ func (s *IpfsStore) Delete(ctx context.Context, cid string) error {
 	return nil
 }
 
+func (s *IpfsStore) DeleteAll(ctx context.Context) error {
+	fs, err := s.List(ctx)
+	if err != nil {
+		log.Println("Could not fetch pinned files ", err.Error())
+		return err
+	}
+
+	for _, f := range fs {
+		if f.PinType == "recursive" {
+			err := s.ipfsApi.Pin().Rm(ctx, path.New(f.Cid))
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (s *IpfsStore) List(ctx context.Context) ([]model.File, error) {
 	files := make([]model.File, 0)
 

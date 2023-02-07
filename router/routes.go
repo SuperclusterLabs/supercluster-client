@@ -52,6 +52,7 @@ func AddRoutes(r proc.SuperclusterRuntime, s store.P2PStore) {
 	// cluster API
 	api.POST("/cluster", func(ctx *gin.Context) { createCluster(ctx) })
 	api.GET("/cluster/files", func(ctx *gin.Context) { listPinnedFiles(ctx, s) })
+	api.DELETE("/cluster/files", func(ctx *gin.Context) { deleteAll(ctx, s) })
 
 	api.GET("/cluster/:clusterId", func(ctx *gin.Context) { getCluster(ctx) })
 	api.PUT("/cluster/:clusterId", func(ctx *gin.Context) { modifyCluster(ctx) })
