@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "abcf6edc-3122-4b3d-8fc7-639762ee918f",
+		"_postman_id": "ce619468-89b9-4981-a295-9689899b43f8",
 		"name": "Supercluster",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "21329711"
@@ -207,7 +207,7 @@
 			"response": []
 		},
 		{
-			"name": "Pin file",
+			"name": "Pin a file to the cluster",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {}
 			},
@@ -220,7 +220,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/home/gov/dev/supercluster-client/go.sum"
+							"src": "/home/gov/dev/supercluster-client/tests/test.file"
 						}
 					]
 				},
@@ -257,7 +257,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2/QmcH7nMUgemcHD4hHu68J9UuXvPS6bj4QiszqHCSqnmMD7",
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2/QmctM3QV79nGaL64fDv3xdPorkTGKYaYKs1tcWFasZZaGF",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -267,7 +267,109 @@
 						"api",
 						"cluster",
 						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
-						"QmcH7nMUgemcHD4hHu68J9UuXvPS6bj4QiszqHCSqnmMD7"
+						"QmctM3QV79nGaL64fDv3xdPorkTGKYaYKs1tcWFasZZaGF"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pin the same file again",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/dev/supercluster-client/tests/test.file"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pin another file to the same cluster",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/dev/supercluster-client/tests/test2.file"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pin directly to node",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/dev/supercluster-client/tests/test.file"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3030/api/cluster/f3055e01-ae2f-42a8-9ee8-30d62419d4a2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"api",
+						"cluster",
+						"f3055e01-ae2f-42a8-9ee8-30d62419d4a2"
 					]
 				}
 			},
@@ -280,6 +382,37 @@
 			},
 			"request": {
 				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/gov/Downloads/Grand-Mosque-of-Qom-12.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3030/api/cluster/files",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3030",
+					"path": [
+						"api",
+						"cluster",
+						"files"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all files",
+			"request": {
+				"method": "DELETE",
 				"header": [],
 				"body": {
 					"mode": "formdata",

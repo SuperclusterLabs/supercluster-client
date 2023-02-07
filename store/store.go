@@ -12,6 +12,7 @@ type P2PStore interface {
 	Create(ctx *gin.Context, name string, contents []byte) (*model.File, error)
 	Modify(ctx context.Context, name, contents string) (*model.File, error)
 	Delete(ctx context.Context, name string) error
+	DeleteAll(ctx context.Context) error
 	List(ctx context.Context) ([]model.File, error)
 	GetInfo(ctx context.Context) (*P2PNodeInfo, error)
 	PinFile(ctx *gin.Context, c string) error
@@ -19,6 +20,9 @@ type P2PStore interface {
 }
 
 type P2PNodeInfo struct {
-	ID    string   `json:"id"`
-	Addrs []string `json:"addrs"`
+	ID              string
+	PublicKey       string
+	Addresses       []string
+	AgentVersion    string
+	ProtocolVersion string
 }
