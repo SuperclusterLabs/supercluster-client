@@ -99,7 +99,7 @@ func deleteFile(ctx *gin.Context, s store.P2PStore) {
 func deleteAll(ctx *gin.Context, s store.P2PStore) {
 	err := s.DeleteAll(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, util.ResponseError{
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
 		return
