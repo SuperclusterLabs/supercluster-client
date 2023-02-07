@@ -5,5 +5,7 @@ type File struct {
 	Cid       string `json:"cid"`
 	Creator   string `json:"creator"`
 	CreatedAt int64  `json:"createdAt"`
+	Size      int64  `json:"size"`
+	PinType   string `json:"pinType"`
 	// TODO: whitelist of users that can access
 }
