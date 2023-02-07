@@ -178,6 +178,7 @@ func getAddrs(ctx *gin.Context, s store.P2PStore) {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
 		})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, info)
