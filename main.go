@@ -28,7 +28,11 @@ func main() {
 		panic(err)
 	}
 
-	ipfs := proc.NewProcessManager(confDir+"/kubo/ipfs", []string{"daemon"})
+	ipfs, err := proc.NewIPFSProcess()
+	if err != nil {
+		panic(err)
+	}
+
 	if err = ipfs.Start(); err != nil {
 		panic(err)
 	}
