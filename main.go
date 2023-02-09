@@ -9,20 +9,15 @@ import (
 	"github.com/SuperclusterLabs/supercluster-client/router"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
+	"github.com/SuperclusterLabs/supercluster-client/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// ensure requisite bins are found
-	dirName := ".supercluster"
+	confDir := util.GetConfDir()
 
-	hDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-	confDir := hDir + "/" + dirName
-	_, err = os.Stat(confDir)
+	_, err := os.Stat(confDir)
 	if err != nil {
 		panic("Supercluster dir doesn't exist")
 	}
