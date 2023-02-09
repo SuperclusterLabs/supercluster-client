@@ -34,10 +34,10 @@ func main() {
 	}
 
 	r := proc.SuperclusterRuntime{
-		IpfsDaemon: ipfs,
+		IPFSDaemon: ipfs,
 		Engine:     gin.Default(),
 	}
-	s, err := store.NewIpfsStore()
+	s, err := store.NewIPFSStore()
 	if err != nil {
 		panic("Cannot create store: " + err.Error())
 	}
