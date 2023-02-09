@@ -1,5 +1,7 @@
 package proc
 
 type ManagedProcess interface {
-	*ProcessManager
+	Init() error
+	Start() error
+	Stop() error
 }
