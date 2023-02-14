@@ -7,22 +7,35 @@ import (
 	"syscall"
 )
 
+// TODO: add https://github.com/jbenet/goprocess
 type ProcessManager struct {
-	exePath string
-	args    []string
-	cmd     *exec.Cmd
+	exePath     string
+	args        []string
+	cmd         *exec.Cmd
+	logFileName string
+	logFile     *os.File
 }
 
-func NewProcessManager(exePath string, args []string) *ProcessManager {
+func NewProcessManager(exePath string, args []string, lfn string) *ProcessManager {
 	return &ProcessManager{
-		exePath: exePath,
-		args:    args,
+		exePath:     exePath,
+		args:        args,
+		logFileName: lfn,
 	}
 }
 
 func (pm *ProcessManager) Start() error {
 	pm.cmd = exec.Command(pm.exePath, pm.args...)
-	err := pm.cmd.Start()
+
+	// TODO: what about Init() logs?
+	lf, err := os.OpenFile(pm.logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	pm.cmd.Stdout = lf
+	pm.logFile = lf
+
+	err = pm.cmd.Start()
 	if err != nil {
 		return err
 	}
@@ -32,6 +45,10 @@ func (pm *ProcessManager) Start() error {
 func (pm *ProcessManager) Stop() error {
 	if pm.cmd == nil {
 		return fmt.Errorf("the process is not running")
+	}
+
+	if err := pm.logFile.Close(); err != nil {
+		return err
 	}
 	return pm.cmd.Process.Signal(os.Interrupt)
 }
