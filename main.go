@@ -33,6 +33,10 @@ func main() {
 		panic(err)
 	}
 
+	if err = ipfs.Init(); err != nil {
+		panic(err)
+	}
+
 	if err = ipfs.Start(); err != nil {
 		panic(err)
 	}
