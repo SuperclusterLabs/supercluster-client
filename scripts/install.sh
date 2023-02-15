@@ -1,28 +1,10 @@
 #!/bin/bash
 
-SUPERCLUSTER_URL=http://localhost:3000
+SUPERCLUSTER_URL=http://localhost:3030
 SUPERCLUSTER_DIR="$(echo $HOME)/.supercluster"
 SUPERCLUSTER_BINS="supercluster ipfs"
 
-# unzip and set permissions
-# this should contain ipfs, supercluster, ipfs-cluster bins
-unzip artifacts.zip
-if [ $? -ne 0 ]; then
-  echo "Unzipping failed, check if you have `unzip` installed"
-  exit
-fi
-
-# make bins executable
-chmod +x $SUPERCLUSTER_BINS
-
-if [[ ! -d $SUPERCLUSTER_DIR ]]; then
-    mkdir $SUPERCLUSTER_DIR
-fi
-
-# move everything to their final resting place and init IPFS
-mv $SUPERCLUSTER_BINS $SUPERCLUSTER_DIR
-cd $SUPERCLUSTER_DIR
-./ipfs init
+cp -r . $SUPERCLUSTER_DIR
 
 # start backend
 nohup ./supercluster >> ./logs.txt &
