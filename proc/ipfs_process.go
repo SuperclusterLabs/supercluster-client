@@ -34,8 +34,8 @@ func (ip *IPFSProcess) Init() error {
 
 	_, err = os.Stat(hDir + "/.ipfs")
 	if os.IsNotExist(err) {
-		cmd := exec.Command(kuboPath, []string{"daemon"}...)
-		return cmd.Wait()
+		cmd := exec.Command(kuboPath, []string{"init"}...)
+		return cmd.Run()
 	}
 	if err != nil {
 		return err
@@ -43,5 +43,5 @@ func (ip *IPFSProcess) Init() error {
 
 	// run any outstanding migrations
 	cmd := exec.Command(kuboPath, []string{"repo", "migrate"}...)
-	return cmd.Wait()
+	return cmd.Run()
 }
