@@ -26,7 +26,7 @@ type IPFSStore struct {
 
 var _ P2PStore = (*IPFSStore)(nil)
 
-func NewIPFSStore() (P2PStore, error) {
+func NewIPFSStore() (*IPFSStore, error) {
 	api, err := shell.NewURLApiWithClient("localhost:5001", &http.Client{
 		Transport: &http.Transport{
 			Proxy:             http.ProxyFromEnvironment,
