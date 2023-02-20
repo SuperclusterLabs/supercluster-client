@@ -10,8 +10,6 @@ import (
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
 	"github.com/SuperclusterLabs/supercluster-client/util"
-
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -41,20 +39,18 @@ func main() {
 		panic(err)
 	}
 
-	r := proc.SuperclusterRuntime{
-		IPFSDaemon: ipfs,
-		Engine:     gin.Default(),
-	}
+	proc.GlobalRuntime = proc.NewSuperclusterRuntime(ipfs)
+
 	s, err := store.NewIPFSStore()
 	if err != nil {
 		panic("Cannot create store: " + err.Error())
 	}
 
-	router.AddRoutes(r, s)
-	ui.AddRoutes(r)
+	router.AddRoutes(proc.GlobalRuntime, s)
+	ui.AddRoutes(proc.GlobalRuntime)
 
 	// TODO: add version here
 	log.Println("Supercluster started!")
 
-	r.Run(":3030")
+	proc.GlobalRuntime.Run(":3030")
 }
