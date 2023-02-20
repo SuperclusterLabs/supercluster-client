@@ -6,6 +6,7 @@ import (
 
 	"github.com/SuperclusterLabs/supercluster-client/db"
 	"github.com/SuperclusterLabs/supercluster-client/model"
+	"github.com/SuperclusterLabs/supercluster-client/proc"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/util"
 
@@ -47,6 +48,30 @@ func createCluster(ctx *gin.Context) {
 
 		return
 	}
+
+	// spin up a pinning service on ipfs cluster
+	icp, err := proc.NewHostIPFSClusterProcess(c.Id)
+	err = icp.Init()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+
+		return
+	}
+	err = icp.Start()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+
+		return
+	}
+
+	// add cluster ptr to process pool in Runtime
+	proc.GlobalRuntime.AddProcess(c.Id, icp)
+
+	// TODO: use xmtp (via websocket?) to "mail" the config to other members
 
 	// add cluster to creator's list of clusters
 	_, err = db.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
@@ -145,7 +170,6 @@ func modifyCluster(ctx *gin.Context) {
 }
 
 func getCluster(ctx *gin.Context) {
-	log.Println("get cluster")
 	clusterId := ctx.Param("clusterId")
 	if clusterId == "" {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
