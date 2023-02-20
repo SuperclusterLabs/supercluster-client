@@ -6,6 +6,9 @@ SUPERCLUSTER_BINS="supercluster ipfs"
 
 cp -r . $SUPERCLUSTER_DIR
 
+cd $SUPERCLUSTER_DIR
+mkdir clusters logs
+
 # start backend
 nohup ./supercluster >> ./logs.txt &
 
