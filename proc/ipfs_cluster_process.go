@@ -15,6 +15,7 @@ type IPFSClusterProcess struct {
 	svcPort  string
 	httpPort string
 	secret   string
+	config   *map[string]interface{}
 
 	*ProcessManager
 }
@@ -55,25 +56,62 @@ func NewJoinIPFSClusterProcess(id uuid.UUID, svcPort, httpPort, secret string) (
 }
 
 func (icp *IPFSClusterProcess) Init() error {
+	cld := clsDir + "/" + icp.id.String()
 	// check if dir already exists, if not the daemon should start without issues
-	if _, err := os.Stat(clsDir + "/" + icp.id.String()); err != nil {
+	if _, err := os.Stat(cld); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 
 		// initialize dir for this cluster
-		cmd := exec.Command(clSvc, []string{"-c", clsDir + "/" + icp.id.String(), "init", "--randomports"}...)
-		return cmd.Run()
-
-		// TODO: update config with details provided
-		// if icp.svcPort != "" && icp.httpPort != "" && icp.secret != "" {
-		// ...
-		// }
+		cmd := exec.Command(clSvc, []string{"-c", cld, "init", "--randomports"}...)
+		err = cmd.Run()
+		if err != nil {
+			return err
+		}
 	}
+
+	// get generated config file for the cluster
+	c, err := util.ReadJSONFile(cld + "/service.json")
+	if err != nil {
+		return err
+	}
+	icp.config = &c
 
 	return nil
 }
 
 func (icp *IPFSClusterProcess) AddPeer(m ma.Multiaddr) {
 	// TODO: add peer to peerstore
+}
+
+func (icp *IPFSClusterProcess) GetPort() (string, error) {
+	apiData, ok := (*icp.config)["api"]
+	if !ok {
+		return "", util.ErrBadClConfig
+	}
+
+	// TODO: can we do better than this ugly wrangling? refer to IPFS cluster src to find out
+	ipfsproxyData, ok := apiData.(map[string]interface{})["ipfsproxy"]
+	if !ok {
+		return "", util.ErrBadClConfig
+	}
+
+	listenAddr, ok := ipfsproxyData.(map[string]interface{})["listen_multiaddress"].(string)
+	if !ok {
+		return "", util.ErrBadClConfig
+	}
+	m, err := ma.NewMultiaddr(listenAddr)
+	if err != nil {
+		return "", err
+	}
+
+	tcpAddr, err := m.ValueForProtocol(ma.ProtocolWithName("tcp").Code)
+	if err != nil {
+		return "", err
+	}
+
+	// Extract the port number from the TCP sub-address
+	port := tcpAddr[len(tcpAddr)-4:]
+	return port, nil
 }
