@@ -35,6 +35,13 @@ func (r *SuperclusterRuntime) AddProcess(id uuid.UUID, p *IPFSClusterProcess) er
 	return nil
 }
 
+func (r *SuperclusterRuntime) GetProcess(id uuid.UUID) (*IPFSClusterProcess, error) {
+	if p, ok := r.clusterCtlProcs[id]; ok {
+		return p, nil
+	}
+	return nil, errors.New("No cluster running with that ID")
+}
+
 // TODO: should this check if the process is ended?
 func (r *SuperclusterRuntime) RemoveProcess(id uuid.UUID, p *IPFSClusterProcess) {
 	delete(r.clusterCtlProcs, id)
