@@ -33,6 +33,7 @@ func (pm *ProcessManager) Start() error {
 		return err
 	}
 	pm.cmd.Stdout = lf
+	pm.cmd.Stderr = lf
 	pm.logFile = lf
 
 	err = pm.cmd.Start()
