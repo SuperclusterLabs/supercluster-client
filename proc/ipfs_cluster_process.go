@@ -36,7 +36,7 @@ func NewHostIPFSClusterProcess(id uuid.UUID) (*IPFSClusterProcess, error) {
 
 	return &IPFSClusterProcess{
 		id:             id,
-		ProcessManager: NewProcessManager(clSvc, []string{"-c", logDir + "/" + id.String(), "daemon"}, logDir+"/"+id.String()),
+		ProcessManager: NewProcessManager(clSvc, []string{"-c", clsDir + "/" + id.String(), "daemon"}, logDir+"/"+id.String()),
 	}, nil
 }
 
