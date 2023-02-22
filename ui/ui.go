@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/SuperclusterLabs/supercluster-client/proc"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
+
 	"github.com/gin-gonic/contrib/static"
 )
 
@@ -15,7 +16,7 @@ import (
 var staticFS embed.FS
 
 // AddRoutes serves the static file system for the UI React App.
-func AddRoutes(router proc.SuperclusterRuntime) {
+func AddRoutes(router runtime.SuperclusterRuntime) {
 	embeddedBuildFolder := newStaticFileSystem()
 	fallbackFileSystem := newFallbackFileSystem(embeddedBuildFolder)
 	router.Use(static.Serve("/", embeddedBuildFolder))

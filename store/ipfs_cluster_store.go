@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
-	"github.com/SuperclusterLabs/supercluster-client/proc"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
 
 	"github.com/gin-gonic/gin"
 	path "github.com/ipfs/interface-go-ipfs-core/path"

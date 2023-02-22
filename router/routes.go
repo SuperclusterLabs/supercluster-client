@@ -3,7 +3,7 @@ package router
 import (
 	"net/http"
 
-	"github.com/SuperclusterLabs/supercluster-client/proc"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 
 	cors "github.com/gin-contrib/cors"
@@ -24,7 +24,7 @@ var wsupgrader = websocket.Upgrader{
 
 var wsCh chan map[string]interface{} = make(chan map[string]interface{})
 
-func AddRoutes(r proc.SuperclusterRuntime, s store.P2PStore) {
+func AddRoutes(r runtime.SuperclusterRuntime, s store.P2PStore) {
 	/** middleware/config **/
 	// cors allow all
 	// TODO: should we be doing this?
