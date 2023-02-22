@@ -106,12 +106,10 @@ func (icp *IPFSClusterProcess) GetPort() (string, error) {
 		return "", err
 	}
 
-	tcpAddr, err := m.ValueForProtocol(ma.ProtocolWithName("tcp").Code)
+	port, err := m.ValueForProtocol(ma.ProtocolWithName("tcp").Code)
 	if err != nil {
 		return "", err
 	}
 
-	// Extract the port number from the TCP sub-address
-	port := tcpAddr[len(tcpAddr)-4:]
 	return port, nil
 }
