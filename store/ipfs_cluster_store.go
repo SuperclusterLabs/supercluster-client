@@ -173,26 +173,48 @@ func getClusterURL(clusterId string) (string, error) {
 }
 
 // endpoint should start with `/`
-func makeClusterSvcRequest(ctx *gin.Context, endpoint string) (map[string]any, error) {
+func makeClusterSvcRequest(ctx *gin.Context, endpoint string) (map[string]interface{}, error) {
 	c := ctx.Param("clusterId")
 	u, err := getClusterURL(c)
-
-	resp, err := http.Post(u+endpoint, ctx.ContentType(), ctx.Request.Body)
 	if err != nil {
 		return nil, err
 	}
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	fileWriter, err := writer.CreateFormFile("file", "filename")
+	if err != nil {
+		return nil, err
+	}
+	_, err = io.Copy(fileWriter, ctx.Request.Body)
+	if err != nil {
+		return nil, err
+	}
+	err = writer.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", u+endpoint, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New("ipfs service err status code: " + strconv.Itoa(resp.StatusCode))
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	var clsResp map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&clsResp)
 	if err != nil {
-		return nil, err
-	}
-	var clsResp map[string]any
-	if err := json.Unmarshal([]byte(string(body)), &clsResp); err != nil {
 		return nil, err
 	}
 
