@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/runtime"
@@ -159,8 +160,8 @@ func (s *IPFSClusterStore) PinFile(ctx *gin.Context, cid string) error {
 	return err
 }
 
-func getClusterURL(c *model.Cluster) (string, error) {
-	icp, err := proc.GlobalRuntime.GetProcess(c.Id)
+func getClusterURL(clusterId string) (string, error) {
+	icp, err := runtime.GlobalRuntime.GetProcess(clusterId)
 	if err != nil {
 		return "", err
 	}
@@ -169,4 +170,31 @@ func getClusterURL(c *model.Cluster) (string, error) {
 		return "", err
 	}
 	return "http://localhost:" + p + "/api/v0", nil
+}
+
+// endpoint should start with `/`
+func makeClusterSvcRequest(ctx *gin.Context, endpoint string) (map[string]any, error) {
+	c := ctx.Param("clusterId")
+	u, err := getClusterURL(c)
+
+	resp, err := http.Post(u+endpoint, ctx.ContentType(), ctx.Request.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("ipfs service err status code: " + strconv.Itoa(resp.StatusCode))
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	var clsResp map[string]any
+	if err := json.Unmarshal([]byte(string(body)), &clsResp); err != nil {
+		return nil, err
+	}
+
+	return clsResp, nil
 }
