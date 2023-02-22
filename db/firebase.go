@@ -40,8 +40,6 @@ func NewFirebaseDB() (SuperclusterDB, error) {
 	return s, nil
 }
 
-// TODO: figure out consistent way of taking/returning pointers
-
 func (d *FirebaseDB) GetUserById(ctx context.Context, uId string) (*model.User, error) {
 	client, err := d.Instance.Database(ctx)
 	if err != nil {

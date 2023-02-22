@@ -21,5 +21,3 @@ type SuperclusterDB interface {
 	GetClusterById(ctx context.Context, cId string) (*model.Cluster, error)
 	CreateCluster(ctx context.Context, c model.Cluster) (*model.Cluster, error)
 }
-
-var AppDB SuperclusterDB
