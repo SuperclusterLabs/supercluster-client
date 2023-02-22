@@ -1,7 +1,6 @@
 package store
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"io/ioutil"
@@ -67,22 +66,22 @@ func (s *IPFSClusterStore) Create(ctx *gin.Context, name string, contents []byte
 	return new, nil
 }
 
-func (s *IPFSClusterStore) Modify(ctx context.Context, name, contents string) (*model.File, error) {
+func (s *IPFSClusterStore) Modify(ctx *gin.Context, name, contents string) (*model.File, error) {
 	return nil, nil
 }
 
-func (s *IPFSClusterStore) Delete(ctx context.Context, cid string) error {
 	p := path.New(cid)
 	err := s.ipfsApi.Pin().Rm(ctx, p)
 	if err != nil {
 		log.Println("Could not remove file ", err.Error())
 		return err
 	}
+func (s *IPFSClusterStore) Delete(ctx *gin.Context, cid string) error {
 
 	return nil
 }
 
-func (s *IPFSClusterStore) DeleteAll(ctx context.Context) error {
+func (s *IPFSClusterStore) DeleteAll(ctx *gin.Context) error {
 	fs, err := s.List(ctx)
 	if err != nil {
 		log.Println("Could not fetch pinned files ", err.Error())
@@ -101,7 +100,7 @@ func (s *IPFSClusterStore) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-func (s *IPFSClusterStore) List(ctx context.Context) ([]model.File, error) {
+func (s *IPFSClusterStore) List(ctx *gin.Context) ([]model.File, error) {
 	files := make([]model.File, 0)
 
 	pins, err := s.ipfsApi.Pin().Ls(ctx)
@@ -140,8 +139,8 @@ func (s *IPFSClusterStore) List(ctx context.Context) ([]model.File, error) {
 	return files, nil
 }
 
-func (s *IPFSClusterStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
 	resp, err := http.Post("http://localhost:5001/api/v0/id", "application/json", nil)
+func (s *IPFSClusterStore) GetInfo(ctx *gin.Context) (*P2PNodeInfo, error) {
 	if err != nil {
 		return nil, err
 	}
@@ -155,8 +154,8 @@ func (s *IPFSClusterStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
 	return &ar, nil
 }
 
-func (s *IPFSClusterStore) PinFile(ctx *gin.Context, c string) error {
 	err := s.ipfsApi.Pin().Add(ctx, path.New(c))
+func (s *IPFSClusterStore) PinFile(ctx *gin.Context, cid string) error {
 	return err
 }
 

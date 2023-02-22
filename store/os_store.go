@@ -1,7 +1,6 @@
 package store
 
 import (
-	"context"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -65,7 +64,7 @@ func (s *osStore) Create(_ *gin.Context, name string, contents []byte) (*model.F
 	return new, nil
 }
 
-func (s *osStore) Modify(ctx context.Context, name, contents string) (*model.File, error) {
+func (s *osStore) Modify(ctx *gin.Context, name, contents string) (*model.File, error) {
 	filename := StoreName + "/" + name
 	if err := os.Truncate(filename, 0); err != nil {
 		log.Println("Failed to truncate: ", err)
@@ -87,7 +86,7 @@ func (s *osStore) Modify(ctx context.Context, name, contents string) (*model.Fil
 	return nil, nil
 }
 
-func (s *osStore) Delete(ctx context.Context, name string) error {
+func (s *osStore) Delete(ctx *gin.Context, name string) error {
 	err := os.Remove(StoreName + "/" + name)
 	if err != nil {
 		log.Println("Could not delete file: ", err.Error())
@@ -96,7 +95,7 @@ func (s *osStore) Delete(ctx context.Context, name string) error {
 	return nil
 }
 
-func (s *osStore) DeleteAll(ctx context.Context) error {
+func (s *osStore) DeleteAll(ctx *gin.Context) error {
 	fs, err := s.List(ctx)
 	if err != nil {
 		log.Println("Could not fetch pinned files ", err.Error())
@@ -114,7 +113,7 @@ func (s *osStore) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-func (s *osStore) List(ctx context.Context) ([]model.File, error) {
+func (s *osStore) List(ctx *gin.Context) ([]model.File, error) {
 	files := make([]model.File, 0)
 	existing, err := ioutil.ReadDir(StoreName)
 	if err != nil {
@@ -144,7 +143,7 @@ func (s *osStore) List(ctx context.Context) ([]model.File, error) {
 	return files, nil
 }
 
-func (s *osStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
+func (s *osStore) GetInfo(ctx *gin.Context) (*P2PNodeInfo, error) {
 	return nil, errors.New("Not supported")
 }
 
