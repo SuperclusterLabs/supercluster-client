@@ -172,7 +172,7 @@ func getCluster(ctx *gin.Context) {
 	clusterId := ctx.Param("clusterId")
 	if clusterId == "" {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: util.ErrMissingParam.Error() + "ethAddr",
+			Error: util.ErrMissingParam.Error() + "clusterId",
 		})
 		return
 	}
