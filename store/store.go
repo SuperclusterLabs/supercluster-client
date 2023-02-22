@@ -1,8 +1,6 @@
 package store
 
 import (
-	"context"
-
 	"github.com/SuperclusterLabs/supercluster-client/model"
 
 	"github.com/gin-gonic/gin"
@@ -10,11 +8,11 @@ import (
 
 type P2PStore interface {
 	Create(ctx *gin.Context, name string, contents []byte) (*model.File, error)
-	Modify(ctx context.Context, name, contents string) (*model.File, error)
-	Delete(ctx context.Context, name string) error
-	DeleteAll(ctx context.Context) error
-	List(ctx context.Context) ([]model.File, error)
-	GetInfo(ctx context.Context) (*P2PNodeInfo, error)
+	Modify(ctx *gin.Context, name, contents string) (*model.File, error)
+	Delete(ctx *gin.Context, name string) error
+	DeleteAll(ctx *gin.Context) error
+	List(ctx *gin.Context) ([]model.File, error)
+	GetInfo(ctx *gin.Context) (*P2PNodeInfo, error)
 	PinFile(ctx *gin.Context, c string) error
 	ConnectPeer(ctx *gin.Context, addr ...string) error
 }
