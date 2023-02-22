@@ -37,7 +37,14 @@ func wshandler(ctx *gin.Context, _ store.P2PStore) {
 }
 
 func createFile(ctx *gin.Context, s store.P2PStore) {
-	log.Println(ctx.Request)
+	clusterId := ctx.Param("clusterId")
+	if clusterId == "" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: util.ErrMissingParam.Error() + "clusterId",
+		})
+		return
+	}
+
 	f, h, err := ctx.Request.FormFile("file")
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest,
@@ -46,7 +53,6 @@ func createFile(ctx *gin.Context, s store.P2PStore) {
 	}
 
 	// read file into bytes from request
-	log.Println(h.Filename)
 	defer f.Close()
 	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, f); err != nil {
@@ -61,17 +67,6 @@ func createFile(ctx *gin.Context, s store.P2PStore) {
 		})
 		return
 	}
-
-	// let frontend know to transmit xmtp msg
-	// info, err := s.GetInfo(ctx)
-	// n := make(map[string]interface{})
-	// n["cid"] = *&file.ID
-	// n["action"] = "pin"
-	// n["ipfsAddr"] = info.ID
-	// n["addrs"] = info.Addrs
-
-	// wsCh <- n
-
 	ctx.JSON(http.StatusOK, CreateResponse{
 		File: *file,
 	})
