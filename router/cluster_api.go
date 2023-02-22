@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/SuperclusterLabs/supercluster-client/db"
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/proc"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/util"
 
@@ -24,7 +24,7 @@ func createCluster(ctx *gin.Context) {
 		return
 	}
 
-	_, err := db.AppDB.GetUserByEthAddr(ctx, c.Creator)
+	_, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, c.Creator)
 	if err == util.ErrUserNotFound {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrUserNotFound.Error(),
@@ -39,7 +39,7 @@ func createCluster(ctx *gin.Context) {
 		return
 	}
 
-	c, err = db.AppDB.CreateCluster(ctx, *c)
+	c, err = runtime.GlobalRuntime.AppDB.CreateCluster(ctx, *c)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
@@ -68,12 +68,12 @@ func createCluster(ctx *gin.Context) {
 	}
 
 	// add cluster ptr to process pool in Runtime
-	proc.GlobalRuntime.AddProcess(c.Id, icp)
+	runtime.GlobalRuntime.AddProcess(c.Id.String(), icp)
 
 	// TODO: use xmtp (via websocket?) to "mail" the config to other members
 
 	// add cluster to creator's list of clusters
-	_, err = db.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
+	_, err = runtime.GlobalRuntime.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
@@ -97,7 +97,7 @@ func modifyCluster(ctx *gin.Context) {
 	// start by making sure new users have this cluster registered
 	// TODO: more complex rules, the following would break if
 	// a member is also an admin due to double-counting
-	cDb, err := db.AppDB.GetClusterById(ctx, c.Id.String())
+	cDb, err := runtime.GlobalRuntime.AppDB.GetClusterById(ctx, c.Id.String())
 	oldUsers := append(cDb.Admins, cDb.Members...)
 	newUsers := append(c.Admins, c.Members...)
 	var updateUs []*model.User
@@ -111,7 +111,7 @@ func modifyCluster(ctx *gin.Context) {
 			}
 		}
 		if !in {
-			u, err := db.AppDB.GetUserByEthAddr(ctx, nUsr)
+			u, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, nUsr)
 			if err != nil {
 				if err == util.ErrUserNotFound {
 					// add unregistered user to create list
@@ -133,7 +133,7 @@ func modifyCluster(ctx *gin.Context) {
 
 	// update existing users
 	for _, u := range updateUs {
-		_, err = db.AppDB.UpdateUser(ctx, *u)
+		_, err = runtime.GlobalRuntime.AppDB.UpdateUser(ctx, *u)
 	}
 
 	// create new unactivated users
@@ -143,7 +143,7 @@ func modifyCluster(ctx *gin.Context) {
 			Activated: "false",
 			Clusters:  []string{c.Id.String()},
 		}
-		_, err = db.AppDB.UpdateUser(ctx, u)
+		_, err = runtime.GlobalRuntime.AppDB.UpdateUser(ctx, u)
 	}
 
 	if err != nil {
@@ -156,7 +156,7 @@ func modifyCluster(ctx *gin.Context) {
 	}
 
 	// finally, update cluster
-	c, err = db.AppDB.CreateCluster(ctx, *c)
+	c, err = runtime.GlobalRuntime.AppDB.CreateCluster(ctx, *c)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
@@ -177,7 +177,7 @@ func getCluster(ctx *gin.Context) {
 		return
 	}
 
-	c, err := db.AppDB.GetClusterById(ctx, clusterId)
+	c, err := runtime.GlobalRuntime.AppDB.GetClusterById(ctx, clusterId)
 	if err != nil {
 		if err == util.ErrClusterNotFound {
 			ctx.JSON(http.StatusBadRequest, ResponseError{
