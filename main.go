@@ -46,6 +46,8 @@ func main() {
 		panic("Cannot create store: " + err.Error())
 	}
 
+	// load folders/cluster-service configs from disk
+	runtime.GlobalRuntime.Init()
 
 	router.AddRoutes(runtime.GlobalRuntime, s)
 	ui.AddRoutes(runtime.GlobalRuntime)
