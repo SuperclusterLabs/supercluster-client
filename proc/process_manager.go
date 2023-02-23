@@ -30,7 +30,7 @@ func (pm *ProcessManager) Start() error {
 	// TODO: what about Init() logs?
 	lf, err := os.OpenFile(pm.logFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	pm.cmd.Stdout = lf
 	pm.logFile = lf
