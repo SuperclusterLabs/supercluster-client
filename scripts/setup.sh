@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SUPERCLUSTER_URL=http://localhost:3030
+CUR_DIR=$(pwd)
 SUPERCLUSTER_DIR="$(echo $HOME)/.supercluster"
 KUBO_DIR="$(echo $HOME)/.supercluster/kubo"
 IPFS_CLUSTER_SERVICE_DIR="$(echo $HOME)/.supercluster/ipfs-cluster"
@@ -43,3 +43,7 @@ tar -xvzf $KUBO_TAR
 tar -xvzf $IPFS_CLUSTER_SERVICE_TAR
 
 rm $KUBO_TAR $IPFS_CLUSTER_SERVICE_TAR
+
+cd $CUR_DIR
+cp -r $SUPERCLUSTER_DIR ./build
+cp ./scripts/install.sh ./build
