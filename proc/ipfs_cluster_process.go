@@ -21,33 +21,48 @@ type IPFSClusterProcess struct {
 
 var _ ManagedProcess = (*IPFSClusterProcess)(nil)
 
-var clSvcPath string = util.GetConfDir() + "/ipfs-cluster/ipfs-cluster-service"
-var clCtlPath string = util.GetConfDir() + "/ipfs-cluster/ipfs-cluster-ctl"
-var clsDirPath string = util.GetConfDir() + "/clusters"
+var clSvc string = util.GetConfDir() + "/ipfs-cluster/ipfs-cluster-service"
+var clCtl string = util.GetConfDir() + "/ipfs-cluster/ipfs-cluster-ctl"
+var clsDir string = util.GetConfDir() + "/clusters"
+var logDir string = util.GetConfDir() + "/logs"
 
-func NewIPFSClusterProcess(id uuid.UUID, svcPort, httpPort, secret string) (ManagedProcess, error) {
-	if _, err := os.Stat(clCtlPath); err != nil {
+func NewHostIPFSClusterProcess(id uuid.UUID) (*IPFSClusterProcess, error) {
+	if _, err := os.Stat(clCtl); err != nil {
 		return nil, err
 	}
-	if _, err := os.Stat(clSvcPath); err != nil {
+	if _, err := os.Stat(clSvc); err != nil {
 		return nil, err
 	}
 
 	return &IPFSClusterProcess{
 		id:             id,
-		ProcessManager: NewProcessManager(clSvcPath, []string{"-c", id.String(), "daemon"}, ""),
+		ProcessManager: NewProcessManager(clSvc, []string{"-c", logDir + "/" + id.String(), "daemon"}, logDir+"/"+id.String()),
+	}, nil
+}
+
+func NewJoinIPFSClusterProcess(id uuid.UUID, svcPort, httpPort, secret string) (ManagedProcess, error) {
+	if _, err := os.Stat(clCtl); err != nil {
+		return nil, err
+	}
+	if _, err := os.Stat(clSvc); err != nil {
+		return nil, err
+	}
+
+	return &IPFSClusterProcess{
+		id:             id,
+		ProcessManager: NewProcessManager(clSvc, []string{"-c", clsDir + "/" + id.String(), "daemon"}, logDir+"/"+id.String()),
 	}, nil
 }
 
 func (icp *IPFSClusterProcess) Init() error {
 	// check if dir already exists, if not the daemon should start without issues
-	if _, err := os.Stat(clsDirPath + "/" + icp.id.String()); err != nil {
+	if _, err := os.Stat(clsDir + "/" + icp.id.String()); err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 
 		// initialize dir for this cluster
-		cmd := exec.Command(kuboPath, []string{"-c", icp.id.String(), "init", "--randomports"}...)
+		cmd := exec.Command(clSvc, []string{"-c", clsDir + "/" + icp.id.String(), "init", "--randomports"}...)
 		return cmd.Run()
 
 		// TODO: update config with details provided
