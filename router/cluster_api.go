@@ -172,7 +172,7 @@ func getCluster(ctx *gin.Context) {
 	clusterId := ctx.Param("clusterId")
 	if clusterId == "" {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: util.ErrMissingParam.Error() + "ethAddr",
+			Error: util.ErrMissingParam.Error() + "clusterId",
 		})
 		return
 	}
@@ -195,6 +195,13 @@ func getCluster(ctx *gin.Context) {
 }
 
 func listPinnedFiles(ctx *gin.Context, s store.P2PStore) {
+	clusterId := ctx.Param("clusterId")
+	if clusterId == "" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: util.ErrMissingParam.Error() + "clusterId",
+		})
+		return
+	}
 	ps, err := s.List(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
@@ -202,4 +209,23 @@ func listPinnedFiles(ctx *gin.Context, s store.P2PStore) {
 		})
 	}
 	ctx.JSON(http.StatusOK, ps)
+}
+
+func listClusterAddrs(ctx *gin.Context, s store.P2PStore) {
+	clusterId := ctx.Param("clusterId")
+	if clusterId == "" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: util.ErrMissingParam.Error() + "clusterId",
+		})
+		return
+	}
+	info, err := s.GetInfo(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, info)
 }
