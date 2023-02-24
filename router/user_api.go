@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/SuperclusterLabs/supercluster-client/db"
 	"github.com/SuperclusterLabs/supercluster-client/model"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/util"
 
@@ -21,7 +21,7 @@ func createUser(ctx *gin.Context) {
 		return
 	}
 
-	uDb, err := db.AppDB.GetUserByEthAddr(ctx, u.EthAddr)
+	uDb, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, u.EthAddr)
 	log.Println(uDb)
 
 	if err != nil && err != util.ErrUserNotFound {
@@ -32,7 +32,7 @@ func createUser(ctx *gin.Context) {
 		return
 	} else if err == util.ErrUserNotFound {
 		u.Activated = "true"
-		u, err = db.AppDB.UpdateUser(ctx, *u)
+		u, err = runtime.GlobalRuntime.AppDB.UpdateUser(ctx, *u)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, ResponseError{
 				Error: err.Error(),
@@ -42,7 +42,7 @@ func createUser(ctx *gin.Context) {
 		}
 	} else if uDb.Activated == "false" {
 		uDb.Activated = "true"
-		_, _ = db.AppDB.UpdateUser(ctx, *uDb)
+		_, _ = runtime.GlobalRuntime.AppDB.UpdateUser(ctx, *uDb)
 		u = uDb
 	} else {
 		// ctx.JSON(http.StatusBadRequest, ResponseError{
@@ -69,7 +69,7 @@ func modifyUser(ctx *gin.Context) {
 		})
 		return
 	}
-	uDB, err := db.AppDB.GetUserByEthAddr(ctx, u.EthAddr)
+	uDB, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, u.EthAddr)
 	if err != nil {
 		if err == util.ErrUserNotFound {
 			ctx.JSON(http.StatusBadRequest, ResponseError{
@@ -88,7 +88,7 @@ func modifyUser(ctx *gin.Context) {
 	// with a seemingly unnecessary extra db call so that
 	// this func doesn't scrub data
 	u.Id = uDB.Id
-	u, err = db.AppDB.UpdateUser(ctx, *u)
+	u, err = runtime.GlobalRuntime.AppDB.UpdateUser(ctx, *u)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
@@ -109,7 +109,7 @@ func getUser(ctx *gin.Context) {
 		return
 	}
 
-	u, err := db.AppDB.GetUserByEthAddr(ctx, ethAddr)
+	u, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, ethAddr)
 	if err != nil {
 		if err == util.ErrUserNotFound {
 			ctx.JSON(http.StatusBadRequest, ResponseError{
@@ -135,7 +135,7 @@ func getUserClusters(ctx *gin.Context) {
 		return
 	}
 
-	uClusters, err := db.AppDB.GetClustersForUser(ctx, userId)
+	uClusters, err := runtime.GlobalRuntime.AppDB.GetClustersForUser(ctx, userId)
 
 	if err != nil {
 		if err == util.ErrUserNotFound {

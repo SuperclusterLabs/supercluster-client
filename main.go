@@ -7,6 +7,7 @@ import (
 	"github.com/SuperclusterLabs/supercluster-client/db"
 	"github.com/SuperclusterLabs/supercluster-client/proc"
 	"github.com/SuperclusterLabs/supercluster-client/router"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
 	"github.com/SuperclusterLabs/supercluster-client/store"
 	"github.com/SuperclusterLabs/supercluster-client/ui"
 	"github.com/SuperclusterLabs/supercluster-client/util"
@@ -21,36 +22,36 @@ func main() {
 	}
 
 	// TODO: remove firebase
-	db.AppDB, err = db.NewFirebaseDB()
+	db, err := db.NewFirebaseDB()
 	if err != nil {
 		panic(err)
 	}
 
+	// Start IPFS
 	ipfs, err := proc.NewIPFSProcess()
 	if err != nil {
 		panic(err)
 	}
-
 	if err = ipfs.Init(); err != nil {
 		panic(err)
 	}
-
 	if err = ipfs.Start(); err != nil {
 		panic(err)
 	}
 
-	proc.GlobalRuntime = proc.NewSuperclusterRuntime(ipfs)
+	runtime.GlobalRuntime = runtime.NewSuperclusterRuntime(ipfs, db)
 
 	s, err := store.NewIPFSStore()
 	if err != nil {
 		panic("Cannot create store: " + err.Error())
 	}
 
-	router.AddRoutes(proc.GlobalRuntime, s)
-	ui.AddRoutes(proc.GlobalRuntime)
+
+	router.AddRoutes(runtime.GlobalRuntime, s)
+	ui.AddRoutes(runtime.GlobalRuntime)
 
 	// TODO: add version here
 	log.Println("Supercluster started!")
 
-	proc.GlobalRuntime.Run(":3030")
+	runtime.GlobalRuntime.Run(":3030")
 }

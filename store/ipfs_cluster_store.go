@@ -1,15 +1,16 @@
 package store
 
 import (
-	"context"
 	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
+	"github.com/SuperclusterLabs/supercluster-client/runtime"
 
 	"github.com/gin-gonic/gin"
-	ipfsFiles "github.com/ipfs/go-ipfs-files"
 	path "github.com/ipfs/interface-go-ipfs-core/path"
 )
 
@@ -19,7 +20,7 @@ type IPFSClusterStore struct {
 	*IPFSStore
 }
 
-var _ P2PStore = (*IPFSStore)(nil)
+var _ P2PStore = (*IPFSClusterStore)(nil)
 
 func NewIPFSClusterStore() (*IPFSClusterStore, error) {
 	is, err := NewIPFSStore()
@@ -34,29 +35,28 @@ func NewIPFSClusterStore() (*IPFSClusterStore, error) {
 }
 
 func (s *IPFSClusterStore) Create(ctx *gin.Context, name string, contents []byte) (*model.File, error) {
+	var data map[string]string
+
 	// This is a hack to track metadata for a file. Since a dir is a file
 	// containing file info, we can use it to track file metadata.
 	// N.B: IPFS only stores name, size (bytes), and cid
-	f := ipfsFiles.NewBytesFile(contents)
-	cid, err := s.ipfsApi.Unixfs().
-		Add(ctx, ipfsFiles.NewMapDirectory(map[string]ipfsFiles.Node{
-			name: f,
-		}))
+	resp, err := http.Post("http://localhost:9095/api/v0/add?wrap-with-directory=true", ctx.ContentType(), ctx.Request.Body)
 	if err != nil {
-		log.Println("Could not create file: ", err.Error())
 		return nil, err
 	}
-
-	err = s.ipfsApi.Pin().Add(ctx, cid)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Could not pin file: ", err.Error())
 		return nil, err
+	}
+	if err := json.Unmarshal([]byte(string(body)), &data); err != nil {
+		return nil, errors.New("Could not add file to ipfs-cluster")
 	}
 
 	// TODO: figure out a way to embed created time/creator info
 	// into ipfs file description
 	new := &model.File{
-		Cid:  cid.Cid().String(),
+		Cid:  data["cid"],
 		Name: name,
 		Size: int64(len(contents)),
 		// TODO: is pin type only one of 2 options?
@@ -66,22 +66,22 @@ func (s *IPFSClusterStore) Create(ctx *gin.Context, name string, contents []byte
 	return new, nil
 }
 
-func (s *IPFSClusterStore) Modify(ctx context.Context, name, contents string) (*model.File, error) {
+func (s *IPFSClusterStore) Modify(ctx *gin.Context, name, contents string) (*model.File, error) {
 	return nil, nil
 }
 
-func (s *IPFSClusterStore) Delete(ctx context.Context, cid string) error {
 	p := path.New(cid)
 	err := s.ipfsApi.Pin().Rm(ctx, p)
 	if err != nil {
 		log.Println("Could not remove file ", err.Error())
 		return err
 	}
+func (s *IPFSClusterStore) Delete(ctx *gin.Context, cid string) error {
 
 	return nil
 }
 
-func (s *IPFSClusterStore) DeleteAll(ctx context.Context) error {
+func (s *IPFSClusterStore) DeleteAll(ctx *gin.Context) error {
 	fs, err := s.List(ctx)
 	if err != nil {
 		log.Println("Could not fetch pinned files ", err.Error())
@@ -100,7 +100,7 @@ func (s *IPFSClusterStore) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-func (s *IPFSClusterStore) List(ctx context.Context) ([]model.File, error) {
+func (s *IPFSClusterStore) List(ctx *gin.Context) ([]model.File, error) {
 	files := make([]model.File, 0)
 
 	pins, err := s.ipfsApi.Pin().Ls(ctx)
@@ -139,8 +139,8 @@ func (s *IPFSClusterStore) List(ctx context.Context) ([]model.File, error) {
 	return files, nil
 }
 
-func (s *IPFSClusterStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
 	resp, err := http.Post("http://localhost:5001/api/v0/id", "application/json", nil)
+func (s *IPFSClusterStore) GetInfo(ctx *gin.Context) (*P2PNodeInfo, error) {
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +154,19 @@ func (s *IPFSClusterStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
 	return &ar, nil
 }
 
-func (s *IPFSClusterStore) PinFile(ctx *gin.Context, c string) error {
 	err := s.ipfsApi.Pin().Add(ctx, path.New(c))
+func (s *IPFSClusterStore) PinFile(ctx *gin.Context, cid string) error {
 	return err
+}
+
+func getClusterURL(c *model.Cluster) (string, error) {
+	icp, err := proc.GlobalRuntime.GetProcess(c.Id)
+	if err != nil {
+		return "", err
+	}
+	p, err := icp.GetPort()
+	if err != nil {
+		return "", err
+	}
+	return "http://localhost:" + p + "/api/v0", nil
 }

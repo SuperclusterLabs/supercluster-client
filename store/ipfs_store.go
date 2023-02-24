@@ -1,7 +1,6 @@
 package store
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -77,11 +76,11 @@ func (s *IPFSStore) Create(ctx *gin.Context, name string, contents []byte) (*mod
 	return new, nil
 }
 
-func (s *IPFSStore) Modify(ctx context.Context, name, contents string) (*model.File, error) {
+func (s *IPFSStore) Modify(ctx *gin.Context, name, contents string) (*model.File, error) {
 	return nil, nil
 }
 
-func (s *IPFSStore) Delete(ctx context.Context, cid string) error {
+func (s *IPFSStore) Delete(ctx *gin.Context, cid string) error {
 	p := path.New(cid)
 	err := s.ipfsApi.Pin().Rm(ctx, p)
 	if err != nil {
@@ -92,7 +91,7 @@ func (s *IPFSStore) Delete(ctx context.Context, cid string) error {
 	return nil
 }
 
-func (s *IPFSStore) DeleteAll(ctx context.Context) error {
+func (s *IPFSStore) DeleteAll(ctx *gin.Context) error {
 	fs, err := s.List(ctx)
 	if err != nil {
 		log.Println("Could not fetch pinned files ", err.Error())
@@ -111,7 +110,7 @@ func (s *IPFSStore) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-func (s *IPFSStore) List(ctx context.Context) ([]model.File, error) {
+func (s *IPFSStore) List(ctx *gin.Context) ([]model.File, error) {
 	files := make([]model.File, 0)
 
 	pins, err := s.ipfsApi.Pin().Ls(ctx)
@@ -150,7 +149,7 @@ func (s *IPFSStore) List(ctx context.Context) ([]model.File, error) {
 	return files, nil
 }
 
-func (s *IPFSStore) GetInfo(ctx context.Context) (*P2PNodeInfo, error) {
+func (s *IPFSStore) GetInfo(ctx *gin.Context) (*P2PNodeInfo, error) {
 	resp, err := http.Post("http://localhost:5001/api/v0/id", "application/json", nil)
 	if err != nil {
 		return nil, err
