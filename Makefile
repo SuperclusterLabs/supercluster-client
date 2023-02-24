@@ -22,7 +22,3 @@ build: supercluster
 
 install: build
 	@sudo cp build/supercluster /usr/local/bin/
-
-ifeq "$(wildcard $(SUPERCLUSTER_DIR)/kubo)" ""
-	@cp -r build/kubo ~/.supercluster
-endif
