@@ -13,7 +13,7 @@ GOFLAGS += -asmflags=all=-trimpath="$(GOPATH)" -gcflags=all=-trimpath="$(GOPATH)
 
 supercluster: main.go
 ifeq ($(wildcard ./build),)
-	cd scripts;	./setup.sh
+	./scripts/setup.sh
 endif
 	$(GOCC) build $(GOFLAGS) -o "./build/$@" "$<"
 
@@ -21,9 +21,4 @@ build: supercluster
 	@echo "Built $<"
 
 install: build
-	@mkdir -p $(SUPERCLUSTER_DIR)
 	@sudo cp build/supercluster /usr/local/bin/
-
-ifeq "$(wildcard $(SUPERCLUSTER_DIR)/kubo)" ""
-	@cp -r build/kubo ~/.supercluster
-endif
