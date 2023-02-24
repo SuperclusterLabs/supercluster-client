@@ -16,3 +16,4 @@ var ErrCannotCreate = errors.New("File could not be created")
 var ErrExistingFileRead = errors.New("Could not read existing file")
 
 var ErrMissingParam = errors.New("Missing param: ")
+var ErrBadClConfig = errors.New("Improperly formatted service.json.for cluster")
