@@ -22,15 +22,11 @@ type IPFSClusterProcess struct {
 
 var _ ManagedProcess = (*IPFSClusterProcess)(nil)
 
-var clSvc string = util.GetConfDir() + "/ipfs-cluster/ipfs-cluster-service"
-var clCtl string = util.GetConfDir() + "/ipfs-cluster/ipfs-cluster-ctl"
+var clSvc string = util.GetConfDir() + "/ipfs-cluster-service/ipfs-cluster-service"
 var clsDir string = util.GetConfDir() + "/clusters"
 var logDir string = util.GetConfDir() + "/logs"
 
 func NewHostIPFSClusterProcess(id uuid.UUID) (*IPFSClusterProcess, error) {
-	if _, err := os.Stat(clCtl); err != nil {
-		return nil, err
-	}
 	if _, err := os.Stat(clSvc); err != nil {
 		return nil, err
 	}
@@ -42,9 +38,6 @@ func NewHostIPFSClusterProcess(id uuid.UUID) (*IPFSClusterProcess, error) {
 }
 
 func NewJoinIPFSClusterProcess(id uuid.UUID, svcPort, httpPort, secret string) (ManagedProcess, error) {
-	if _, err := os.Stat(clCtl); err != nil {
-		return nil, err
-	}
 	if _, err := os.Stat(clSvc); err != nil {
 		return nil, err
 	}

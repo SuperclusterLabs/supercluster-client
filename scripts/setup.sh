@@ -34,7 +34,7 @@ wget https://dist.ipfs.tech/kubo/v0.18.1/$KUBO_TAR
 if [ $? -ne 0 ]; then
     exit
 fi
-wget http://dist-ipfs-tech.ipns.localhost:48084/ipfs-cluster-service/v1.0.5/$IPFS_CLUSTER_SERVICE_TAR
+wget http://dist.ipfs.tech/ipfs-cluster-service/v1.0.5/$IPFS_CLUSTER_SERVICE_TAR
 if [ $? -ne 0 ]; then
     exit
 fi
