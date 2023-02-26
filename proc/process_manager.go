@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"syscall"
 )
 
 // TODO: add https://github.com/jbenet/goprocess
@@ -55,24 +54,24 @@ func (pm *ProcessManager) Stop() error {
 }
 
 // TODO: support windows
-func (pm *ProcessManager) pause() error {
-	if pm.cmd == nil || pm.cmd.Process == nil {
-		return fmt.Errorf("Process not running")
-	}
-	err := pm.cmd.Process.Signal(syscall.SIGSTOP)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func (pm *ProcessManager) pause() error {
+// 	if pm.cmd == nil || pm.cmd.Process == nil {
+// 		return fmt.Errorf("Process not running")
+// 	}
+// 	err := pm.cmd.Process.Signal(syscall.SIGSTOP)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
-func (pm *ProcessManager) resume() error {
-	if pm.cmd == nil || pm.cmd.Process == nil {
-		return fmt.Errorf("Process not running")
-	}
-	err := pm.cmd.Process.Signal(syscall.SIGCONT)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+// func (pm *ProcessManager) resume() error {
+// 	if pm.cmd == nil || pm.cmd.Process == nil {
+// 		return fmt.Errorf("Process not running")
+// 	}
+// 	err := pm.cmd.Process.Signal(syscall.SIGCONT)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
