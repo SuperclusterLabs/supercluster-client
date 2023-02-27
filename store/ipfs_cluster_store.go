@@ -17,6 +17,19 @@ import (
 	path "github.com/ipfs/interface-go-ipfs-core/path"
 )
 
+type objects struct {
+	ObjectsList []struct {
+		Hash  string `json:"Hash"`
+		Links []struct {
+			Name   string `json:"Name"`
+			Hash   string `json:"Hash"`
+			Size   int    `json:"Size"`
+			Type   int    `json:"Type"`
+			Target string `json:"Target"`
+		} `json:"Links"`
+	} `json:"Objects"`
+}
+
 type IPFSClusterStore struct {
 	clusterSvcPort string
 
@@ -90,7 +103,7 @@ func (s *IPFSClusterStore) DeleteAll(ctx *gin.Context) error {
 
 	for _, f := range fs {
 		if f.PinType == "recursive" {
-			err := s.ipfsApi.Pin().Rm(ctx, path.New(f.Cid))
+			err := s.Delete(ctx, f.Cid)
 			if err != nil {
 				return err
 			}
@@ -112,10 +125,36 @@ func (s *IPFSClusterStore) List(ctx *gin.Context) ([]model.File, error) {
 	if cids, ok := clsResp["Keys"]; ok {
 		cidsMap := cids.(map[string]any)
 		for k := range cidsMap {
+			// ipfs cluster doesn't pin the contents of directories, rather just the dirs
+			// so we need to fetch the contents
+			lsEp := "/ls/" + k
+			clsResp, err := makeClusterSvcRequest(ctx, lsEp)
+			if err != nil {
+				return nil, err
+			}
+
+			jsonString, _ := json.Marshal(clsResp)
+			var o objects
+			err = json.Unmarshal([]byte(jsonString), &o)
+			if err != nil {
+				return nil, err
+			}
+			if len(o.ObjectsList) == 0 {
+				return nil, errors.New("empty object list")
+			}
+			firstObject := o.ObjectsList[0]
+			if len(firstObject.Links) == 0 {
+				log.Println("empty links for " + k)
+				continue
+			}
+			l := firstObject.Links[0]
+
 			// TODO: figure out a way to embed created time/creator info
 			// into ipfs file description
 			f := model.File{
-				Cid: k,
+				Cid:  l.Hash,
+				Name: l.Name,
+				Size: int64(l.Size),
 			}
 
 			files = append(files, f)
@@ -123,11 +162,7 @@ func (s *IPFSClusterStore) List(ctx *gin.Context) ([]model.File, error) {
 		return files, nil
 	}
 
-	// FIXME: this is weird
-	errStr, err := json.Marshal(clsResp)
-	if err != nil {
-		return nil, err
-	}
+	errStr, _ := json.Marshal(clsResp)
 	return nil, errors.New(string(errStr))
 }
 
