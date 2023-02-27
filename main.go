@@ -41,7 +41,7 @@ func main() {
 
 	runtime.GlobalRuntime = runtime.NewSuperclusterRuntime(ipfs, db)
 
-	s, err := store.NewIPFSStore()
+	s, err := store.NewIPFSClusterStore()
 	if err != nil {
 		panic("Cannot create store: " + err.Error())
 	}
