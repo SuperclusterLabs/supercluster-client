@@ -50,6 +50,13 @@ func createCluster(ctx *gin.Context) {
 
 	// spin up a pinning service on ipfs cluster
 	icp, err := proc.NewHostIPFSClusterProcess(c.Id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+
+		return
+	}
 	err = icp.Init()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
