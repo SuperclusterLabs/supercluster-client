@@ -8,14 +8,25 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"strconv"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/runtime"
 
 	"github.com/gin-gonic/gin"
-	path "github.com/ipfs/interface-go-ipfs-core/path"
 )
+
+type objects struct {
+	ObjectsList []struct {
+		Hash  string `json:"Hash"`
+		Links []struct {
+			Name   string `json:"Name"`
+			Hash   string `json:"Hash"`
+			Size   int    `json:"Size"`
+			Type   int    `json:"Type"`
+			Target string `json:"Target"`
+		} `json:"Links"`
+	} `json:"Objects"`
+}
 
 type IPFSClusterStore struct {
 	clusterSvcPort string
@@ -35,6 +46,22 @@ func NewIPFSClusterStore() (*IPFSClusterStore, error) {
 	}
 
 	return s, nil
+}
+
+func (s *IPFSClusterStore) Get(ctx *gin.Context, cid string) ([]byte, *model.File, error) {
+	// FIXME: make consistent with other API calls
+	u := "http://localhost:5001/api/v0/block/get/" + cid
+
+	resp, err := http.Post(u, "application/json", nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer resp.Body.Close()
+	buf := &bytes.Buffer{}
+	buf.ReadFrom(resp.Body)
+	data := buf.Bytes()
+
+	return data, nil, nil
 }
 
 func (s *IPFSClusterStore) Create(ctx *gin.Context, name string, contents []byte) (*model.File, error) {
@@ -90,7 +117,7 @@ func (s *IPFSClusterStore) DeleteAll(ctx *gin.Context) error {
 
 	for _, f := range fs {
 		if f.PinType == "recursive" {
-			err := s.ipfsApi.Pin().Rm(ctx, path.New(f.Cid))
+			err := s.Delete(ctx, f.Cid)
 			if err != nil {
 				return err
 			}
@@ -112,10 +139,36 @@ func (s *IPFSClusterStore) List(ctx *gin.Context) ([]model.File, error) {
 	if cids, ok := clsResp["Keys"]; ok {
 		cidsMap := cids.(map[string]any)
 		for k := range cidsMap {
+			// ipfs cluster doesn't pin the contents of directories, rather just the dirs
+			// so we need to fetch the contents
+			lsEp := "/ls/" + k
+			clsResp, err := makeClusterSvcRequest(ctx, lsEp)
+			if err != nil {
+				return nil, err
+			}
+
+			jsonString, _ := json.Marshal(clsResp)
+			var o objects
+			err = json.Unmarshal([]byte(jsonString), &o)
+			if err != nil {
+				return nil, err
+			}
+			if len(o.ObjectsList) == 0 {
+				return nil, errors.New("empty object list")
+			}
+			firstObject := o.ObjectsList[0]
+			if len(firstObject.Links) == 0 {
+				log.Println("empty links for " + k)
+				continue
+			}
+			l := firstObject.Links[0]
+
 			// TODO: figure out a way to embed created time/creator info
 			// into ipfs file description
 			f := model.File{
-				Cid: k,
+				Cid:  l.Hash,
+				Name: l.Name,
+				Size: int64(l.Size),
 			}
 
 			files = append(files, f)
@@ -123,11 +176,7 @@ func (s *IPFSClusterStore) List(ctx *gin.Context) ([]model.File, error) {
 		return files, nil
 	}
 
-	// FIXME: this is weird
-	errStr, err := json.Marshal(clsResp)
-	if err != nil {
-		return nil, err
-	}
+	errStr, _ := json.Marshal(clsResp)
 	return nil, errors.New(string(errStr))
 }
 
@@ -135,6 +184,9 @@ func (s *IPFSClusterStore) GetInfo(ctx *gin.Context) (*P2PNodeInfo, error) {
 	// FIXME: make consistent with other API calls
 	c := ctx.Param("clusterId")
 	u, err := getClusterURL(c)
+	if err != nil {
+		return nil, err
+	}
 
 	resp, err := http.Post(u+"/id", "application/json", nil)
 	if err != nil {
@@ -204,15 +256,15 @@ func makeClusterSvcRequest(ctx *gin.Context, endpoint string) (map[string]interf
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("ipfs service err status code: " + strconv.Itoa(resp.StatusCode))
-	}
-
 	var clsResp map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&clsResp)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		errJson, _ := json.Marshal(clsResp)
+		return nil, errors.New(string(errJson))
 	}
 
 	return clsResp, nil

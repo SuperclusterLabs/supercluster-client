@@ -32,6 +32,10 @@ func NewOSStore() (P2PStore, error) {
 	return s, nil
 }
 
+func (s *osStore) Get(ctx *gin.Context, cid string) ([]byte, *model.File, error) {
+	return nil, nil, nil
+}
+
 func (s *osStore) Create(_ *gin.Context, name string, contents []byte) (*model.File, error) {
 	new := &model.File{
 		Name:      name,

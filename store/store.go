@@ -7,6 +7,7 @@ import (
 )
 
 type P2PStore interface {
+	Get(ctx *gin.Context, cid string) ([]byte, *model.File, error)
 	Create(ctx *gin.Context, name string, contents []byte) (*model.File, error)
 	Modify(ctx *gin.Context, name, contents string) (*model.File, error)
 	Delete(ctx *gin.Context, name string) error
