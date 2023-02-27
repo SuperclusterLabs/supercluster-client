@@ -8,13 +8,11 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
-	"strconv"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/runtime"
 
 	"github.com/gin-gonic/gin"
-	path "github.com/ipfs/interface-go-ipfs-core/path"
 )
 
 type objects struct {
@@ -170,6 +168,9 @@ func (s *IPFSClusterStore) GetInfo(ctx *gin.Context) (*P2PNodeInfo, error) {
 	// FIXME: make consistent with other API calls
 	c := ctx.Param("clusterId")
 	u, err := getClusterURL(c)
+	if err != nil {
+		return nil, err
+	}
 
 	resp, err := http.Post(u+"/id", "application/json", nil)
 	if err != nil {
@@ -239,15 +240,15 @@ func makeClusterSvcRequest(ctx *gin.Context, endpoint string) (map[string]interf
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("ipfs service err status code: " + strconv.Itoa(resp.StatusCode))
-	}
-
 	var clsResp map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&clsResp)
 	if err != nil {
 		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		errJson, _ := json.Marshal(clsResp)
+		return nil, errors.New(string(errJson))
 	}
 
 	return clsResp, nil
