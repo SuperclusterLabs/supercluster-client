@@ -93,6 +93,12 @@ func createFile(ctx *gin.Context, s store.P2PStore) {
 
 func deleteFile(ctx *gin.Context, s store.P2PStore) {
 	cid := ctx.Param("fileCid")
+	if cid == "" {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: util.ErrMissingParam.Error() + "cid",
+		})
+		return
+	}
 
 	err := s.Delete(ctx, cid)
 	if err != nil {
@@ -101,11 +107,6 @@ func deleteFile(ctx *gin.Context, s store.P2PStore) {
 		})
 		return
 	}
-	// let frontend know to transmit xmtp msg
-	// n := make(map[string]interface{})
-	// n["cid"] = cid
-	// n["action"] = "unpin"
-	// wsCh <- n
 
 	ctx.Status(http.StatusOK)
 }
