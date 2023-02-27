@@ -1,6 +1,7 @@
 package router
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -173,7 +174,16 @@ func connectPeer(ctx *gin.Context, s store.P2PStore) {
 }
 
 func getAddrs(ctx *gin.Context, s store.P2PStore) {
-	info, err := s.GetInfo(ctx)
+	resp, err := http.Post("http://localhost:5001/api/v0/id", "application/json", nil)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, ResponseError{
+			Error: err.Error(),
+		})
+		return
+	}
+	defer resp.Body.Close()
+	var ar store.P2PNodeInfo
+	err = json.NewDecoder(resp.Body).Decode(&ar)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
@@ -181,5 +191,5 @@ func getAddrs(ctx *gin.Context, s store.P2PStore) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, info)
+	ctx.JSON(http.StatusOK, ar)
 }
