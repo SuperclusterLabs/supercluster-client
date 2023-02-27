@@ -43,6 +43,10 @@ func NewIPFSStore() (*IPFSStore, error) {
 	return s, nil
 }
 
+func (s *IPFSStore) Get(ctx *gin.Context, cid string) ([]byte, *model.File, error) {
+	return nil, nil, nil
+}
+
 func (s *IPFSStore) Create(ctx *gin.Context, name string, contents []byte) (*model.File, error) {
 	// This is a hack to track metadata for a file. Since a dir is a file
 	// containing file info, we can use it to track file metadata.

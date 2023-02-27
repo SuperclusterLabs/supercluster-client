@@ -48,6 +48,22 @@ func NewIPFSClusterStore() (*IPFSClusterStore, error) {
 	return s, nil
 }
 
+func (s *IPFSClusterStore) Get(ctx *gin.Context, cid string) ([]byte, *model.File, error) {
+	// FIXME: make consistent with other API calls
+	u := "http://localhost:5001/api/v0/block/get/" + cid
+
+	resp, err := http.Post(u, "application/json", nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer resp.Body.Close()
+	buf := &bytes.Buffer{}
+	buf.ReadFrom(resp.Body)
+	data := buf.Bytes()
+
+	return data, nil, nil
+}
+
 func (s *IPFSClusterStore) Create(ctx *gin.Context, name string, contents []byte) (*model.File, error) {
 
 	// This is a hack to track metadata for a file. Since a dir is a file
