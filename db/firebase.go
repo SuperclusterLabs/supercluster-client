@@ -212,13 +212,13 @@ func (d *FirebaseDB) UpdateUser(ctx context.Context, u model.User) (*model.User,
 	return &u, nil
 }
 
-func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, eAddr string, cs ...string) (*model.User, error) {
+func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, eAddr string, clusterIds ...string) (*model.User, error) {
 	u, err := d.GetUserByEthAddr(ctx, eAddr)
 	if err != nil {
 		return nil, err
 	}
 
-	u.Clusters = append(u.Clusters, cs...)
+	u.Clusters = append(u.Clusters, clusterIds...)
 
 	d.UpdateUser(ctx, *u)
 	if err != nil {
