@@ -30,3 +30,7 @@ type ResponseError struct {
 type PinRequest struct {
 	Cid string `json:"cid"`
 }
+
+type NFTsRequest struct {
+	NftList []string `json:"nftList" binding:"required"`
+}

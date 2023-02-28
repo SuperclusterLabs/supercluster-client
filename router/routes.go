@@ -46,7 +46,7 @@ func AddRoutes(r runtime.SuperclusterRuntime, s store.P2PStore) {
 	api.PUT("/user", func(ctx *gin.Context) { modifyUser(ctx) })
 	api.POST("/user/connectPeer", func(ctx *gin.Context) { connectPeer(ctx, s) })
 	api.GET("/user/myAddr", func(ctx *gin.Context) { getAddrs(ctx, s) })
-	api.GET("/user/clusters", func(ctx *gin.Context) { getUserClusters(ctx) })
+	api.POST("/user/:userId/clusters", func(ctx *gin.Context) { getUserClusters(ctx) })
 	api.POST("/user/pinFile", func(ctx *gin.Context) { createPin(ctx, s) })
 
 	// cluster API

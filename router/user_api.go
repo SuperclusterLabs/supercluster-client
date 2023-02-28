@@ -128,15 +128,20 @@ func getUser(ctx *gin.Context) {
 }
 
 func getUserClusters(ctx *gin.Context) {
-	userId := ctx.Query("userId")
-	if userId == "" {
+	uid := ctx.Param("userId")
+	if uid == "" {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
-			Error: util.ErrMissingParam.Error() + "ethAddr",
+			Error: util.ErrMissingParam.Error() + "userId",
 		})
 		return
 	}
-
-	uClusters, err := runtime.GlobalRuntime.AppDB.GetClustersForUser(ctx, userId)
+	n := &NFTsRequest{}
+	if err := ctx.BindJSON(n); err != nil {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: util.ErrRequestUnmarshalled.Error(),
+		})
+		return
+	}
 
 	if err != nil {
 		if err == util.ErrUserNotFound {
