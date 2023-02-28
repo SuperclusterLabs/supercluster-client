@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/util"
@@ -104,21 +105,27 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftL
 
 	// execute all queries in parallel
 	results := make(chan db.QueryNode)
-	for _, query := range queries {
-		go func(q *db.Query) {
-			snapshots, err := q.GetOrdered(ctx)
-			if err != nil {
-				// Handle error
-				log.Println("error when executing NFT query: " + err.Error() +
-					", for user " + u.Id.String())
-				return
-			}
-			for _, snapshot := range snapshots {
-				results <- snapshot
-			}
-			close(results)
-		}(query)
-	}
+	go func(qs []*db.Query) {
+		defer close(results)
+		wg := sync.WaitGroup{}
+		for _, q := range qs {
+			wg.Add(1)
+			go func(q *db.Query) {
+				defer wg.Done()
+				snapshots, err := q.GetOrdered(ctx)
+				if err != nil {
+					// Handle error
+					log.Println("error when executing NFT query: " + err.Error() +
+						", for user " + u.Id.String())
+					return
+				}
+				for _, snapshot := range snapshots {
+					results <- snapshot
+				}
+			}(q)
+		}
+		wg.Wait()
+	}(queries)
 
 	// Collect the results from all queries
 	for r := range results {
