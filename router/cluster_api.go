@@ -105,6 +105,12 @@ func modifyCluster(ctx *gin.Context) {
 	// TODO: more complex rules, the following would break if
 	// a member is also an admin due to double-counting
 	cDb, err := runtime.GlobalRuntime.AppDB.GetClusterById(ctx, c.Id.String())
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, ResponseError{
+			Error: util.ErrClusterNotFound.Error(),
+		})
+		return
+	}
 	oldUsers := append(cDb.Admins, cDb.Members...)
 	newUsers := append(c.Admins, c.Members...)
 	var updateUs []*model.User
