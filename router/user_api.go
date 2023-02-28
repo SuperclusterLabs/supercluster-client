@@ -142,6 +142,7 @@ func getUserClusters(ctx *gin.Context) {
 		})
 		return
 	}
+	uClusters, err := runtime.GlobalRuntime.AppDB.GetClustersForUser(ctx, uid, n.NftList)
 
 	if err != nil {
 		if err == util.ErrUserNotFound {
