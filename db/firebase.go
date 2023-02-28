@@ -9,6 +9,7 @@ import (
 	"github.com/SuperclusterLabs/supercluster-client/util"
 
 	firebase "firebase.google.com/go"
+	"firebase.google.com/go/db"
 	"github.com/google/uuid"
 	"google.golang.org/api/option"
 )
@@ -55,7 +56,10 @@ func (d *FirebaseDB) GetUserById(ctx context.Context, uId string) (*model.User, 
 	return &u, nil
 }
 
-func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string) ([]*model.Cluster, error) {
+// checks if user has been added to a cluster by eth address
+// then, checks if the NFTs a user has makes them eligible to join a cluster
+// and adds them to those clusters
+func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftList []string) ([]*model.Cluster, error) {
 	client, err := d.Instance.Database(ctx)
 	if err != nil {
 		return nil, err
@@ -80,6 +84,7 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string) ([]*
 
 	// Get cluster information for each cluster
 	var uClusters []*model.Cluster
+	var NFTClusterIDs []string
 
 	for _, cId := range cs {
 		var c model.Cluster
@@ -88,6 +93,53 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string) ([]*
 		}
 		uClusters = append(uClusters, &c)
 	}
+
+	// check for clusters matching nfts
+	ref := client.NewRef("clusters")
+	// Construct a query for each value in ns
+	queries := make([]*db.Query, len(nftList))
+	for i, n := range nftList {
+		queries[i] = ref.OrderByChild("nftAddr").EqualTo(n)
+	}
+
+	// execute all queries in parallel
+	results := make(chan db.QueryNode)
+	for _, query := range queries {
+		go func(q *db.Query) {
+			snapshots, err := q.GetOrdered(ctx)
+			if err != nil {
+				// Handle error
+				log.Println("error when executing NFT query: " + err.Error() +
+					", for user " + u.Id.String())
+				return
+			}
+			for _, snapshot := range snapshots {
+				results <- snapshot
+			}
+			close(results)
+		}(query)
+	}
+
+	// Collect the results from all queries
+	for r := range results {
+		var c model.Cluster
+		err := r.Unmarshal(&c)
+		if err != nil {
+			return nil, err
+		}
+		c.Members = append(c.Members, u.Id.String())
+		_, err = d.CreateCluster(ctx, c)
+		if err != nil {
+			log.Println("Inconsistent DB state adding nft holder to cluster! " + err.Error())
+		}
+		uClusters = append(uClusters, &c)
+		NFTClusterIDs = append(NFTClusterIDs, c.Id.String())
+	}
+	_, err = d.UpdateUserClusters(ctx, u.EthAddr, NFTClusterIDs...)
+	if err != nil {
+		log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
+	}
+
 	return uClusters, nil
 }
 
@@ -160,13 +212,13 @@ func (d *FirebaseDB) UpdateUser(ctx context.Context, u model.User) (*model.User,
 	return &u, nil
 }
 
-func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, eAddr string, cs ...string) (*model.User, error) {
+func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, eAddr string, clusterIds ...string) (*model.User, error) {
 	u, err := d.GetUserByEthAddr(ctx, eAddr)
 	if err != nil {
 		return nil, err
 	}
 
-	u.Clusters = append(u.Clusters, cs...)
+	u.Clusters = append(u.Clusters, clusterIds...)
 
 	d.UpdateUser(ctx, *u)
 	if err != nil {

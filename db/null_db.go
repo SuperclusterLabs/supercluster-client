@@ -16,7 +16,7 @@ var _ SuperclusterDB = (*NullDB)(nil)
 func (n *NullDB) GetUserById(ctx context.Context, uId string) (*model.User, error) {
 	return nil, nil
 }
-func (n *NullDB) GetClustersForUser(ctx context.Context, userId string) ([]*model.Cluster, error) {
+func (n *NullDB) GetClustersForUser(ctx context.Context, userId string, nftList []string) ([]*model.Cluster, error) {
 	return []*model.Cluster{}, nil
 }
 func (n *NullDB) GetUserByEthAddr(ctx context.Context, ethAddr string) (*model.User, error) {
