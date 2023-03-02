@@ -24,7 +24,7 @@ func createCluster(ctx *gin.Context) {
 		return
 	}
 
-	_, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, c.Creator)
+	_, err := runtime.GlobalRuntime.AppDB.GetUserById(ctx, c.Creator)
 	if err == util.ErrUserNotFound {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrUserNotFound.Error(),
