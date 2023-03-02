@@ -136,7 +136,8 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftL
 			return nil, err
 		}
 		if !slices.Contains(c.Members, u.Id.String()) &&
-			!slices.Contains(c.Admins, u.Id.String()) {
+			!slices.Contains(c.Admins, u.Id.String()) &&
+			c.Creator != u.Id.String() {
 			c.Members = append(c.Members, u.Id.String())
 			_, err = d.CreateCluster(ctx, c)
 			if err != nil {
