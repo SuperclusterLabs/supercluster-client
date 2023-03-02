@@ -151,8 +151,20 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftL
 			log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
 		}
 	}
+
+	// get created clusters
+	q := ref.OrderByChild("creator").EqualTo(u.Id.String())
+	ss, err := q.GetOrdered(ctx)
 	if err != nil {
-		log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
+		log.Println("Couldn't query created clusters " + err.Error())
+	}
+	for _, s := range ss {
+		var c model.Cluster
+		err := s.Unmarshal(&c)
+		if err != nil {
+			log.Println("Couldn't get created cluster " + err.Error())
+		}
+		uClusters = append(uClusters, &c)
 	}
 
 	return uClusters, nil
