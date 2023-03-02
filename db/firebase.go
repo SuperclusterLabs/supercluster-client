@@ -146,8 +146,11 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftL
 			uClusters = append(uClusters, &c)
 			NFTClusterIDs = append(NFTClusterIDs, c.Id.String())
 		}
+		_, err = d.UpdateUserClusters(ctx, u.EthAddr, NFTClusterIDs...)
+		if err != nil {
+			log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
+		}
 	}
-	_, err = d.UpdateUserClusters(ctx, u.EthAddr, NFTClusterIDs...)
 	if err != nil {
 		log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
 	}
