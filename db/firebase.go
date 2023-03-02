@@ -8,6 +8,7 @@ import (
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/util"
+	"golang.org/x/exp/slices"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/db"
@@ -134,13 +135,16 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftL
 		if err != nil {
 			return nil, err
 		}
-		c.Members = append(c.Members, u.Id.String())
-		_, err = d.CreateCluster(ctx, c)
-		if err != nil {
-			log.Println("Inconsistent DB state adding nft holder to cluster! " + err.Error())
+		if !slices.Contains(c.Members, u.Id.String()) &&
+			!slices.Contains(c.Admins, u.Id.String()) {
+			c.Members = append(c.Members, u.Id.String())
+			_, err = d.CreateCluster(ctx, c)
+			if err != nil {
+				log.Println("Inconsistent DB state adding nft holder to cluster! " + err.Error())
+			}
+			uClusters = append(uClusters, &c)
+			NFTClusterIDs = append(NFTClusterIDs, c.Id.String())
 		}
-		uClusters = append(uClusters, &c)
-		NFTClusterIDs = append(NFTClusterIDs, c.Id.String())
 	}
 	_, err = d.UpdateUserClusters(ctx, u.EthAddr, NFTClusterIDs...)
 	if err != nil {
