@@ -70,7 +70,36 @@ func (s *IPFSClusterStore) Create(ctx *gin.Context, name string, contents []byte
 	// containing file info, we can use it to track file metadata.
 	// N.B: IPFS only stores name, size (bytes), and cid
 	createEp := "/add?wrap-with-directory=true"
-	clsResp, err := makeClusterSvcRequest(ctx, createEp)
+
+	c := ctx.Param("clusterId")
+	u, err := getClusterURL(c)
+	if err != nil {
+		return nil, err
+	}
+
+	payload := new(bytes.Buffer)
+	w := multipart.NewWriter(payload)
+
+	file, _ := w.CreateFormField("file")
+	file.Write(contents)
+
+	w.Close()
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", u+createEp, payload)
+
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", w.FormDataContentType())
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var clsResp map[string]interface{}
+	err = json.NewDecoder(res.Body).Decode(&clsResp)
 	if err != nil {
 		return nil, err
 	}

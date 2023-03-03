@@ -8,6 +8,7 @@ import (
 
 	"github.com/SuperclusterLabs/supercluster-client/model"
 	"github.com/SuperclusterLabs/supercluster-client/util"
+	"golang.org/x/exp/slices"
 
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/db"
@@ -134,17 +135,36 @@ func (d *FirebaseDB) GetClustersForUser(ctx context.Context, userId string, nftL
 		if err != nil {
 			return nil, err
 		}
-		c.Members = append(c.Members, u.Id.String())
-		_, err = d.CreateCluster(ctx, c)
+		if !slices.Contains(c.Members, u.Id.String()) &&
+			!slices.Contains(c.Admins, u.Id.String()) &&
+			c.Creator != u.Id.String() {
+			c.Members = append(c.Members, u.Id.String())
+			_, err = d.CreateCluster(ctx, c)
+			if err != nil {
+				log.Println("Inconsistent DB state adding nft holder to cluster! " + err.Error())
+			}
+			uClusters = append(uClusters, &c)
+			NFTClusterIDs = append(NFTClusterIDs, c.Id.String())
+			_, err = d.UpdateUserClusters(ctx, u.Id.String(), NFTClusterIDs...)
+			if err != nil {
+				log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
+			}
+		}
+	}
+
+	// get created clusters
+	q := ref.OrderByChild("creator").EqualTo(u.Id.String())
+	ss, err := q.GetOrdered(ctx)
+	if err != nil {
+		log.Println("Couldn't query created clusters " + err.Error())
+	}
+	for _, s := range ss {
+		var c model.Cluster
+		err := s.Unmarshal(&c)
 		if err != nil {
-			log.Println("Inconsistent DB state adding nft holder to cluster! " + err.Error())
+			log.Println("Couldn't get created cluster " + err.Error())
 		}
 		uClusters = append(uClusters, &c)
-		NFTClusterIDs = append(NFTClusterIDs, c.Id.String())
-	}
-	_, err = d.UpdateUserClusters(ctx, u.EthAddr, NFTClusterIDs...)
-	if err != nil {
-		log.Println("Inconsistent DB state adding cluster to user's list! " + err.Error())
 	}
 
 	return uClusters, nil
@@ -219,8 +239,8 @@ func (d *FirebaseDB) UpdateUser(ctx context.Context, u model.User) (*model.User,
 	return &u, nil
 }
 
-func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, eAddr string, clusterIds ...string) (*model.User, error) {
-	u, err := d.GetUserByEthAddr(ctx, eAddr)
+func (d *FirebaseDB) UpdateUserClusters(ctx context.Context, userId string, clusterIds ...string) (*model.User, error) {
+	u, err := d.GetUserById(ctx, userId)
 	if err != nil {
 		return nil, err
 	}

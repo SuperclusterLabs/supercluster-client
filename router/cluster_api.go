@@ -24,7 +24,7 @@ func createCluster(ctx *gin.Context) {
 		return
 	}
 
-	_, err := runtime.GlobalRuntime.AppDB.GetUserByEthAddr(ctx, c.Creator)
+	_, err := runtime.GlobalRuntime.AppDB.GetUserById(ctx, c.Creator)
 	if err == util.ErrUserNotFound {
 		ctx.JSON(http.StatusBadRequest, ResponseError{
 			Error: util.ErrUserNotFound.Error(),
@@ -80,7 +80,7 @@ func createCluster(ctx *gin.Context) {
 	// TODO: use xmtp (via websocket?) to "mail" the config to other members
 
 	// add cluster to creator's list of clusters
-	_, err = runtime.GlobalRuntime.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
+	// _, err = runtime.GlobalRuntime.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
