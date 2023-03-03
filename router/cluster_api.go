@@ -80,7 +80,7 @@ func createCluster(ctx *gin.Context) {
 	// TODO: use xmtp (via websocket?) to "mail" the config to other members
 
 	// add cluster to creator's list of clusters
-	_, err = runtime.GlobalRuntime.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
+	// _, err = runtime.GlobalRuntime.AppDB.UpdateUserClusters(ctx, c.Creator, c.Id.String())
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, ResponseError{
 			Error: err.Error(),
